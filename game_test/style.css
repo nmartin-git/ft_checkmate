@@ -1,0 +1,30 @@
+body {
+    background-color: rgb(136, 201, 197);
+    color: white;
+}
+
+h1 {
+    color: #e2b96f;
+}
+
+#board {
+    display: inline-block;
+    border: 3px solid rgb(0, 0, 0);
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+}
+
+.dark {
+    background-color: #769656;
+}
+
+.light {
+    background-color: #eeeed2;
+}
