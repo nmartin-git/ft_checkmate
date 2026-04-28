@@ -28,3 +28,25 @@ h1 {
 .light {
     background-color: #eeeed2;
 }
+
+.piece {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: auto;
+    margin-top: 7px;
+}
+
+.black {
+    background-color: #1a1a1a;
+    border: 3px solid #555;
+}
+
+.white {
+    background-color: #f0f0f0;
+    border: 3px solid #aaa;
+}
+
+.selected {
+    background-color: yellow;
+}
