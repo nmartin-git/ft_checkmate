@@ -64,11 +64,28 @@ function drawboard()
                 {
                     if (gameBoard[row][col] == 0 && (row + col) % 2 == 0)
                     {
-                        gameBoard[row][col] = gameBoard[selected.row][selected.col];
-                        gameBoard[selected.row][selected.col] = 0;
-                        selected = null;
-                        board.innerHTML = "";
-                        drawboard();
+                        if (gameBoard[selected.row][selected.col] == 1)
+                        {
+                            if (row == selected.row + 1 && (col == selected.col + 1 || col == selected.col - 1))
+                            {
+                                gameBoard[row][col] = gameBoard[selected.row][selected.col];
+                                gameBoard[selected.row][selected.col] = 0;
+                                selected = null;
+                                board.innerHTML = "";
+                                drawboard();
+                            }
+                        }
+                        else if (gameBoard[selected.row][selected.col] == 2)
+                        {
+                                if (row == selected.row - 1 && (col == selected.col + 1 || col == selected.col - 1))
+                                {
+                                    gameBoard[row][col] = gameBoard[selected.row][selected.col];
+                                    gameBoard[selected.row][selected.col] = 0;
+                                    selected = null;
+                                    board.innerHTML = "";
+                                    drawboard();
+                                }
+                       }
                     } 
                     else
                     {
