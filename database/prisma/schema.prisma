@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+	provider = "prisma-client"
+	output	 = "../src/generated/prisma"
+}
+
+datasource db {
+	provider = "postgresql"
+}
+
+model users {
+	id									String							@id @default(uuid()) @db.Uuid
+	email								String							@unique @db.Citext
+	password						String?
+	birthdate						DateTime?						@db.Date
+	a2f_enable					Boolean							@default(false)
+	a2f_secret					Boolean?
+	a2f_recovery_codes	Boolean?
+	chat_enable					Boolean							@default(false)
+	club								String	
+	is_premium					Boolean							@default(false)
+	is_admin						Boolean							@default(false)
+	elo									Int									@default(800)
+	is_online						Boolean							@default(true)
+	authInformations 		auth_informations[] @relation("authUserId")
+  chatMessages     		chat_messages[]     @relation("authorUserId")
+  followLists      		follow_list[]       @relation("followUserId")
+  followedBy       		follow_list[]       @relation("friendUserId")
+  whiteGames       		games[]             @relation("whitePlayerId")
+  blackGames       		games[]             @relation("blackPlayerId")
+}
+
+model auth_informations {
+	id				String		@id @default(uuid()) @db.Uuid
+	auth_type	String
+	auth_id		String?
+	user_id		String
+	user			users			@relation("authUserId", fields: [user_id], references: [id])
+
+	@@unique([user_id, auth_type])
+}
+
+model follow_list {
+	id				String		@id @default(uuid()) @db.Uuid
+	user_id		String
+	user			users			@relation("followUserId", fields: [user_id], references: [id])
+	friend_id	String
+	friend		users			@relation("friendUserId", fields: [friend_id], references: [id])
+
+	@@unique([user_id, friend_id])
+	//check CHECK user_id != friend_id
+}
+
+model games {
+	id								String		@id @default(uuid()) @db.Uuid
+	date							DateTime
+	white_player_elo	Int
+	black_player_elo	Int
+	white_player_id		String
+	white_user				users			@relation("whitePlayerId", fields: [white_player_id], references: [id])
+	black_player_id		String
+	black_user				users			@relation("blackPlayerId", fields: [black_player_id], references: [id])
+	// result
+	chats							chat_messages[]	@relation("chatGameId")
+	moves							moves[]					@relation("moveGameId")
+	// check CHECK white_player_id != black_player_id
+}
+
+model chat_messages {
+	id								String		@id @default(uuid()) @db.Uuid
+	message						String		@db.VarChar(140)
+	date							DateTime
+	author_user_id		String
+	author_user				users			@relation("authorUserId", fields: [author_user_id], references: [id])
+	game_id						String
+	game							games			@relation("chatGameId", fields: [game_id], references: [id])
+}
+
+model moves {
+	id								String	@id @default(uuid()) @db.Uuid
+	move_number				Int			
+	initial_position	Int			@db.SmallInt
+	new_position			Int			@db.SmallInt
+	time_to_move			DateTime
+	game_id						String
+	game							games			@relation("moveGameId", fields: [game_id], references: [id])
+
+	@@unique([game_id, move_number])
+}
+
