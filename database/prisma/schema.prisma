@@ -52,7 +52,7 @@ model Auth {
     id        String  @id @default(uuid()) @db.Uuid
     auth_type String
     auth_id   String?
-    user_id   String
+    user_id   String  @db.Uuid
     user      User    @relation("authUserId", fields: [user_id], references: [id])
 
     @@unique([user_id, auth_type])
@@ -60,9 +60,9 @@ model Auth {
 
 model Follow {
     id        String @id @default(uuid()) @db.Uuid
-    user_id   String
+    user_id   String @db.Uuid
     user      User   @relation("followUserId", fields: [user_id], references: [id])
-    friend_id String
+    friend_id String @db.Uuid
     friend    User   @relation("friendUserId", fields: [friend_id], references: [id])
     //check CHECK user_id != friend_id
 
@@ -76,9 +76,9 @@ model Game {
     date             DateTime
     white_player_elo Int
     black_player_elo Int
-    white_player_id  String
+    white_player_id  String		   @db.Uuid
     white_user       User          @relation("whitePlayerId", fields: [white_player_id], references: [id])
-    black_player_id  String
+    black_player_id  String		   @db.Uuid
     black_user       User          @relation("blackPlayerId", fields: [black_player_id], references: [id])
     result           game_results?
     chats            Chat[]        @relation("chatGameId")
@@ -93,9 +93,9 @@ model Chat {
     id             String   @id @default(uuid()) @db.Uuid
     message        String   @db.VarChar(140)
     date           DateTime @updatedAt
-    author_user_id String
+    author_user_id String	@db.Uuid
     author_user    User     @relation("authorUserId", fields: [author_user_id], references: [id])
-    game_id        String
+    game_id        String	@db.Uuid
     game           Game     @relation("chatGameId", fields: [game_id], references: [id])
 
     @@index([author_user_id])
@@ -108,7 +108,7 @@ model Move {
     initial_position Int      @db.SmallInt
     new_position     Int      @db.SmallInt
     time_to_move     DateTime
-    game_id          String
+    game_id          String	  @db.Uuid
     game             Game     @relation("moveGameId", fields: [game_id], references: [id])
 
     @@unique([game_id, move_number])
