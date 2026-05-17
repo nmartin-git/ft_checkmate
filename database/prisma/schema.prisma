@@ -29,6 +29,7 @@ enum game_results {
 model User {
     id                 String     @id @default(uuid()) @db.Uuid
     email              String     @unique @db.Citext
+	username		   String	  @unique @db.VarChar(12)
     password           String?
     birthdate          DateTime?  @db.Date
     a2f_enable         Boolean    @default(false)

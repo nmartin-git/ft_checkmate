@@ -11,7 +11,7 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
     const user = await prisma.user.create({
         data: {
-            email: "test.mail",
+            email: "mailll",
             club: "N"
         },
     })

@@ -11,6 +11,7 @@ CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
 CREATE TABLE "User" (
     "id" UUID NOT NULL,
     "email" CITEXT NOT NULL,
+    "username" VARCHAR(12) NOT NULL,
     "password" TEXT,
     "birthdate" DATE,
     "a2f_enable" BOOLEAN NOT NULL DEFAULT false,
@@ -23,7 +24,8 @@ CREATE TABLE "User" (
     "elo" INTEGER NOT NULL DEFAULT 800,
     "is_online" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "User_email_lenght_check" CHECK (length(email) <= 254)
 );
 
 -- CreateTable
@@ -83,6 +85,9 @@ CREATE TABLE "Move" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Auth_user_id_auth_type_key" ON "Auth"("user_id", "auth_type");
