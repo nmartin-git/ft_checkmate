@@ -74,7 +74,7 @@ model Follow {
 
 model Game {
     id               String        @id @default(uuid()) @db.Uuid
-    date             DateTime
+    date             DateTime      @default(now())
     white_player_elo Int
     black_player_elo Int
     white_player_id  String		   @db.Uuid
