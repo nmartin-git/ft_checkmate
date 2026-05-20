@@ -9,19 +9,6 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
-async function changePassword(userId : string, password : string) : Promise <void>
-{
-    const hash = await argon2.hash(password)
-    await prisma.user.update({
-		where: {
-			id: userId
-		},
-        data: {
-            password: hash
-        },
-    })
-}
-
 type UserUpdateFields = Partial<{
 	birthdate: Date | null
 	chat_enable: boolean
@@ -38,6 +25,39 @@ async function updateUserField(userId : string, data : UserUpdateFields) : Promi
 			id: userId
 		},
         data,
+    })
+}
+
+async function follow(userId : string, friendId : string)
+{
+	await prisma.follow.create({
+		data: {
+			user: userId,
+			friend: friendId,
+		},
+	})
+}
+
+async function unfollow(userId : string, friendId : string)
+{
+	await prisma.follow.delete({
+		where: {
+			user: userId,
+			friend: friendId,
+		},
+	})
+}
+
+async function changePassword(userId : string, password : string) : Promise <void>
+{
+    const hash = await argon2.hash(password)
+    await prisma.user.update({
+		where: {
+			id: userId
+		},
+        data: {
+            password: hash
+        },
     })
 }
 
