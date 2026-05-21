@@ -2,6 +2,7 @@ import "dotenv/config"
 import { game_results, PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 import { blob } from "node:stream/consumers"
+import { error } from "node:console"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -11,6 +12,8 @@ const prisma = new PrismaClient({ adapter })
 
 async function newGame(whitePlayerId : string, blackPlayerId : string)
 {
+	if (whitePlayerId === blackPlayerId)
+		throw new Error("You can't play against yourself !");
 	const whitePlayer = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: whitePlayerId
@@ -78,7 +81,7 @@ async function addResult(gameId : string, gameResult : game_results)
 	const { whiteElo: whiteNewElo, blackElo: blackNewElo } =
 		eloCalculator(game.white_user.elo, game.black_user.elo, gameResult);
 	await prisma.$transaction([
-		prisma.game.update({
+		prisma.game.updateMany({
 			where: {
 				id: gameId
 			},
