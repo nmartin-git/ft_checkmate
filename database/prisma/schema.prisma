@@ -108,7 +108,7 @@ model Move {
     move_number      Int
     initial_position Int      @db.SmallInt
     new_position     Int      @db.SmallInt
-    time_to_move     DateTime
+    time_to_move     Int
     game_id          String	  @db.Uuid
     game             Game     @relation("moveGameId", fields: [game_id], references: [id])
 

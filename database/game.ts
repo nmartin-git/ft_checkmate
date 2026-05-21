@@ -10,6 +10,33 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
+async function addMove(gameId : string, initialPos: number, newPos : number, timeToMove : number)
+{
+	return prisma.$transaction(async (tx) => {
+		const last = await tx.move.findFirst({
+			where: {
+				game_id: gameId
+			},
+			orderBy: {
+				move_number: "desc"
+			},
+			select: {
+				move_number: true
+			}
+		})
+		const moveNumber = (last?.move_number ?? 0) + 1
+		return tx.move.create({
+			data: {
+				game_id: gameId,
+				move_number: moveNumber,
+				initial_position: initialPos,
+				new_position: newPos,
+				time_to_move: timeToMove
+			}
+		})
+	})
+}
+
 async function newGame(whitePlayerId : string, blackPlayerId : string)
 {
 	if (whitePlayerId === blackPlayerId)

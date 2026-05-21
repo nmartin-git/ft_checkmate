@@ -25,7 +25,7 @@ CREATE TABLE "User" (
     "is_online" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-    CONSTRAINT "User_email_lenght_check" CHECK (length(email) <= 254) 
+    CONSTRAINT "User_email_lenght_check" CHECK (length(email) <= 254)
 );
 
 -- CreateTable
@@ -77,7 +77,7 @@ CREATE TABLE "Move" (
     "move_number" INTEGER NOT NULL,
     "initial_position" SMALLINT NOT NULL,
     "new_position" SMALLINT NOT NULL,
-    "time_to_move" TIMESTAMP(3) NOT NULL,
+    "time_to_move" INTEGER NOT NULL,
     "game_id" UUID NOT NULL,
 
     CONSTRAINT "Move_pkey" PRIMARY KEY ("id")

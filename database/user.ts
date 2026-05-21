@@ -28,26 +28,6 @@ async function updateUserField(userId : string, data : UserUpdateFields) : Promi
     })
 }
 
-async function follow(userId : string, friendId : string)
-{
-	await prisma.follow.create({
-		data: {
-			user_id: userId,
-			friend_id: friendId,
-		},
-	})
-}
-
-async function unfollow(userId : string, friendId : string)
-{
-	await prisma.follow.deleteMany({
-		where: {
-			user_id: userId,
-			friend_id: friendId,
-		},
-	})
-}
-
 async function changePassword(userId : string, password : string) : Promise <void>
 {
     const hash = await argon2.hash(password)
@@ -61,6 +41,11 @@ async function changePassword(userId : string, password : string) : Promise <voi
     })
 }
 
+async function twoFactorAuth() : Promise<boolean>
+{
+	return (true);
+}
+
 async function verifyPassword(userEmail : string, password : string) : Promise<boolean>
 {
 	const user = await prisma.user.findUnique({
@@ -68,12 +53,16 @@ async function verifyPassword(userEmail : string, password : string) : Promise<b
 			email: userEmail
 		},
 		select: {
-			password: true
+			password: true,
+			a2f_enable: true
 		},
 	})
 	if (!user?.password)
-		return (false)
-	return (argon2.verify(user.password, password))
+		return (false);
+	if (user.a2f_enable)
+		return (twoFactorAuth());
+	else
+		return (argon2.verify(user.password, password));
 }
 
 async function inscriptionClassic(inputEmail : string, inputUsername : string, inputPassword : string) : Promise<void>
