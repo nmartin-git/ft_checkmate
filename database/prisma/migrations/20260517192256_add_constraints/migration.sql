@@ -24,8 +24,8 @@ CREATE TABLE "User" (
     "elo" INTEGER NOT NULL DEFAULT 800,
     "is_online" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "User_email_lenght_check" CHECK (length(email) <= 254)
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "User_email_lenght_check" CHECK (length(email) <= 254) 
 );
 
 -- CreateTable
@@ -50,7 +50,7 @@ CREATE TABLE "Follow" (
 -- CreateTable
 CREATE TABLE "Game" (
     "id" UUID NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "white_player_elo" INTEGER NOT NULL,
     "black_player_elo" INTEGER NOT NULL,
     "white_player_id" UUID NOT NULL,

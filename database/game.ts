@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { game_results, PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
+import { blob } from "node:stream/consumers"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -10,7 +11,7 @@ const prisma = new PrismaClient({ adapter })
 
 async function newGame(whitePlayerId : string, blackPlayerId : string)
 {
-	const whitePlayer = await prisma.user.findUnique({
+	const whitePlayer = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: whitePlayerId
 		},
@@ -18,7 +19,7 @@ async function newGame(whitePlayerId : string, blackPlayerId : string)
 			elo: true
 		}
 	})
-	const blackPlayer = await prisma.user.findUnique({
+	const blackPlayer = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: blackPlayerId
 		},
@@ -36,56 +37,70 @@ async function newGame(whitePlayerId : string, blackPlayerId : string)
 	})
 }
 
+function eloMultiplier(whiteElo : number, blackElo : number)
+{
+	return (1 / (1 + Math.pow(10, (blackElo - whiteElo) / 400)));
+}
+
+function eloCalculator(whiteElo : number, blackElo : number, result : game_results)
+{
+	const constantMultiplier = 20;
+	const whiteMultiplier = eloMultiplier(whiteElo, blackElo);
+	const blackMultiplier = 1 - whiteMultiplier;
+	let whiteScore: 0 | 0.5 | 1;
+	if (result === "WHITE")
+		whiteScore = 1;
+	else if (result === "BLACK")
+		whiteScore = 0;
+	else
+		whiteScore = 0.5;
+	const blackScore = (1 - whiteScore) as 0 | 0.5 | 1;
+	const whiteNewElo = whiteElo + constantMultiplier * (whiteScore - whiteMultiplier);
+	const blackNewElo = blackElo + constantMultiplier * (blackScore - blackMultiplier);
+	return {
+		whiteElo: Math.max(0, Math.round(whiteNewElo)),
+		blackElo: Math.max(0, Math.round(blackNewElo))
+	}
+}
+
 async function addResult(gameId : string, gameResult : game_results)
 {
-	const game = await prisma.game.findUnique({
+	const game = await prisma.game.findUniqueOrThrow({
 		where: {
 			id: gameId
 		},
 		select: {
-			white_player_id: true,
-			black_player_id: true
+			white_user: {select: { id: true, elo: true} },
+			black_user: {select: { id: true, elo: true} },
+			result: true
 		}
 	})
-	const whitePlayer = await prisma.user.findUnique({
-		where: {
-			id: game.white_player_id
-		},
-		select: {
-			elo: true
-		}
-	})
-	const blackPlayer = await prisma.user.findUnique({
-		where: {
-			id: game.black_player_id
-		},
-		select: {
-			elo: true
-		}
-	})
-	//handle elo algorythm
-	await prisma.game.update({
-		where: {
-			id: gameId
-		},
-		data: {
-			result: gameResult
-		},
-	})
-	await prisma.user.update({
-		where: {
-			id: whitePlayer.id
-		},
-		data: {
-			elo: elo//result
-		},
-	})
-	await prisma.user.update({
-		where: {
-			id: blackPlayer.id
-		},
-		data: {
-			elo: elo//result
-		},
-	})
+	const { whiteElo: whiteNewElo, blackElo: blackNewElo } =
+		eloCalculator(game.white_user.elo, game.black_user.elo, gameResult);
+	await prisma.$transaction([
+		prisma.game.update({
+			where: {
+				id: gameId
+			},
+			data: {
+				result: gameResult
+			},
+		}),
+		prisma.user.update({
+			where: {
+				id: game.white_user.id
+			},
+			data: {
+				elo: whiteNewElo
+			},
+		}),
+		prisma.user.update({
+			where: {
+				id: game.black_user.id
+			},
+			data: {
+				elo: blackNewElo
+			},
+		})
+	])
 }

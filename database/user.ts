@@ -32,18 +32,18 @@ async function follow(userId : string, friendId : string)
 {
 	await prisma.follow.create({
 		data: {
-			user: userId,
-			friend: friendId,
+			user_id: userId,
+			friend_id: friendId,
 		},
 	})
 }
 
 async function unfollow(userId : string, friendId : string)
 {
-	await prisma.follow.delete({
+	await prisma.follow.deleteMany({
 		where: {
-			user: userId,
-			friend: friendId,
+			user_id: userId,
+			friend_id: friendId,
 		},
 	})
 }
