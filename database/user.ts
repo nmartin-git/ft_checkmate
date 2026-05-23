@@ -41,11 +41,6 @@ async function changePassword(userId : string, password : string) : Promise <voi
     })
 }
 
-async function twoFactorAuth() : Promise<boolean>
-{
-	return (true);
-}
-
 async function verifyPassword(userEmail : string, password : string) : Promise<boolean>
 {
 	const user = await prisma.user.findUnique({
@@ -60,7 +55,7 @@ async function verifyPassword(userEmail : string, password : string) : Promise<b
 	if (!user?.password)
 		return (false);
 	if (user.a2f_enable)
-		return (twoFactorAuth());
+		return (false);//TODO: check 2FA
 	else
 		return (argon2.verify(user.password, password));
 }

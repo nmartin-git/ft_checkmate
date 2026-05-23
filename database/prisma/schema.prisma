@@ -33,7 +33,7 @@ model User {
     password           String?
     birthdate          DateTime?  @db.Date
     a2f_enable         Boolean    @default(false)
-    a2f_secret         String?    @db.VarChar(64)
+    a2f_secret         String?    @db.Text
     a2f_recovery_codes String?    @db.Text
     chat_enable        Boolean    @default(false)
     club               club_names
