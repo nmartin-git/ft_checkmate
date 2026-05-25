@@ -33,7 +33,9 @@ model User {
     password           String?
     birthdate          DateTime?  @db.Date
     a2f_enable         Boolean    @default(false)
-    a2f_secret         String?    @db.Text
+    a2f_opt_hash       String?    @db.Text
+    a2f_expires_at     DateTime
+    a2f_log_attemps    Int        @default(0)
     a2f_recovery_codes String?    @db.Text
     chat_enable        Boolean    @default(false)
     club               club_names

@@ -1,4 +1,5 @@
 import argon2 from "argon2"
+import crypto from "node:crypto"
 import "dotenv/config"
 import { club_names, PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
@@ -9,6 +10,9 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
+const RECOVERY_CODES_NUMBER = 10;
+const RECOVERY_CODES_LENGTH = 10;
+
 type UserUpdateFields = Partial<{
 	birthdate: Date | null
 	chat_enable: boolean
@@ -18,6 +22,11 @@ type UserUpdateFields = Partial<{
 	is_online: boolean
 }>
 
+export type RecoveryCodeTab = {
+	hash: string
+	usedAt: string | null
+}
+
 async function updateUserField(userId : string, data : UserUpdateFields) : Promise <void>
 {
     await prisma.user.update({
@@ -25,6 +34,46 @@ async function updateUserField(userId : string, data : UserUpdateFields) : Promi
 			id: userId
 		},
         data,
+    })
+}
+
+async function generateRecoveryCodes(userId : string) : Promise <void>
+{
+	const rawRecoveryCodes: string[] = []
+	const recoveryCodes: RecoveryCodeTab [] = []
+	for (let i = 0; i++; i < RECOVERY_CODES_NUMBER)
+	{
+		const code = crypto.randomBytes(RECOVERY_CODES_LENGTH).toString("hex")
+		const codeHash = await argon2.hash(code)
+		rawRecoveryCodes.push(code)
+		recoveryCodes.push({hash: codeHash, usedAt: null})
+	}
+	// TODO afficher sur l'ecran les codes de rawRecoveryCodes
+	await prisma.user.update({
+		where: {
+			id: userId
+		},
+		data: {
+			a2f_recovery_codes: JSON.stringify(recoveryCodes)
+		}
+	})
+}
+
+async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>
+{
+	let recoveryCodes
+	if (enable)
+		recoveryCodes = await generateRecoveryCodes(userId)
+	else
+		recoveryCodes = null
+	await prisma.user.update({
+		where: {
+			id: userId
+		},
+        data: {
+			a2f_enable: enable,
+			a2f_recovery_codes: recoveryCodes
+		}
     })
 }
 
@@ -39,25 +88,6 @@ async function changePassword(userId : string, password : string) : Promise <voi
             password: hash
         },
     })
-}
-
-async function verifyPassword(userEmail : string, password : string) : Promise<boolean>
-{
-	const user = await prisma.user.findUnique({
-		where: {
-			email: userEmail
-		},
-		select: {
-			password: true,
-			a2f_enable: true
-		},
-	})
-	if (!user?.password)
-		return (false);
-	if (user.a2f_enable)
-		return (false);//TODO: check 2FA
-	else
-		return (argon2.verify(user.password, password));
 }
 
 async function inscriptionClassic(inputEmail : string, inputUsername : string, inputPassword : string) : Promise<void>

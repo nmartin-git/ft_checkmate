@@ -1,8 +1,6 @@
 import "dotenv/config"
 import { game_results, PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
-import { blob } from "node:stream/consumers"
-import { error } from "node:console"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
