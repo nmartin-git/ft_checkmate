@@ -1,5 +1,6 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
+import { Resend } from "resend"
 import "dotenv/config"
 import { RecoveryCodeTab } from "./user"
 import { PrismaClient } from "@prisma/client"
@@ -12,9 +13,24 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
+const resend = new Resend(process.env.RESEND_API_KEY!)
+
 const MINUTES_A2F_EXPIRATION = 5;
 const MAX_A2F_LOG_ATTEMPS = 5;
 
+
+async function sendEmailTwoFactorAuth(userEmail : string, code : string)
+{
+	const subject = "Votre code 2FA"
+	const text = `Votre code 2FA est:\n\n${code}\n\nIl expire dans ${MINUTES_A2F_EXPIRATION} minutes.`
+	const result = await resend.emails.send({
+		from: process.env.RESEND_MAIL_FROM!,
+		to : userEmail,
+		subject,
+		text
+	})
+	return result
+}
 
 async function setTwoFactorAuth(userEmail : string) : Promise<void>
 {
@@ -57,9 +73,9 @@ async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promi
 	if (!user.a2f_enable)
 		return (true);
     else if (user.a2f_expires_at > Date.now())
-        throw new Error("A2f code expired")//TODO voir si throw ou return
+        return (false);
 	else if (user.a2f_log_attemps > MAX_A2F_LOG_ATTEMPS)
-		throw new Error("Too many invalid log attemps")//TODO voir si throw ou return
+		return (false);
 	if (await argon2.verify(user.a2f_opt_hash, userOpt))
     {
         await prisma.user.update({
