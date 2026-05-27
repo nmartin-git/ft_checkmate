@@ -1,5 +1,31 @@
 _This project has been created as part of the 42 curriculum by nmartin, yamartin, joudafke, braugust, maissat_
 
+# Team organisatiom
+
+## Roles
+
+Product Owner (PO): _nmartin_
+As a product owner, I decided with my teammates the project subject (checkers game).
+I discuss with my team and decided wich modules and features were pertinents to do according to the project and our preferences.
+With the Project Manager, we established roles and work repartitions between each members, priority order of modules and features and tracked their progression.
+Also I regularly discuss with each members of the group to see their work, its compatility with the global code and to merge it with github.
+
+Project Manager (PM) / Scrum Master: _joudafke_
+
+
+Technical Lead / Architect: _maissat_
+
+
+Developers: all team members
+
+
+
+## Work repartition
+
+## Technologies
+
+## Modules
+
 # Ft_checkmate
 
 ## Database _by nmartin_
