@@ -17,9 +17,11 @@ Before any code, visualize the needs of our project is important to get a global
 I found a platform who make schema realization easier: draw.io.
 
 ![MCD schema](documents/MCD.drawio.png)
+
 This schema is a Conceptual Data Model (CDM).
 Its goal is to establish the differents tables of our database, the differents elements composing each and the relation between those tables.
 ![MLD schema](documents/MCD.drawio.png)
+
 This schema is a Logical Data Model (LDM).
 Its goal is to get a global vision closer to prisma's models.
 It is similar to the CDM, adding differents constraints (unique, check, not null...) and foreign keys.
@@ -41,7 +43,7 @@ We add our constraints in SQL langage and we send this `.sql` file to our databa
 ```apply migration.sql
 npx prisma migrate dev
 ```
-Our backend is now in communication with our database with tool like `find`,`update`,`delete`.
+Our backend is now in communication with our database with functions like `find`,`update`,`delete`.
 
 # Documentation
 -- Database
