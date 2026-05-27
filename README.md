@@ -20,6 +20,7 @@ I found a platform who make schema realization easier: draw.io.
 
 This schema is a Conceptual Data Model (CDM).
 Its goal is to establish the differents tables of our database, the differents elements composing each and the relation between those tables.
+
 ![MLD schema](documents/MCD.drawio.png)
 
 This schema is a Logical Data Model (LDM).
