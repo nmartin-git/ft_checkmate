@@ -1,15 +1,7 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
 import { unlink } from "node:fs/promises"
-import "dotenv/config"
-import { club_names, PrismaClient } from "@prisma/client"
-import { PrismaPg } from "@prisma/adapter-pg"
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-const prisma = new PrismaClient({ adapter })
+import { prisma } from "@/lib/prisma"
 
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;

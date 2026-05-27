@@ -1,16 +1,8 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
 import { Resend } from "resend"
-import "dotenv/config"
 import { RecoveryCodeTab } from "./user"
-import { PrismaClient } from "@prisma/client"
-import { PrismaPg } from "@prisma/adapter-pg"
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-const prisma = new PrismaClient({ adapter })
+import { prisma } from "@/lib/prisma"
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 
