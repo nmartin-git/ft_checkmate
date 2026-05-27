@@ -6,10 +6,10 @@ import { prisma } from "@/lib/prisma"
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;
 const DEFAULT_AVATAR_URL = "url";
+const CHAT_AGE_LIMIT = 16;
 
 type UserUpdateFields = Partial<{
 	birthdate: Date | null
-	chat_enable: boolean
 	is_premium: boolean
 	is_admin: boolean
 	elo: number
@@ -29,6 +29,93 @@ async function updateUserField(userId : string, data : UserUpdateFields) : Promi
 		},
         data,
     })
+}
+
+function isAtLeastAge(birthdate: Date | null, age = CHAT_AGE_LIMIT, now = new Date()) : boolean
+{
+	if (!birthdate)
+		return (false);
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+	const birthdayThisAge = new Date(
+		birthdate.getFullYear() + age,
+		birthdate.getMonth(),
+		birthdate.getDate()
+	)
+  return (today >= birthdayThisAge);
+}
+
+async function updateChatEnable(userId : string, enable : boolean) : Promise <void>
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			birthdate: true,
+			chat_enable: true
+		}
+	})
+	if (user.chat_enable === enable)
+		return ;
+	else if (enable)
+	{
+		if (!isAtLeastAge(user.birthdate))
+			return ;
+		await prisma.user.update({
+			where: {
+				id: userId
+			},
+			data: {
+				chat_enable: true
+			}
+		})
+	}
+	else
+	{
+		await prisma.user.update({
+			where: {
+				id: userId
+			},
+			data: {
+				chat_enable: false
+			}
+		})
+	}
+}
+
+async function updateAvatar(userId : string, newUrl : string | null) : Promise <void>
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true
+		}
+	})
+	if (user.avatar_url)
+		await unlink(user.avatar_url)
+	await prisma.user.update({
+		where: {
+			id: userId
+		},
+		data: {
+			avatar_url: newUrl
+		}
+	})
+}
+
+async function getAvatar(userId : string) : Promise <string>
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true
+		}
+	})
+	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
 }
 
 async function generateRecoveryCodes(userId : string) : Promise <void>
@@ -51,41 +138,6 @@ async function generateRecoveryCodes(userId : string) : Promise <void>
 			a2f_recovery_codes: JSON.stringify(recoveryCodes)
 		}
 	})
-}
-
-async function updateAvatar(userId : string, newUrl : string | null)
-{
-	const user = await prisma.user.findUniqueOrThrow({
-		where: {
-			id: userId
-		},
-		select: {
-			avatar_url: true
-		}
-	})
-	if (user.avatar_url)
-		await unlink(user.avatar_url)
-	await prisma.user.update({
-		where: {
-			id: userId
-		},
-		data: {
-			avatar_url: newUrl
-		}
-	})
-}
-
-async function getAvatar(userId : string)
-{
-	const user = await prisma.user.findUniqueOrThrow({
-		where: {
-			id: userId
-		},
-		select: {
-			avatar_url: true
-		}
-	})
-	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
 }
 
 async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>
