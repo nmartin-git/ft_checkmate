@@ -32,6 +32,7 @@ model User {
 	username		   String	  @unique @db.VarChar(12)
     password           String?
     birthdate          DateTime?  @db.Date
+	avatar_url	       String?
     a2f_enable         Boolean    @default(false)
     a2f_opt_hash       String?    @db.Text
     a2f_expires_at     DateTime

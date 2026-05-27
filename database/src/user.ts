@@ -1,5 +1,6 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
+import { unlink } from "node:fs/promises"
 import "dotenv/config"
 import { club_names, PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
@@ -12,6 +13,7 @@ const prisma = new PrismaClient({ adapter })
 
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;
+const DEFAULT_AVATAR_URL = "url";
 
 type UserUpdateFields = Partial<{
 	birthdate: Date | null
@@ -57,6 +59,41 @@ async function generateRecoveryCodes(userId : string) : Promise <void>
 			a2f_recovery_codes: JSON.stringify(recoveryCodes)
 		}
 	})
+}
+
+async function updateAvatar(userId : string, newUrl : string | null)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true
+		}
+	})
+	if (user.avatar_url)
+		await unlink(user.avatar_url)
+	await prisma.user.update({
+		where: {
+			id: userId
+		},
+		data: {
+			avatar_url: newUrl
+		}
+	})
+}
+
+async function getAvatar(userId : string)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true
+		}
+	})
+	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
 }
 
 async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>

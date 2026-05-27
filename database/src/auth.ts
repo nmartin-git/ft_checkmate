@@ -5,7 +5,6 @@ import "dotenv/config"
 import { RecoveryCodeTab } from "./user"
 import { PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
-import { increment } from "libsodium-wrappers"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -156,6 +155,7 @@ async function verifyPassword(userEmail : string, password : string) : Promise<b
 	{
 		await setTwoFactorAuth(userEmail)
 		// return (verifyTwoFactorAuth(userEmail, input));//TODO: check 2FA
+		return (false);
 	}
 	else
 		return (true);
