@@ -1,12 +1,4 @@
-import "dotenv/config"
-import { game_results, PrismaClient } from "@prisma/client"
-import { PrismaPg } from "@prisma/adapter-pg"
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-const prisma = new PrismaClient({ adapter })
+import { prisma } from "@/lib/prisma"
 
 async function addMove(gameId : string, initialPos: number, newPos : number, timeToMove : number)
 {
