@@ -1,13 +1,21 @@
 body {
-    background-color: rgb(136, 201, 197);
-    color: white;
+    background-image: url("bg_one_piece.jpg");
+    background-size: cover;
 }
 
 h1 {
-    color: #e2b96f;
+    color: #ff0000;
+}
+
+p {
+    color: #ffffff;
 }
 
 #board {
+    	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
     display: inline-block;
     border: 3px solid rgb(0, 0, 0);
 }
@@ -34,7 +42,7 @@ h1 {
     height: 45px;
     border-radius: 50%;
     margin: auto;
-    margin-top: 7px;
+    margin-top: 5px;
 }
 
 .black {
