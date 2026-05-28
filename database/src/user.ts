@@ -1,7 +1,8 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
 import { unlink } from "node:fs/promises"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "./lib/prisma"
+import { club_names } from "@prisma/client"
 
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;
@@ -90,7 +91,7 @@ async function updateAvatar(userId : string, newUrl : string | null) : Promise <
 			id: userId
 		},
 		select: {
-			avatar_url: true
+			avatar_url: true,
 		}
 	})
 	if (user.avatar_url)
@@ -144,7 +145,7 @@ async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise 
 {
 	let recoveryCodes
 	if (enable)
-		recoveryCodes = await generateRecoveryCodes(userId)
+		await generateRecoveryCodes(userId)
 	else
 		recoveryCodes = null
 	await prisma.user.update({
@@ -152,8 +153,7 @@ async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise 
 			id: userId
 		},
         data: {
-			a2f_enable: enable,
-			a2f_recovery_codes: recoveryCodes
+			a2f_enable: enable
 		}
     })
 }

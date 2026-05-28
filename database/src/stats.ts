@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { prisma } from "./lib/prisma"
 
 async function getStats(userId : string)
 {
@@ -20,15 +20,15 @@ async function getStats(userId : string)
 		winRate = 0
 }
 
-async function eloStats(userId : string)
-{
-	const user = await prisma.user.findUniqueOrThrow({
-		where: {
-			id: userId
-		},
-		select: {
-			elo: true
-		}
-	})
-	const 
-}
+// async function eloStats(userId : string)
+// {
+// 	const user = await prisma.user.findUniqueOrThrow({
+// 		where: {
+// 			id: userId
+// 		},
+// 		select: {
+// 			elo: true
+// 		}
+// 	})
+// 	const 
+// }

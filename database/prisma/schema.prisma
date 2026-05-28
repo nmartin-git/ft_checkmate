@@ -35,7 +35,7 @@ model User {
 	avatar_url	       String?
     a2f_enable         Boolean    @default(false)
     a2f_opt_hash       String?    @db.Text
-    a2f_expires_at     DateTime
+    a2f_expires_at     DateTime?
     a2f_log_attemps    Int        @default(0)
     a2f_recovery_codes String?    @db.Text
     chat_enable        Boolean    @default(false)
