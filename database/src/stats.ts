@@ -30,5 +30,5 @@ async function eloStats(userId : string)
 			elo: true
 		}
 	})
-	
+	const 
 }
