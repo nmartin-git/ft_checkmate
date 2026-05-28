@@ -2,7 +2,7 @@ import argon2 from "argon2"
 import crypto from "node:crypto"
 import { Resend } from "resend"
 import { RecoveryCodeTab } from "./user"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "./lib/prisma"
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 
@@ -37,15 +37,16 @@ async function setTwoFactorAuth(userEmail : string) : Promise<void>
         return ;
     const hash = await argon2.hash(crypto.randomInt(0, 1000000).toString())
     //TODO send mail
-    return prisma.user.update({
+	await prisma.user.update({
         where: {
 			email: userEmail
         },
 		data: {
 			a2f_opt_hash: hash,
-			a2f_expires_at: Date.now() + MINUTES_A2F_EXPIRATION * 60 * 1000
+			a2f_expires_at: new Date(Date.now() + (MINUTES_A2F_EXPIRATION * 60 * 1000))
 		}
     })
+	return ;
 }
 
 async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promise<boolean>
@@ -63,7 +64,9 @@ async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promi
     })
 	if (!user.a2f_enable)
 		return (true);
-    else if (user.a2f_expires_at > Date.now())
+	else if (!user.a2f_opt_hash || !user.a2f_expires_at)
+		return (false);
+    else if (user.a2f_expires_at.getTime() > Date.now())
         return (false);
 	else if (user.a2f_log_attemps > MAX_A2F_LOG_ATTEMPS)
 		return (false);
