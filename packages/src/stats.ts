@@ -20,15 +20,28 @@ async function getStats(userId : string)
 		winRate = 0
 }
 
-// async function eloStats(userId : string)
-// {
-// 	const user = await prisma.user.findUniqueOrThrow({
-// 		where: {
-// 			id: userId
-// 		},
-// 		select: {
-// 			elo: true
-// 		}
-// 	})
-// 	const 
-// }
+async function eloHistoric(userId : string, durationStats : number)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			elo: true
+		}
+	})
+	const eloStats = await prisma.game.findMany({
+		where: {
+			user_id: userId,
+			// date: 
+		},
+		select: {
+			date: true,
+			result: true
+		},
+		orderBy: {
+			date: 'asc'
+		}
+	})
+	//TODO fix, prendre le bon player (black or white)
+}
