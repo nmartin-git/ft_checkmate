@@ -26,6 +26,11 @@ enum game_results {
     DRAW
 }
 
+enum follow_status {
+    PENDING
+    ACCEPTED
+}
+
 model User {
     id                 String     @id @default(uuid()) @db.Uuid
     email              String     @unique @db.Citext
@@ -48,6 +53,8 @@ model User {
     chatMessages       Chat[]     @relation("authorUserId")
     followLists        Follow[]   @relation("followUserId")
     followedBy         Follow[]   @relation("friendUserId")
+    sentMessages       DirectMessage[] @relation("dmSenderId")
+    receivedMessages   DirectMessage[] @relation("dmReceiverId")
     whiteGames         Game[]     @relation("whitePlayerId")
     blackGames         Game[]     @relation("blackPlayerId")
 }
@@ -68,6 +75,7 @@ model Follow {
     user      User   @relation("followUserId", fields: [user_id], references: [id])
     friend_id String @db.Uuid
     friend    User   @relation("friendUserId", fields: [friend_id], references: [id])
+    status    follow_status @default(PENDING)
     //check CHECK user_id != friend_id
 
     @@unique([user_id, friend_id])
@@ -117,4 +125,20 @@ model Move {
 
     @@unique([game_id, move_number])
     @@index([game_id])
+}
+
+model DirectMessage {
+    id          String    @id @default(uuid()) @db.Uuid
+    message     String    @db.VarChar(140)
+    date        DateTime  @default(now())
+    read_at     DateTime?
+    sender_id   String    @db.Uuid
+    sender      User      @relation("dmSenderId", fields: [sender_id], references: [id])
+    receiver_id String    @db.Uuid
+    receiver    User      @relation("dmReceiverId", fields: [receiver_id], references: [id])
+    //check CHECK sender_id != receiver_id
+
+    @@index([sender_id])
+    @@index([receiver_id])
+    @@index([sender_id, receiver_id])
 }
