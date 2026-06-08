@@ -41,8 +41,11 @@ async function eloHistoric(userId : string, durationStats : number = 0)
 			blackUserElo: true,
 			whiteUserId: true,
 			whiteUserElo: true
+		},
+		orderBy: {
+			date: 'asc'
 		}
-	});
+	})
 	type GameData = typeof games[0];
 	return games.map((game: GameData) => ({
 		id: game.id,
