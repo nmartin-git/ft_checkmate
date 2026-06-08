@@ -20,28 +20,33 @@ async function getStats(userId : string)
 		winRate = 0
 }
 
-async function eloHistoric(userId : string, durationStats : number)
+async function eloHistoric(userId : string, durationStats : number = 0)
 {
-	const user = await prisma.user.findUniqueOrThrow({
+	const cutoffDate = new Date();
+	if (durationStats === 0)
+		cutoffDate.setTime(Number.MIN_SAFE_INTEGER);
+	else
+		cutoffDate.setDate(cutoffDate.getDate() - durationStats);
+	const games = await prisma.game.findMany({
 		where: {
-			id: userId
+			OR: [{ blackUserId: userId }, { whiteUserId: userId }],
+			date: {
+				gte: cutoffDate
+			}
 		},
 		select: {
-			elo: true
-		}
-	})
-	const eloStats = await prisma.game.findMany({
-		where: {
-			user_id: userId,
-			// date: 
-		},
-		select: {
+			id: true,
 			date: true,
-			result: true
-		},
-		orderBy: {
-			date: 'asc'
+			blackUserId: true,
+			blackUserElo: true,
+			whiteUserId: true,
+			whiteUserElo: true
 		}
-	})
-	//TODO fix, prendre le bon player (black or white)
+	});
+	type GameData = typeof games[0];
+	return games.map((game: GameData) => ({
+		id: game.id,
+		date: game.date,
+		elo: game.blackUserId === userId ? game.blackUserElo : game.whiteUserElo
+	}));
 }
