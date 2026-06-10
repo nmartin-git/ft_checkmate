@@ -2,10 +2,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css"; // TRÈS IMPORTANT pour que Tailwind fonctionne
-import Topbar from "@/components/Topbar";
-import LoginModal from "@/components/Modals/LoginModal";
-import RegisterModal from "@/components/Modals/RegisterModal";
-import NotifModal from "@/components/Modals/NotifModal";
+import Topbar from "@/src/components/Topbar";
+import LoginModal from "@/src/components/Modals/LoginModal";
+import RegisterModal from "@/src/components/Modals/RegisterModal";
+import NotifModal from "@/src/components/Modals/NotifModal";
+import AuthProvider from "@/src/components/AuthProvider";
 
 // Configuration des polices par défaut de Next.js
 const geistSans = Geist({
@@ -29,10 +30,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="h-full bg-green-900 text-white">
+    <html lang="fr" className= "bg-green-800">
+      <body className="h-full text-white">
         <div >
-          <div>
+          <AuthProvider>
             <RegisterModal/>
             <LoginModal/>
             <NotifModal/>
@@ -40,8 +41,7 @@ export default function RootLayout({
             <div>
               {children}
             </div>
-
-          </div>
+          </AuthProvider>
         </div>
       </body>
     </html>
