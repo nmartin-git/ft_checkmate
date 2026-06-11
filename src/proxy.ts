@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const protectedRoutes = ['/profile', '/profile/edit'];
 const protectedApiRoutes = ['/api/auth/me'];
 
-export function middleware(request :NextRequest){
+export function proxy(request :NextRequest){
 	const sessionToken = request.cookies.get('auth-token')?.value;
 	const {pathname} = request.nextUrl;
 	

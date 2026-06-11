@@ -16,87 +16,137 @@ const LoginModal= () => {
     const [password,setPassword] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
+    const [step, setStep] = useState(1);
 
-    const onSubmit =useCallback(async () =>{
-        try{
-            setIsLoading(true);
-            const response = await fetch ('api/auth/login', {
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify({
-                    email,
-                    password
+
+        const onSubmit =useCallback(async () =>{
+            try{
+                setIsLoading(true);
+                const response = await fetch ('api/auth/login', {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify({
+                        email,
+                        password
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok)
+                    throw new Error(data.error || 'response pas ok');
+                alert('Utilisateur log avec succes!');
+                currentUser.setUser({
+                    id : data.user.id,
+                    username : data.user.username,
+                    email : data.user.email
                 })
-            });
-            const data = await response.json();
-            if (!response.ok)
-                throw new Error(data.error || 'response pas ok');
-            alert('Utilisateur log avec succes!');
-            currentUser.setUser({
-                id : data.user.id,
-                username : data.user.username,
-                email : data.user.email
-            })
+                LoginModal.onClose();
+            } catch (error: any)
+            {
+                console.log(error.message);
+            } finally {
+                setIsLoading(false);    
+            }
+
+        }, [currentUser,LoginModal, email, password]);
+
+        const onToggle = useCallback(()=>{
+            if (isLoading)return;
             LoginModal.onClose();
-        } catch (error: any)
-        {
-            console.log(error.message);
-        } finally {
-            setIsLoading(false);    
-        }
-        
-    }, [currentUser,LoginModal, email, password]);
+            registerModal.onOpen();
+        },[registerModal, LoginModal, isLoading]);
+    if (step === 1)
+    {
+        const bodyContent = (
+            <div className="flex flex-col gap-4">
+                <Input
+                placeholder="Email"
+                onChange={(e)=>setEmail(e.target.value)}
+                value={email}
+                disabled={isLoading}
 
-    const onToggle = useCallback(()=>{
-        if (isLoading)return;
-        LoginModal.onClose();
-        registerModal.onOpen();
-    },[registerModal, LoginModal, isLoading]);
+                />
+                <Input
+                placeholder="Password"
+                onChange={(e)=>setPassword(e.target.value)}
+                value={password}
+                disabled={isLoading}
 
-    const bodyContent = (
-        <div className="flex flex-col gap-4">
-            <Input
-            placeholder="Email"
-            onChange={(e)=>setEmail(e.target.value)}
-            value={email}
+                />
+            </div>
+        )
+        const footerContent = (
+           <div className="flex flex-row py-2">
+            <p className="pr-2">Dont have an account ? </p>
+            <span className="
+            text-decoration-line: underline
+            cursor-pointer 
+            hover:opacity-50
+            " onClick={onToggle}>Sign</span>
+           </div>
+        )
+        return (
+        <div>
+            <Modal
             disabled={isLoading}
-
-            />
-            <Input
-            placeholder="Password"
-            onChange={(e)=>setPassword(e.target.value)}
-            value={password}
-            disabled={isLoading}
+            isOpen={LoginModal.isOpen}
+            title="Login"
+            actionLabel="Sign in"
+            onClose={LoginModal.onClose}
+            onSubmit={onSubmit}
+            body={bodyContent}
+            footer={footerContent}
 
             />
         </div>
-    )
-    const footerContent = (
-       <div className="flex flex-row py-2">
-        <p className="pr-2">Dont have an account ? </p>
-        <span className="
-        text-decoration-line: underline
-        cursor-pointer 
-        hover:opacity-50
-        " onClick={onToggle}>Sign</span>
-       </div>
-    )
-    return (
-    <div>
-        <Modal
-        disabled={isLoading}
-        isOpen={LoginModal.isOpen}
-        title="Login"
-        actionLabel="Sign in"
-        onClose={LoginModal.onClose}
-        onSubmit={onSubmit}
-        body={bodyContent}
-        footer={footerContent}
+        );
+    }
+    else if (step === 2)
+    {
+        const bodyContent = (
+            <div className="flex flex-col gap-4">
+                <Input
+                placeholder="Email"
+                onChange={(e)=>setEmail(e.target.value)}
+                value={email}
+                disabled={isLoading}
 
-        />
-    </div>
-    );
+                />
+                <Input
+                placeholder="Password"
+                onChange={(e)=>setPassword(e.target.value)}
+                value={password}
+                disabled={isLoading}
+
+                />
+            </div>
+        )
+        const footerContent = (
+           <div className="flex flex-row py-2">
+            <p className="pr-2">Dont have an account ? </p>
+            <span className="
+            text-decoration-line: underline
+            cursor-pointer 
+            hover:opacity-50
+            " onClick={onToggle}>Sign</span>
+           </div>
+        )
+        return (
+        <div>
+            <Modal
+            disabled={isLoading}
+            isOpen={LoginModal.isOpen}
+            title="Login"
+            actionLabel="Sign in"
+            onClose={LoginModal.onClose}
+            onSubmit={onSubmit}
+            body={bodyContent}
+            footer={footerContent}
+
+            />
+        </div>
+        );
+    }
 }
 export default LoginModal

@@ -24,7 +24,11 @@ export async function POST(req : NextRequest)
                 {status : 401}
             ));
         }
-        // if (a2fEnable)
+        if (a2fEnable)
+        {
+            setRequires2FA(true);
+            setStep(2);
+        }
 	    // {
         //     await setTwoFactorAuth(email)
 		//     // return (verifyTwoFactorAuth(userEmail, input));//TODO: check 2FA
@@ -51,14 +55,14 @@ export async function POST(req : NextRequest)
                 }            
             ));
 
-    //     response.cookies.set('auth-token', token, {
-    //         httpOnly: true,
-    //         secure: process.env.NODE_ENV === 'production',
-    //         sameSite: 'lax',
-    //         maxAge: 60 * 60 * 24,
-    //         path: '/'
-    //     });
-    //     return response;
+        response.cookies.set('auth-token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24,
+            path: '/'
+        });
+        return response;
     } catch (error) {
         console.error('Erreur lors du login', error);
         return NextResponse.json({

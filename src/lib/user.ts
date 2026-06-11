@@ -45,7 +45,7 @@ function isAtLeastAge(birthdate: Date | null, age = CHAT_AGE_LIMIT, now = new Da
   return (today >= birthdayThisAge);
 }
 
-async function updateChatEnable(userId : string, enable : boolean) : Promise <void>
+export async function updateChatEnable(userId : string, enable : boolean) : Promise <void>
 {
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {

@@ -1,12 +1,14 @@
+'use client'
+
 import Button from "@/src/components/ui/Button"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 
 export default function ProfilePage() //Si pas connectE lancer LOGIN MODAL
 {
 	const router = useRouter();
 	const handleEditClick = () => {
-		router.push('/edit');
+		router.push('/profile/parameters');
 	};
     return (    
         <div>
@@ -15,7 +17,7 @@ export default function ProfilePage() //Si pas connectE lancer LOGIN MODAL
                 {/* il faut une page avec nom username, une photo de profile, un elo et un hitorique ! */}
             </div>
 			<Button
-				label="Edit"
+				label="Parameters"
 				onClick={handleEditClick}
 				/>
             <div className=" flex gap-4 px-8 pb-8">

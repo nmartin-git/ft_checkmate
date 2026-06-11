@@ -1,7 +1,9 @@
+'use client'
+
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import useLoginModal from "@/src/hooks/useLoginModal";
 import Button from "./Button";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Profile = ()=>{
 	const {user} = useCurrentUser();
