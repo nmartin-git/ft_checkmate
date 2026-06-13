@@ -8,10 +8,12 @@ import { useCallback } from "react";
 import Notif from "@/src/components/ui/Notif";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import Profile from "@/src/components/ui/Profile";
+import { useRouter } from "next/navigation";
 
 const Topbar= () => {
     const loginModal = useLoginModal();
 	const {user} = useCurrentUser();
+	const router = useRouter();
     const handleLoginClick = useCallback (()=>{
         loginModal.onOpen();
     },[loginModal])
@@ -52,7 +54,7 @@ const Topbar= () => {
 				<h2 className="text-white font-semibold">Jeu de Dames</h2>
 				<p className="text-white font-semibold">Player 1 VS Player 2</p>
 			</div>
-			<div onClick={()=>{alert("on a clique sur play!\n")}}className="hover:opacity-50 cursor-pointer p-5">
+			<div onClick={() => {router.push('/game')}} className="hover:opacity-50 cursor-pointer p-5">
 					<p className="text-2xl font-bold
 					text-yellow-400">PLAY
 					</p>

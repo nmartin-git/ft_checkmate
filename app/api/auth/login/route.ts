@@ -24,11 +24,11 @@ export async function POST(req : NextRequest)
                 {status : 401}
             ));
         }
-        if (a2fEnable)
-        {
-            setRequires2FA(true);
-            setStep(2);
-        }
+        // if (a2fEnable)
+        // {
+        //     setRequires2FA(true);
+        //     setStep(2);
+        // }
 	    // {
         //     await setTwoFactorAuth(email)
 		//     // return (verifyTwoFactorAuth(userEmail, input));//TODO: check 2FA

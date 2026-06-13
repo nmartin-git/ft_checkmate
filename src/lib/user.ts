@@ -141,13 +141,10 @@ async function generateRecoveryCodes(userId : string) : Promise <void>
 	})
 }
 
-async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>
+export async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>
 {
-	let recoveryCodes
 	if (enable)
 		await generateRecoveryCodes(userId)
-	else
-		recoveryCodes = null
 	await prisma.user.update({
 		where: {
 			id: userId

@@ -14,12 +14,20 @@ const LoginModal= () => {
     const registerModal = useRegisterModal();
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
+    const [code,setCode] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
     const [step, setStep] = useState(1);
+    const [requires2FA, setRequires2FA] = useState(false);
 
-
-        const onSubmit =useCallback(async () =>{
+        const onToggle = useCallback(()=>{
+            if (isLoading)return;
+            LoginModal.onClose();
+            registerModal.onOpen();
+        },[registerModal, LoginModal, isLoading]);
+    if (step === 1)
+    {
+         const onSubmit =useCallback(async () =>{
             try{
                 setIsLoading(true);
                 const response = await fetch ('api/auth/login', {
@@ -35,7 +43,6 @@ const LoginModal= () => {
                 const data = await response.json();
                 if (!response.ok)
                     throw new Error(data.error || 'response pas ok');
-                alert('Utilisateur log avec succes!');
                 currentUser.setUser({
                     id : data.user.id,
                     username : data.user.username,
@@ -50,14 +57,6 @@ const LoginModal= () => {
             }
 
         }, [currentUser,LoginModal, email, password]);
-
-        const onToggle = useCallback(()=>{
-            if (isLoading)return;
-            LoginModal.onClose();
-            registerModal.onOpen();
-        },[registerModal, LoginModal, isLoading]);
-    if (step === 1)
-    {
         const bodyContent = (
             <div className="flex flex-col gap-4">
                 <Input
@@ -104,33 +103,56 @@ const LoginModal= () => {
     }
     else if (step === 2)
     {
+        const onSubmit =useCallback(async () =>{
+            try{
+                setIsLoading(true);
+                const response = await fetch ('api/auth/login', {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify({
+                        code
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok)
+                    throw new Error(data.error || 'response pas ok');
+                alert('Utilisateur log avec succes!');
+                currentUser.setUser({
+                    id : data.user.id,
+                    username : data.user.username,
+                    email : data.user.email
+                })
+                LoginModal.onClose();
+            } catch (error: any)
+            {
+                console.log(error.message);
+            } finally {
+                setIsLoading(false);    
+            }
+
+        }, [currentUser,LoginModal, email, password]);
         const bodyContent = (
             <div className="flex flex-col gap-4">
                 <Input
-                placeholder="Email"
-                onChange={(e)=>setEmail(e.target.value)}
-                value={email}
-                disabled={isLoading}
-
-                />
-                <Input
-                placeholder="Password"
-                onChange={(e)=>setPassword(e.target.value)}
-                value={password}
+                placeholder="code"
+                onChange={(e)=>setCode(e.target.value)}
+                value={code}
                 disabled={isLoading}
 
                 />
             </div>
         )
         const footerContent = (
-           <div className="flex flex-row py-2">
-            <p className="pr-2">Dont have an account ? </p>
+            <div className="flex flex-row py-2">
+            <p className="pr-2">Have a problem with two factor authentification ? </p>
             <span className="
             text-decoration-line: underline
             cursor-pointer 
             hover:opacity-50
-            " onClick={onToggle}>Sign</span>
-           </div>
+            " onClick={onToggle}>Recovery codes</span>
+            </div>
         )
         return (
         <div>
