@@ -1,6 +1,7 @@
 'use client'
 
 import useLoginModal from "@/src/hooks/useLoginModal";
+import { step, setStep, requires2FA, setRequires2FA } from "@/src/hooks/useLoginModal";
 import Input from "../ui/Input";
 import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
@@ -17,8 +18,6 @@ const LoginModal= () => {
     const [code,setCode] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
-    const [step, setStep] = useState(1);
-    const [requires2FA, setRequires2FA] = useState(false);
 
         const onToggle = useCallback(()=>{
             if (isLoading)return;
@@ -48,6 +47,11 @@ const LoginModal= () => {
                     username : data.user.username,
                     email : data.user.email
                 })
+                if (data.twoFactorAuthEnable)
+                {
+                    setStep(2);
+                    return ;
+                }
                 LoginModal.onClose();
             } catch (error: any)
             {

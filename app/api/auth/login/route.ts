@@ -24,18 +24,22 @@ export async function POST(req : NextRequest)
                 {status : 401}
             ));
         }
-        // if (a2fEnable)
-        // {
-        //     setRequires2FA(true);
-        //     setStep(2);
-        // }
-	    // {
-        //     await setTwoFactorAuth(email)
-		//     // return (verifyTwoFactorAuth(userEmail, input));//TODO: check 2FA
-		//     return (NextResponse.json({error: 'Two factor dientification code is invalid'},
-        //         {status : 401}
-        //     ));
-	    // }
+        if (a2fEnable)
+	    {
+            // await setTwoFactorAuth(email)
+		    // return (verifyTwoFactorAuth(userEmail, input));//TODO: check 2FA
+            // const response = (NextResponse.json({
+            //     error: 'Invalid two factor identification code',
+            //     status : 401
+            // }));
+			const response = (NextResponse.json({
+                error: 'Valid two factor identification code',
+                status : 200,
+				success: false,
+				twoFactorAuthEnable: true
+            }));
+            return (response);
+	    }
         const token = await new SignJWT({
             id : userId,
             username : userUsername,
@@ -51,9 +55,10 @@ export async function POST(req : NextRequest)
                 username : userUsername,
                 email: email
             },
-            status : 200
-                }            
-            ));
+            status : 200,
+			success: true,
+			twoFactorAuthEnable: false
+            }));
 
         response.cookies.set('auth-token', token, {
             httpOnly: true,
@@ -62,7 +67,7 @@ export async function POST(req : NextRequest)
             maxAge: 60 * 60 * 24,
             path: '/'
         });
-        return response;
+        return (response);
     } catch (error) {
         console.error('Erreur lors du login', error);
         return NextResponse.json({
