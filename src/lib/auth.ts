@@ -151,3 +151,4 @@ export async function verifyPassword(userEmail : string, password : string) : Pr
 	else
 		return ({userId: user.id, userUsername: user.username, a2fEnable: user.a2f_enable});
 }
+

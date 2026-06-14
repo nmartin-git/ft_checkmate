@@ -10,11 +10,11 @@ const gamePage  = () => {
     return (
         <div>
             <h1>Jeu de dames</h1>
-            <body>
+            <div>
                 <h1 className="text-center">Jeu de Dames</h1>
                 <p className="text-center">Player 1 VS Player 2</p>
                 <div id="board" ></div>
-            </body>
+            </div>
         </div>
     );
 }

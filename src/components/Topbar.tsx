@@ -9,6 +9,7 @@ import Notif from "@/src/components/ui/Notif";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import Profile from "@/src/components/ui/Profile";
 import { useRouter } from "next/navigation";
+import handleLogout from "../lib/logout";
 
 const Topbar= () => {
     const loginModal = useLoginModal();
@@ -42,9 +43,13 @@ const Topbar= () => {
 				<Profile/>
 				<Notif/>
 				{user ? (
-					<div className="text-2xl text-white font-semibold">
-						{user.username}
-					</div>) :(<Button
+					<div>
+						<div className="text-2xl text-white font-semibold">
+							{user.username}
+						</div>
+						<Button label='logout' onClick={handleLogout}/>
+					</div>
+					) :(<Button
 				label="Login"
 				onClick={handleLoginClick}
 				/>)
