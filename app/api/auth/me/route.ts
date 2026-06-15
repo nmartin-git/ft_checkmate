@@ -25,7 +25,11 @@ export async function POST(request: Request) {
     if (!token)
         return NextResponse.json({user:null},{status : 401});
     const {payload} = await jwtVerify<TokenPayload>(token, JWT_SECRET)
-    return NextResponse.json({ success: true, user: null });
+    return NextResponse.json({ success: true, user:{
+      id : payload.id,
+      email : payload.email,
+      username : payload.username
+    } });
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

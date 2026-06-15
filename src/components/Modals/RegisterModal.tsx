@@ -5,6 +5,7 @@ import useLoginModal from "@/src/hooks/useLoginModal";
 import Input from "@/src/components/ui/Input";
 import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
+import useCurrentUser from "@/src/hooks/useCurrentUser";
 
 
 const RegisterModal= () => {
@@ -14,6 +15,7 @@ const RegisterModal= () => {
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [isLoading,setIsLoading] = useState(false);
+    const currentUser = useCurrentUser();
 
     const onSubmit =useCallback(async () =>{
         try{
@@ -35,10 +37,14 @@ const RegisterModal= () => {
                 return;
             }
             console.log("on arrive ici on submite bien")
-            // const data = await response.json();
+            const data = await response.json();
+            currentUser.setUser({
+                id : data.user.id,
+                username : data.user.username,
+                email : data.user.email
+            })
             alert('user creer avec succes');
             RegisterModal.onClose();
-            LoginModal.onOpen();
         } catch (error)
         {
 			//MESSAGE DERREUR
@@ -47,7 +53,7 @@ const RegisterModal= () => {
             setIsLoading(false);
         }
         
-    }, [RegisterModal, email, username, password]);
+    }, [RegisterModal, LoginModal, email, username, password]);
 
      const onToggle = useCallback(()=>{
          if (isLoading)return;
