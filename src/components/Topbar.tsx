@@ -13,9 +13,13 @@ import handleLogout from "../lib/logout";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
-    const { user } = useCurrentUser();
+    // const { user } = useCurrentUser();
     const router = useRouter();
-
+	const user = {
+        id:99,
+        username: "admintest",
+        email : "mailtest@mail.com"
+    }
     const handleLoginClick = useCallback(() => {
         loginModal.onOpen();
     }, [loginModal]);
@@ -51,7 +55,7 @@ const Topbar = () => {
                 
                 <div className="flex items-center gap-2">
                     {items.map((item) => (
-                        <TopbarItem s
+                        <TopbarItem
                             key={item.href}
                             href={item.href}
                             label={item.label}
@@ -74,7 +78,17 @@ const Topbar = () => {
                 
                 {/* Profil et Notifications groupés */}
                 <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
-                    <Profile />
+                    {
+						user ? <span className="text-sm text-gray-300 
+						cursor-pointer
+						font-bold max-w-[120px] 
+						truncate
+						hover:text-gray-400
+						text-xl
+						" onClick={() => {router.push('/profile/')}}>
+                                {user.username}
+                            </span> : <Profile />
+					}
                     <Notif />
                 </div>
 
@@ -82,10 +96,7 @@ const Topbar = () => {
                 <div className="flex items-center gap-3">
                     {user ? (
                         <div className="flex items-center gap-3">
-                            <span className="text-sm text-gray-300 font-bold max-w-[120px] truncate">
-                                {user.username}
-                            </span>
-                            <Button label='Logout' secondary onClick={handleLogout} />
+                            <Button label='Logout' secondary onClick={handleLogout} large/>
                         </div>
                     ) : (
                         <Button label="Login" secondary onClick={handleLoginClick} large/>	
