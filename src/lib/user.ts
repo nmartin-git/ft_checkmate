@@ -2,7 +2,7 @@ import argon2 from "argon2"
 import crypto from "node:crypto"
 import { unlink } from "node:fs/promises"
 import { prisma } from "./prisma"
-import { club_names } from "@prisma/client"
+import { Prisma, club_names } from "@prisma/client"
 
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;
@@ -170,38 +170,46 @@ async function changePassword(userId : string, password : string) : Promise <voi
 
 export async function inscriptionClassic(inputEmail : string, inputUsername : string, inputPassword : string) : Promise<string | null>
 {
+	const user = await prisma.user.findFirst({
+		where: {
+			OR: [ { email: inputEmail} , { username: inputUsername}]
+		},
+		select: {
+			id : true
+		},
+	})
+	if (user)
+		return (null);
 	const hash = await argon2.hash(inputPassword)
 	const clubs = Object.values(club_names)
-	await prisma.$transaction(async (tx) => {
-		const user = await tx.user.findUnique({
-			where: {
-				email: inputEmail
-			},
-			select: {
-				id : true
-			},
-		})
-		if (user)
-			return (null);
-		await tx.user.create({
+	try {
+		const newUser = await prisma.user.create({
 			data: {
 				email: inputEmail,
 				username: inputUsername,
 				password: hash,
 				club: clubs[Math.floor(Math.random() * clubs.length)],
 			},
-		})
-		const newUser = await tx.user.findUniqueOrThrow({
-			where: {
-				email: inputEmail
-			},
 			select: {
 				id: true
 			}
 		})
 		return (newUser.id);
-	})
-	return (null);
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			if (error.code === 'P2002') {
+				const targets = error.meta?.target as string[];
+				if (targets?.includes('email')) {
+                	console.log("Collision détectée sur l'email");
+           		}
+            	if (targets?.includes('username')) {
+              		console.log("Collision détectée sur le username");
+            	}
+				return (null);
+			}
+		}
+		throw error;
+	}
 }
 
 // async function main() {

@@ -4,7 +4,10 @@ import Button from "@/src/components/ui/Button"
 import { useRouter } from "next/navigation"
 import useCurrentUser from "@/src/hooks/useCurrentUser" // On importe ton hook !
 import useLoginModal from "@/src/hooks/useLoginModal"    // Pour pouvoir ouvrir le login si besoin
+import useCurrentUser from "@/src/hooks/useCurrentUser" // On importe ton hook !
+import useLoginModal from "@/src/hooks/useLoginModal"    // Pour pouvoir ouvrir le login si besoin
 
+export default function ProfilePage() 
 export default function ProfilePage() 
 {
     const router = useRouter();

@@ -14,8 +14,9 @@ const gamePage  = () => {
                 <p className="text-center">Player 1 VS Player 2</p>
                 <div id="board" ></div>
             </div>
+            </div>
         </div>
     );
 }
 
-export default gamePage 
+export default gamePage
