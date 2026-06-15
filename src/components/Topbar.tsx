@@ -35,7 +35,6 @@ const Topbar = () => {
     return (
         <nav className="w-full bg-[#1e1c18] border-b border-[#2b2925] px-6 py-3 flex items-center justify-between shadow-md select-none">
             
-            {/* BLOC GAUCHE : Titre du site & Navigation de base */}
             <div className="flex items-center gap-6">
                 <div className="flex 
 								items-center 
@@ -65,7 +64,6 @@ const Topbar = () => {
                 </div>
             </div>
 
-            {/* BLOC CENTRE : Infos de jeu (Propre, discret, sans collision) */}
             <div className="hidden md:flex flex-col items-center text-center">
                 <h2 className="text-gray-200 font-bold text-sm tracking-wide">Jeu de Dames</h2>
                 <p className="text-xs text-[#81b64c] font-medium font-mono px-2 py-0.5 bg-[#262522] rounded mt-0.5">
@@ -73,17 +71,15 @@ const Topbar = () => {
                 </p>
             </div>
 
-            {/* BLOC DROITE : Profil, Notifs & Actions d'authentification / Play */}
             <div className="flex items-center gap-4">
                 
-                {/* Profil et Notifications groupés */}
                 <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
                     {
 						user ? <span className="text-sm text-gray-300 
 						cursor-pointer
 						font-bold max-w-[120px] 
 						truncate
-						hover:text-gray-400
+						hover:text-gray-
 						text-xl
 						" onClick={() => {router.push('/profile/')}}>
                                 {user.username}
@@ -92,7 +88,6 @@ const Topbar = () => {
                     <Notif />
                 </div>
 
-                {/* Utilisateur connecté VS Déconnecté */}
                 <div className="flex items-center gap-3">
                     {user ? (
                         <div className="flex items-center gap-3">
@@ -102,7 +97,6 @@ const Topbar = () => {
                         <Button label="Login" secondary onClick={handleLoginClick} large/>	
                     )}
 
-                    {/* Le Gros Bouton PLAY à la Chess.com */}
                     <button 
                         onClick={() => router.push('/game')} 
                         className="px-6 
