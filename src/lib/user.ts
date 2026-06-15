@@ -3,6 +3,7 @@ import crypto from "node:crypto"
 import { unlink } from "node:fs/promises"
 import { prisma } from "./prisma"
 import { Prisma, club_names } from "@prisma/client"
+import { setTwoFactorAuth } from "./auth"
 
 const RECOVERY_CODES_NUMBER = 10;
 const RECOVERY_CODES_LENGTH = 10;
@@ -117,6 +118,21 @@ async function getAvatar(userId : string) : Promise <string>
 		}
 	})
 	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
+}
+
+export async function getParameters(userId : string)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true,
+			chat_enable: true,
+			a2f_enable: true
+		}
+	})
+	return ({avatar: user.avatar_url, chatEnable:user.chat_enable, twoFactorAuthEnable:user.a2f_enable});
 }
 
 async function generateRecoveryCodes(userId : string) : Promise <void>

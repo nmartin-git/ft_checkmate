@@ -34,7 +34,7 @@ const LoginModal= () => {
     const onSubmitStep1 =useCallback(async () => {
     try{
         setIsLoading(true);
-        const response = await fetch ('api/auth/login', {
+        const response = await fetch ('/api/auth/login', {
             method : 'POST',
             headers : {
                 'Content-Type' : 'application/json'
@@ -70,17 +70,18 @@ const LoginModal= () => {
     const onSubmitStep2 =useCallback(async () => {
     try{
         setIsLoading(true);
-        const response = await fetch ('api/auth/login', {
+        const response = await fetch ('/api/auth/login', {
             method : 'POST',
             headers : {
                 'Content-Type' : 'application/json'
             },
             body : JSON.stringify({
+                email,
                 code
             })
         });
         const data = await response.json();
-        if (!response.ok)
+        if (!response.ok || data.success === false)
             throw new Error(data.error || 'response pas ok');
         alert('Utilisateur log avec succes!');
         currentUser.setUser({
@@ -95,7 +96,7 @@ const LoginModal= () => {
     } finally {
         setIsLoading(false);    
     }
-    }, [currentUser, handleClose, code]);
+    }, [currentUser, handleClose, email, code]);
     if (step === 1)
     {
 

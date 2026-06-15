@@ -10,6 +10,20 @@ const MINUTES_A2F_EXPIRATION = 5;
 const MAX_A2F_LOG_ATTEMPS = 5;
 
 
+export async function getUserByEmail(userEmail : string) : Promise<{ userId: string | null; userUsername: string | null }>
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			email: userEmail
+		},
+		select: {
+			id: true,
+			username: true
+		}
+	})
+	return ({ userId: user.id, userUsername: user.username });
+}
+
 async function verifyRecoveryCode(userEmail : string, userRecoveryCode : string) : Promise <boolean>
 {
 	const user = await prisma.user.findUniqueOrThrow({
@@ -50,7 +64,7 @@ async function sendEmailTwoFactorAuth(userEmail : string, code : string)
 	const subject = "Votre code 2FA"
 	const text = `Votre code 2FA est:\n\n${code}\n\nIl expire dans ${MINUTES_A2F_EXPIRATION} minutes.`
 	const result = await resend.emails.send({
-		from: process.env.RESEND_MAIL_FROM!,
+		from: process.env.RESEND_SEND_FROM!,
 		to : userEmail,
 		subject,
 		text
@@ -58,7 +72,7 @@ async function sendEmailTwoFactorAuth(userEmail : string, code : string)
 	return result
 }
 
-async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promise<boolean>
+export async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promise<boolean>
 {
     const user = await prisma.user.findUniqueOrThrow({
         where: {
@@ -75,7 +89,7 @@ async function verifyTwoFactorAuth(userEmail : string, userOpt : string) : Promi
 		return (true);
 	else if (!user.a2f_opt_hash || !user.a2f_expires_at)
 		return (false);
-    else if (user.a2f_expires_at.getTime() > Date.now())
+    else if (user.a2f_expires_at.getTime() < Date.now())
         return (false);
 	else if (user.a2f_log_attemps > MAX_A2F_LOG_ATTEMPS)
 		return (false);
@@ -117,8 +131,9 @@ export async function setTwoFactorAuth(userEmail : string) : Promise<void>
     })
     if (!user.a2f_enable)
         return ;
-    const hash = await argon2.hash(crypto.randomInt(0, 1000000).toString())
-    //TODO send mail
+	const code = crypto.randomInt(0, 1000000).toString()
+    const hash = await argon2.hash(code)
+    await sendEmailTwoFactorAuth(userEmail, code)
 	await prisma.user.update({
         where: {
 			email: userEmail
@@ -151,4 +166,3 @@ export async function verifyPassword(userEmail : string, password : string) : Pr
 	else
 		return ({userId: user.id, userUsername: user.username, a2fEnable: user.a2f_enable});
 }
-

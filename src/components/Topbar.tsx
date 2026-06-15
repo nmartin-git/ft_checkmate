@@ -9,8 +9,7 @@ import Notif from "@/src/components/ui/Notif";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import Profile from "@/src/components/ui/Profile";
 import { useRouter } from "next/navigation";
-import handleLogout from "../lib/logout";
-import handleLogout from "../lib/logout";
+import handleLogout from "@/src/lib/logout";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
