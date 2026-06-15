@@ -31,7 +31,11 @@ export async function POST(request: Request) {
 			await updateChatEnable(payload.id, chatEnable)
 		if (twoFactorAuthEnable)
 			await updateTwoFactorAuth(payload.id, twoFactorAuthEnable)
-		return NextResponse.json({ success: true, user: payload })
+		return NextResponse.json({ success: true, user: {
+			id : payload.id,
+			username : payload.username,
+			email : payload.email
+		} })
 	} catch (error) {
     	console.error(error)
     	return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })

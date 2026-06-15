@@ -1,12 +1,19 @@
 import useNotifModal from "@/src/hooks/useNotifModal";
 import { HiBell } from "react-icons/hi";
+import useCurrentUser from "@/src/hooks/useCurrentUser";
+import useLoginModal from "@/src/hooks/useLoginModal";
 
 
 const Notif = ()=>{
     const NotifModal = useNotifModal();
+    const loginModal = useLoginModal();
+    const currentUser = useCurrentUser();
     const handleClick = () =>
     {
-        NotifModal.onOpen();
+        if (currentUser.user)
+            NotifModal.onOpen();
+        else
+            loginModal.onOpen();
     }
 
    return (
@@ -17,7 +24,7 @@ const Notif = ()=>{
         <HiBell size={30} color="yellow"/>
         <p className="text-white
         font-semibold
-        ">Notifications</p>
+        "></p>
 
     </div>
    );

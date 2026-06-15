@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css"; // TRÈS IMPORTANT pour que Tailwind fonctionne
@@ -30,19 +29,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className= "bg-green-800">
-      <body className="h-full text-white">
-        <div >
-          <AuthProvider>
-            <RegisterModal/>
-            <LoginModal/>
-            <NotifModal/>
-            <Topbar />
-            <div>
-              {children}
-            </div>
-          </AuthProvider>
-        </div>
+    /* Changement du fond de l'application (Gris très sombre de Chess.com) */
+    <html lang="fr" className="bg-[#262522] min-h-screen">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen text-white flex flex-col`}>
+        <AuthProvider>
+          {/* Les Modals gérées globalement */}
+          <RegisterModal />
+          <LoginModal />
+          <NotifModal />
+          
+          {/* Structure globale : Topbar en haut, puis le contenu prend tout le reste de la place */}
+          <Topbar />
+          
+          <div className="flex-1 w-full">
+            {children}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
