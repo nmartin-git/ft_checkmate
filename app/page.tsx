@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import DamesImg from "@/public/diagdam1.jpg";
+import DamesImg from "@/public/board.png";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import useLoginModal from "@/src/hooks/useLoginModal";
