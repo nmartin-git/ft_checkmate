@@ -46,11 +46,12 @@ export async function POST(request: Request) {
 		const {payload} = await jwtVerify<TokenPayload>(token, JWT_SECRET)
 		const chatEnable = data.get("chatEnable")
 		const twoFactorAuthEnable = data.get("twoFactorAuthEnable")
+		let recoveryCodes = null
 		if (chatEnable !== null)
 			await updateChatEnable(payload.id, chatEnable === "true")
 		if (twoFactorAuthEnable !== null)
-			await updateTwoFactorAuth(payload.id, twoFactorAuthEnable === "true")
-		return NextResponse.json({ success: true, user: payload })
+			recoveryCodes = await updateTwoFactorAuth(payload.id, twoFactorAuthEnable === "true")
+		return NextResponse.json({ success: true, user: payload, recoveryCodes: recoveryCodes })
 	} catch (error) {
     	console.error(error)
     	return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })

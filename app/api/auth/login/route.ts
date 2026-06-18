@@ -1,7 +1,7 @@
 import { SignJWT } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 import { serialize } from 'cookie';
-import { getUserByEmail, setTwoFactorAuth, verifyPassword, verifyTwoFactorAuth } from '@/src/lib/auth';
+import { getUserByEmail, setTwoFactorAuth, verifyPassword, verifyTwoFactorAuth, verifyRecoveryCode } from '@/src/lib/auth';
 
 
 const JWT_SECRET =new TextEncoder().encode(
@@ -12,18 +12,37 @@ export async function POST(req : NextRequest)
 {
     try {
         const body = await req.json();
-        if (body.code) {
-            const { email, code } = body;
-            if (!email) {
-                return (NextResponse.json(
-                    { error: 'Email missing for 2FaA verification' },
-                    { status : 400 }));
+        if (body.code || body.recoveryCode) {
+            const { email } = body;
+            if (body.code)
+            {
+                const { code } = body;
+                if (!email) {
+                    return (NextResponse.json(
+                        { error: 'Email missing for 2FaA verification' },
+                        { status : 400 }));
+                }
+                const isCodeValid = await verifyTwoFactorAuth(email, code);
+                if (!isCodeValid) {
+                    return (NextResponse.json(
+                        { error: 'Invalid two factor identification code'},
+                        { status : 401 }));
+                }
             }
-            const isCodeValid = await verifyTwoFactorAuth(email, code);
-            if (!isCodeValid) {
-                return (NextResponse.json(
-                    { error: 'Invalid two factor identification code'},
-                    { status : 401 }));
+            else
+            {
+                const { recoveryCode } = body;
+                if (!email) {
+                    return (NextResponse.json(
+                        { error: 'Email missing for 2FaA verification' },
+                        { status : 400 }));
+                }
+                const isCodeValid = await verifyRecoveryCode(email, recoveryCode);
+                if (!isCodeValid) {
+                    return (NextResponse.json(
+                        { error: 'Invalid two factor identification code'},
+                        { status : 401 }));
+                }
             }
         const user = await getUserByEmail(email)
         const token = await new SignJWT({

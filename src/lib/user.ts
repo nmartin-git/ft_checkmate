@@ -135,7 +135,7 @@ export async function getParameters(userId : string)
 	return ({avatar: user.avatar_url, chatEnable:user.chat_enable, twoFactorAuthEnable:user.a2f_enable});
 }
 
-async function generateRecoveryCodes(userId : string) : Promise <void>
+async function generateRecoveryCodes(userId : string) : Promise <string []>
 {
 	const rawRecoveryCodes: string[] = []
 	const recoveryCodes: RecoveryCodeTab [] = []
@@ -155,12 +155,14 @@ async function generateRecoveryCodes(userId : string) : Promise <void>
 			a2f_recovery_codes: JSON.stringify(recoveryCodes)
 		}
 	})
+	return (rawRecoveryCodes);
 }
 
-export async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <void>
+export async function updateTwoFactorAuth(userId : string, enable : boolean) : Promise <string [] | null>
 {
+	let recoveryCodes = null
 	if (enable)
-		await generateRecoveryCodes(userId)
+		recoveryCodes = await generateRecoveryCodes(userId)
 	await prisma.user.update({
 		where: {
 			id: userId
@@ -169,6 +171,7 @@ export async function updateTwoFactorAuth(userId : string, enable : boolean) : P
 			a2f_enable: enable
 		}
     })
+	return (recoveryCodes);
 }
 
 async function changePassword(userId : string, password : string) : Promise <void>

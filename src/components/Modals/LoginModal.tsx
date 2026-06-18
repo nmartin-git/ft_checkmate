@@ -13,6 +13,7 @@ const LoginModal= () => {
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [code,setCode] = useState('');
+    const [recoveryCode,setRecoveryCode] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
 	let bodyContent;
@@ -26,11 +27,17 @@ const LoginModal= () => {
         setPassword('');
         setCode('');
     }, [onClose, setStep, setRequires2FA]);
-    const onToggle = useCallback(()=>{
+    const onToggleStep1 = useCallback(()=>{
         if (isLoading)return;
         handleClose();
         registerModal.onOpen();
     },[registerModal, handleClose, isLoading]);
+    const onToggleStep2 = useCallback(()=>{
+        setStep(3);
+    },[setStep]);
+    const onToggleStep3 = useCallback(()=>{
+        setStep(2);
+    },[setStep]);
     const onSubmitStep1 =useCallback(async () => {
     try{
         setIsLoading(true);
@@ -97,9 +104,39 @@ const LoginModal= () => {
         setIsLoading(false);    
     }
     }, [currentUser, handleClose, email, code]);
+    const onSubmitStep3 =useCallback(async () => {
+    try{
+        setIsLoading(true);
+        const response = await fetch ('/api/auth/login', {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({
+                email,
+                recoveryCode
+            })
+        });
+        const data = await response.json();
+        if (!response.ok || data.success === false)
+            throw new Error(data.error || 'response pas ok');
+        alert('Utilisateur log avec succes!');
+        currentUser.setUser({
+            id : data.user.id,
+            username : data.user.username,
+            email : data.user.email
+        })
+        handleClose();
+    } catch (error: any)
+    {
+        console.log(error.message);
+    } finally {
+        setIsLoading(false);    
+    }
+    }, [currentUser, handleClose, email, recoveryCode]);
+    let currentOnSubmit = onSubmitStep1
     if (step === 1)
     {
-
         bodyContent = (
             <div className="flex flex-col gap-4">
                 <Input
@@ -149,13 +186,14 @@ const LoginModal= () => {
                 text-decoration-line: underline
                 cursor-pointer 
                 hover:opacity-50
-                " onClick={onToggle}>Sign</span>
+                " onClick={onToggleStep1}>Sign</span>
                 </div>
            </div>
         )
     }
     else if (step === 2)
     {
+        currentOnSubmit = onSubmitStep2
         bodyContent = (
             <div className="flex flex-col gap-4">
                 <Input
@@ -174,11 +212,34 @@ const LoginModal= () => {
             text-decoration-line: underline
             cursor-pointer 
             hover:opacity-50
-            " onClick={onToggle}>Recovery codes</span>
+            " onClick={onToggleStep2}>Recovery codes</span>
             </div>
         )
     }
-    const currentOnSubmit = step === 1 ? onSubmitStep1 : onSubmitStep2;
+    else if (step === 3)
+    {
+        currentOnSubmit = onSubmitStep3
+        bodyContent = (
+            <div className="flex flex-col gap-4">
+                <Input
+                placeholder="recoveryCode"
+                onChange={(e)=>setRecoveryCode(e.target.value)}
+                value={recoveryCode}
+                disabled={isLoading}
+                />
+            </div>
+        )
+        footerContent = (
+            <div className="flex flex-row py-2">
+            <p className="pr-2">Have a problem with recovery codes ? </p>
+            <span className="
+            text-decoration-line: underline
+            cursor-pointer 
+            hover:opacity-50
+            " onClick={onToggleStep3}>Authentification code (2FA)</span>
+            </div>
+        )
+    }
     return (
     	<div>
         <Modal

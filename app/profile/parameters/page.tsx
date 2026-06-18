@@ -59,6 +59,9 @@ export default function ParametersPage() {
 
       if (response.ok) {
         alert("Paramètres enregistrés !")
+        const data = await response.json()
+        if (data.recoveryCodes)
+          alert(data.recoveryCodes[1])
       }
     } catch (error) {
       console.error(error)
