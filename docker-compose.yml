@@ -36,6 +36,15 @@ services:
       - "443:443"
     depends_on:
       - frontend
-
+ 
+  adminer:
+    image: adminer
+    container_name: ft_checkmate_adminer
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
 volumes:
   postgres_data:
