@@ -8,13 +8,13 @@ import useCurrentUser from "@/src/hooks/useCurrentUser" // On importe ton hook !
 export default function ProfilePage() 
 {
     const router = useRouter();
-    // const { user } = useCurrentUser(); // On récupère l'utilisateur connecté
+    const { user } = useCurrentUser(); // On récupère l'utilisateur connecté
     const loginModal = useLoginModal();
-    const user = {
-        id:99,
-        username: "admintest",
-        email : "mailtest@mail.com"
-    }
+    // const user = {
+    //     id:99,
+    //     username: "admintest",
+    //     email : "mailtest@mail.com"
+    // }
     const handleEditClick = () => {
         router.push('/profile/parameters');
     };
@@ -31,6 +31,10 @@ export default function ProfilePage()
     //         </div>
     //     );
     // }
+    if (!user){
+        router.push('/');
+        return;
+    }
 
     return (    
         <div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 md:p-10 select-none">

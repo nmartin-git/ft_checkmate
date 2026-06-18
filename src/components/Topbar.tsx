@@ -13,13 +13,13 @@ import handleLogout from "@/src/lib/logout";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
-    // const { user } = useCurrentUser();
+    const { user } = useCurrentUser();
     const router = useRouter();
-	const user = {
-        id:99,
-        username: "admintest",
-        email : "mailtest@mail.com"
-    }
+	// const user = {
+    //     id:99,
+    //     username: "admintest",
+    //     email : "mailtest@mail.com"
+    // }
     const handleLoginClick = useCallback(() => {
         loginModal.onOpen();
     }, [loginModal]);
