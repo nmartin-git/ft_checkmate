@@ -10,11 +10,6 @@ export default function ProfilePage()
     const router = useRouter();
     const { user } = useCurrentUser(); // On récupère l'utilisateur connecté
     const loginModal = useLoginModal();
-    // const user = {
-    //     id:99,
-    //     username: "admintest",
-    //     email : "mailtest@mail.com"
-    // }
     const handleEditClick = () => {
         router.push('/profile/parameters');
     };
@@ -31,9 +26,10 @@ export default function ProfilePage()
     //         </div>
     //     );
     // }
-    if (!user){
+    if (!user)
+    {
         router.push('/');
-        return;
+        return (null);
     }
 
     return (    

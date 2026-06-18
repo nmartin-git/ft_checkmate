@@ -13,13 +13,8 @@ import handleLogout from "@/src/lib/logout";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
-    const { user } = useCurrentUser();
+    const currentUser = useCurrentUser();
     const router = useRouter();
-	// const user = {
-    //     id:99,
-    //     username: "admintest",
-    //     email : "mailtest@mail.com"
-    // }
     const handleLoginClick = useCallback(() => {
         loginModal.onOpen();
     }, [loginModal]);
@@ -75,23 +70,23 @@ const Topbar = () => {
                 
                 <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
                     {
-						user ? <span className="text-sm text-gray-300 
+						currentUser.user ? <span className="text-sm text-gray-300 
 						cursor-pointer
 						font-bold max-w-[120px] 
 						truncate
 						hover:text-gray-
 						text-xl
 						" onClick={() => {router.push('/profile/')}}>
-                                {user.username}
+                                {currentUser.user?.username}
                             </span> : <Profile />
 					}
                     <Notif />
                 </div>
 
                 <div className="flex items-center gap-3">
-                    {user ? (
+                    {currentUser.user ? (
                         <div className="flex items-center gap-3">
-                            <Button label='Logout' secondary onClick={handleLogout} large/>
+                            <Button label='Logout' secondary onClick={() => (handleLogout(currentUser.setUser), router.push('/'))} large/>
                         </div>
                     ) : (
                         <Button label="Login" secondary onClick={handleLoginClick} large/>	
