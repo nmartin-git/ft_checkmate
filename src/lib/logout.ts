@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
-import useCurrentUser from "../hooks/useCurrentUser";
 
-const handleLogout = async () => {
+const handleLogout = async (setUser: (user: any) => void) => {
     try {
-        const currentUser = useCurrentUser(); 
-        const response = await fetch('/app/auth/logout');
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'applications/json'
+            }
+        });
         if(!response.ok)
             throw new Error('Log out error')
-        currentUser.setUser(null);
+        setUser(null);
         alert("User disconnected !");
+
     } catch (error : any) {
         return NextResponse.json({
                 error:error.message,

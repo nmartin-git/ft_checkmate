@@ -19,7 +19,7 @@ const Profile = ()=>{
 		}
 	}
 
-  return <Button label="Profile" onClick={handleClick}/>
+  return <Button label="Profile" onClick={handleClick} large/>
 }
 
 export default Profile;

@@ -3,13 +3,12 @@ import { IconType } from "react-icons";
 
 interface TopbarItemProps
 {
-    label:string;
+    label?:string
     href:string;
     icon : IconType;
 }
 
 const TopbarItem : React.FC<TopbarItemProps>= ({
-    label,
     href,
     icon : Icon
 }) => {
@@ -21,7 +20,7 @@ const TopbarItem : React.FC<TopbarItemProps>= ({
         <Icon size={30} color="yellow"/>
         <p className="text-white
         font-semibold
-        ">{label}</p>
+        "></p>
 
     </Link>
   );
