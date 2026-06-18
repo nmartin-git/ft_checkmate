@@ -2,22 +2,34 @@ import { prisma } from "./prisma"
 
 async function getStats(userId : string)
 {
-    const rows = await prisma.game.groupBy({
-        by: ["result"],
+    const games = await prisma.game.findMany({
         where: {
-            id: userId
+            OR: [{ white_player_id: userId },{ black_player_id: userId }]
         },
-        _count: { _all: true },
+        select: {
+        	result: true,
+        	white_player_id: true
+    	}
     })
-    const stats = { WIN: 0, LOSS: 0, DRAW: 0 }
-    for (const r of rows)
-        stats[r.result as "WIN" | "LOSS" | "DRAW"] = r._count._all
-	const totalGames = stats.WIN + stats.LOSS + stats.DRAW
+	let wins = 0
+	let losses = 0
+	let draws = 0
+	for (const g of games)
+	{
+        if (g.result === "DRAW")
+			draws++
+		else if (g.result === "WHITE")
+			g.white_player_id === userId ? wins++ : losses++
+		else if (g.result === "BLACK")
+			g.white_player_id === userId ? losses++ : wins++
+	}
+	const totalGames = wins + losses + draws
 	let winRate : number
 	if (totalGames)
-		winRate = stats.WIN / totalGames
+		winRate = wins / totalGames
 	else
 		winRate = 0
+	return { winrate: winRate, wins: wins, losses: losses, draws: draws}
 }
 
 async function eloHistoric(userId : string, durationStats : number = 0)
