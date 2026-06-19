@@ -24,7 +24,7 @@ export async function getUserByEmail(userEmail : string) : Promise<{ userId: str
 	return ({ userId: user.id, userUsername: user.username });
 }
 
-async function verifyRecoveryCode(userEmail : string, userRecoveryCode : string) : Promise <boolean>
+export async function verifyRecoveryCode(userEmail : string, userRecoveryCode : string) : Promise <boolean>
 {
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {
