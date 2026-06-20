@@ -1,6 +1,6 @@
 import { prisma } from "./prisma"
 
-async function getStats(userId : string)
+export async function getStats(userId : string)
 {
     const games = await prisma.game.findMany({
         where: {
@@ -32,7 +32,7 @@ async function getStats(userId : string)
 	return { winrate: winRate, wins: wins, losses: losses, draws: draws}
 }
 
-async function eloHistoric(userId : string, durationStats : number = 0)
+export async function eloHistoric(userId : string, durationStats : number = 0)
 {
 	const cutoffDate = new Date();
 	if (durationStats === 0)
@@ -49,10 +49,10 @@ async function eloHistoric(userId : string, durationStats : number = 0)
 		select: {
 			id: true,
 			date: true,
-			black_user_id: true,
-			black_user_elo: true,
-			white_user_id: true,
-			white_user_elo: true
+			black_player_id: true,
+			black_player_elo: true,
+			white_player_id: true,
+			white_player_elo: true
 		},
 		orderBy: {
 			date: 'asc'
@@ -62,6 +62,6 @@ async function eloHistoric(userId : string, durationStats : number = 0)
 	return games.map((game: GameData) => ({
 		id: game.id,
 		date: game.date,
-		elo: game.black_user_id === userId ? game.black_user_elo : game.white_user_elo
+		elo: game.black_player_id === userId ? game.black_player_elo : game.white_player_elo
 	}));
 }
