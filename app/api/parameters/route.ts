@@ -51,7 +51,8 @@ export async function POST(request: Request) {
 			await updateChatEnable(payload.id, chatEnable === "true")
 		if (twoFactorAuthEnable !== null)
 			recoveryCodes = await updateTwoFactorAuth(payload.id, twoFactorAuthEnable === "true")
-		return NextResponse.json({ success: true, user: payload, recoveryCodes: recoveryCodes })
+		return NextResponse.json({ success: true, user: payload, chatEnable: chatEnable === "true",
+    		twoFactorAuthEnable: twoFactorAuthEnable === "true", recoveryCodes: recoveryCodes });
 	} catch (error) {
     	console.error(error)
     	return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })

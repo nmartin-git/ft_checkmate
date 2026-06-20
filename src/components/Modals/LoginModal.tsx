@@ -6,6 +6,7 @@ import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
 import useRegisterModal from "@/src/hooks/useRegisterModal";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
+import { redirectAuthGoogle } from "@/src/lib/google";
 
 const LoginModal= () => {
     const { step, setStep, requires2FA, setRequires2FA, isOpen, onClose } = useLoginModal();
@@ -163,7 +164,8 @@ const LoginModal= () => {
                 <div className="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div className="w-full">
-                <button className="gsi-material-button w-full">
+                <button className="gsi-material-button w-full"
+                        onClick = {() => redirectAuthGoogle()}>
                     <div className="gsi-material-button-state"></div>
                     <div className="gsi-material-button-content-wrapper">
                       <div className="gsi-material-button-icon">
@@ -186,7 +188,7 @@ const LoginModal= () => {
                 text-decoration-line: underline
                 cursor-pointer 
                 hover:opacity-50
-                " onClick={onToggleStep1}>Sign</span>
+                " onClick={onToggleStep1}>Sign up</span>
                 </div>
            </div>
         )

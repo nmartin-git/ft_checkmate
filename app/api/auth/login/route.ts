@@ -1,6 +1,5 @@
 import { SignJWT } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
-import { serialize } from 'cookie';
 import { getUserByEmail, setTwoFactorAuth, verifyPassword, verifyTwoFactorAuth, verifyRecoveryCode } from '@/src/lib/auth';
 
 
@@ -125,9 +124,8 @@ export async function POST(req : NextRequest)
     return (response);
     } catch (error) {
         console.error('Login error', error);
-        return NextResponse.json({
-            error: "Servor error",
-            status : 500
-        });       
+        return NextResponse.json(
+            { error: "Servor error" },
+            { status : 500 });       
     }
 }

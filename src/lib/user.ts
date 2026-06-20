@@ -187,7 +187,7 @@ async function changePassword(userId : string, password : string) : Promise <voi
     })
 }
 
-export async function inscriptionClassic(inputEmail : string, inputUsername : string, inputPassword : string) : Promise<string | null>
+export async function inscriptionClassic(inputEmail : string, inputUsername : string, inputPassword : string | null) : Promise<string | null>
 {
 	const user = await prisma.user.findFirst({
 		where: {
@@ -199,7 +199,11 @@ export async function inscriptionClassic(inputEmail : string, inputUsername : st
 	})
 	if (user)
 		return (null);
-	const hash = await argon2.hash(inputPassword)
+	let hash: string | null;
+	if (inputPassword)
+		hash = await argon2.hash(inputPassword)
+	else
+		hash = null
 	const clubs = Object.values(club_names)
 	try {
 		const newUser = await prisma.user.create({

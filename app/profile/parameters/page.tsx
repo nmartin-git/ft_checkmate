@@ -18,8 +18,8 @@ export default function ParametersPage() {
 				const response = await fetch ("/api/parameters")
 				if (response.ok) {
 					const data = await response.json()
-					setChatEnabled(data.chatEnable ?? false)
-					setTwoFactorAuthEnabled(data.twoFactorAuthEnable ?? false)
+					setChatEnabled(Boolean(data.chatEnable))
+					setTwoFactorAuthEnabled(Boolean(data.twoFactorAuthEnable))
 				}
 			} catch (error) {
 				console.error("Error: parameters loading failed:", error)
@@ -30,7 +30,7 @@ export default function ParametersPage() {
 		loadParameters()
 	}, [])
 
-  // Gérer l'aperçu de l'image quand l'utilisateur la sélectionne
+// Gérer l'aperçu de l'image quand l'utilisateur la sélectionne
 //   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 //     const file = e.target.files?.[0]
 //     if (file) {
