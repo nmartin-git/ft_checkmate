@@ -1,5 +1,6 @@
 'use client'
 
+import { io, Socket } from 'socket.io-client';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -10,17 +11,42 @@ export default function Home() {
   const [eatenByBlack, setEatenByBlack] = useState<number>(0);
   const [eatenByWhite, setEatenByWhite] = useState<number>(0);
   const [seconds, setSeconds] = useState<number>(0);
-
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [myColor, setMyColor] = useState<number>(0);
 
   useEffect(() => {
-  if (winner !== 0) return;
-  const interval = setInterval(() => {
-    setSeconds(s => s + 1);
-  }, 1000);
-  return () => clearInterval(interval);
-}, [winner]);
+    if (winner !== 0) return;
+    const interval = setInterval(() => {
+      setSeconds(s => s + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [winner]);
+
+  useEffect(() => {
+    const newSocket = io();
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on('move', (data: { board: number[][], turn: number, winner?: number, eatenByBlack?: number, eatenByWhite?: number }) => {
+      setBoard(data.board);
+      setTurn(data.turn);
+      if (data.winner !== undefined) setWinner(data.winner);
+      if (data.eatenByBlack !== undefined) setEatenByBlack(data.eatenByBlack);
+      if (data.eatenByWhite !== undefined) setEatenByWhite(data.eatenByWhite);
+    });
+    socket.on('assignColor', (color: number) => {
+      setMyColor(color);
+    });
+  }, [socket]);
 
   function handleClick(rowIndex: number, colIndex: number) {
+    if (myColor !== turn) return;
     if (selected === null) {
       if (board[rowIndex][colIndex] === turn || board[rowIndex][colIndex] === turn + 2) {
         setSelected({row: rowIndex, col: colIndex});
@@ -59,6 +85,7 @@ export default function Home() {
         const w = checkWinner(newBoard);
         if (w !== 0) setWinner(w);
         setBoard(newBoard);
+        socket?.emit('move', { board: newBoard, turn: turn === 1 ? 2 : 1, winner: w, eatenByBlack, eatenByWhite });
         setSelected(null);
         setTurn(turn === 1 ? 2 : 1);
       }
@@ -87,35 +114,45 @@ export default function Home() {
         if (turn === 2 && rowIndex === 0) newBoard[rowIndex][colIndex] = 4;
         const w = checkWinner(newBoard);
         if (w !== 0) setWinner(w);
-        if (turn === 1) setEatenByBlack(eatenByBlack + 1);
-        else setEatenByWhite(eatenByWhite + 1);
+        const newEatenByBlack = turn === 1 ? eatenByBlack + 1 : eatenByBlack;
+        const newEatenByWhite = turn === 2 ? eatenByWhite + 1 : eatenByWhite;
+        if (turn === 1) setEatenByBlack(newEatenByBlack);
+        else setEatenByWhite(newEatenByWhite);
         setBoard(newBoard);
-        if (canCapture(rowIndex, colIndex, newBoard, turn)) {
+        const stillCapturing = canCapture(rowIndex, colIndex, newBoard, turn);
+        socket?.emit('move', {
+          board: newBoard,
+          turn: stillCapturing ? turn : (turn === 1 ? 2 : 1),
+          winner: w,
+          eatenByBlack: newEatenByBlack,
+          eatenByWhite: newEatenByWhite
+        });
+        if (stillCapturing) {
           setSelected({row: rowIndex, col: colIndex});
         } else {
           setSelected(null);
           setTurn(turn === 1 ? 2 : 1);
-        }   
+        }
       }
     }
   }
 
-function resetGame() {
-  setBoard(createInitialBoard());
-  setSelected(null);
-  setTurn(1);
-  setWinner(0);
-  setSeconds(0);
-  setEatenByBlack(0);
-  setEatenByWhite(0);
-}
+  function resetGame() {
+    setBoard(createInitialBoard());
+    setSelected(null);
+    setTurn(1);
+    setWinner(0);
+    setSeconds(0);
+    setEatenByBlack(0);
+    setEatenByWhite(0);
+  }
 
-
-return (
+  return (
     <div className="flex flex-col justify-center items-center mt-10">
       {winner !== 0 && <p className="text-2xl font-bold text-yellow-400 mb-4">Joueur {winner} a gagné !</p>}
       {winner !== 0 && <button onClick={resetGame} className="mt-4 px-6 py-2 bg-yellow-400 text-black font-bold rounded hover:bg-yellow-300">Rejouer</button>}
       {winner === 0 && <p className="text-lg font-semibold text-white mb-4">Tour du joueur {turn}</p>}
+      <p className="text-md text-gray-300 mb-2">Vous êtes : {myColor === 1 ? "Noir" : "Blanc"}</p>
       {winner === 0 && <p className="text-lg font-semibold text-white mb-4">Temps : {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</p>}
       <div className="flex items-center gap-8">
         <div className="text-white text-center">
@@ -159,7 +196,7 @@ function createInitialBoard() {
   );
 }
 
-function checkWinner(newBoard) {
+function checkWinner(newBoard: number[][]) {
   if (!newBoard.some(row => row.some(cell => cell === 1 || cell === 3)))
     return (2);
   if (!newBoard.some(row => row.some(cell => cell === 2 || cell === 4)))
@@ -204,7 +241,6 @@ function isPathClear(r1: number, c1: number, r2: number, c2: number, board: numb
   }
   return true;
 }
-
 
 function isValidDameCapture(r1: number, c1: number, r2: number, c2: number, board: number[][], turn: number): boolean {
   if (Math.abs(r2 - r1) !== Math.abs(c2 - c1)) return false;
