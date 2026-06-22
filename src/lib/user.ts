@@ -11,7 +11,7 @@ const DEFAULT_AVATAR_URL = "url";
 const CHAT_AGE_LIMIT = 16;
 
 type UserUpdateFields = Partial<{
-	birthdate: Date | null
+	birthdate: Date | null 
 	is_premium: boolean
 	is_admin: boolean
 	elo: number
@@ -23,7 +23,7 @@ export type RecoveryCodeTab = {
 	usedAt: string | null
 }
 
-async function updateUserField(userId : string, data : UserUpdateFields) : Promise <void>
+export async function updateUserField(userId : string, data : UserUpdateFields) : Promise <void>
 {
     await prisma.user.update({
 		where: {
@@ -129,17 +129,18 @@ export async function getParameters(userId : string)
 		select: {
 			avatar_url: true,
 			chat_enable: true,
-			a2f_enable: true
+			a2f_enable: true,
+			birthdate: true
 		}
 	})
-	return ({avatar: user.avatar_url, chatEnable:user.chat_enable, twoFactorAuthEnable:user.a2f_enable});
+	return ({avatar: user.avatar_url, chatEnable: user.chat_enable, twoFactorAuthEnable: user.a2f_enable, birthdate: user.birthdate});
 }
 
 async function generateRecoveryCodes(userId : string) : Promise <string []>
 {
 	const rawRecoveryCodes: string[] = []
 	const recoveryCodes: RecoveryCodeTab [] = []
-	for (let i = 0; i++; i < RECOVERY_CODES_NUMBER)
+	for (let i = 0; i < RECOVERY_CODES_NUMBER; i++)
 	{
 		const code = crypto.randomBytes(RECOVERY_CODES_LENGTH).toString("hex")
 		const codeHash = await argon2.hash(code)

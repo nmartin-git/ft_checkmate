@@ -39,7 +39,7 @@ export async function GET(request: NextRequest)
 		const email = userJson.email;
 		let user = await getUserByEmail(email).catch(() => null);
 		if (!user) {
-    		const username = email.split('@')[0];
+    		const username = email.split('@')[0].slice(0,12);
     		if (!username) {
       			return NextResponse.json({ error: 'Invalid register data' }, { status: 409 });
 			}

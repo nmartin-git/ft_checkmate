@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/src/lib/prisma"
 import { writeFile } from "fs/promises"
 import { join } from "path"
-import { updateChatEnable, updateTwoFactorAuth, getParameters } from "@/src/lib/user"
+import { updateChatEnable, updateTwoFactorAuth, getParameters, updateUserField } from "@/src/lib/user"
 import { jwtVerify, JWTPayload } from "jose";
 import { cookies } from "next/headers";
 
@@ -28,7 +28,8 @@ export async function GET() {
 		return NextResponse.json({
 			avatar: parameters.avatar,
 			chatEnable: parameters.chatEnable,
-			twoFactorAuthEnable: parameters.twoFactorAuthEnable
+			twoFactorAuthEnable: parameters.twoFactorAuthEnable,
+			birthdate: parameters.birthdate
 		});
 	} catch (error) {
     	console.error(error)
@@ -46,7 +47,15 @@ export async function POST(request: Request) {
 		const {payload} = await jwtVerify<TokenPayload>(token, JWT_SECRET)
 		const chatEnable = data.get("chatEnable")
 		const twoFactorAuthEnable = data.get("twoFactorAuthEnable")
+		const birthdate = data.get("birthdate")
 		let recoveryCodes = null
+		if (birthdate !== null) {
+   			const birthdateString = String(birthdate);
+			const birthdateValue = (birthdateString === "undefined" || birthdateString === "") 
+        	? null 
+        	: new Date(birthdateString);
+			updateUserField(payload.id, { birthdate: birthdateValue })
+		}
 		if (chatEnable !== null)
 			await updateChatEnable(payload.id, chatEnable === "true")
 		if (twoFactorAuthEnable !== null)
