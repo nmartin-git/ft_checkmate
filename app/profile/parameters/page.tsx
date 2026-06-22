@@ -11,7 +11,7 @@ import { fr } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/src/components/ui/shadcn/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/shadcn/popover"
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/lib/utils"
 
 export default function ParametersPage() {
   const parametersModal = useParametersModal()
