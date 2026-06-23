@@ -1,4 +1,3 @@
--- AddExtensionCitext
 CREATE EXTENSION IF NOT EXISTS citext;
 
 -- CreateEnum
@@ -6,6 +5,9 @@ CREATE TYPE "club_names" AS ENUM ('N', 'Y', 'J', 'B', 'M');
 
 -- CreateEnum
 CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
+
+-- CreateEnum
+CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -46,6 +48,7 @@ CREATE TABLE "Follow" (
     "id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "friend_id" UUID NOT NULL,
+    "status" "follow_status" NOT NULL DEFAULT 'PENDING',
 
     CONSTRAINT "Follow_pkey" PRIMARY KEY ("id")
 );
@@ -86,6 +89,18 @@ CREATE TABLE "Move" (
     CONSTRAINT "Move_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "DirectMessage" (
+    "id" UUID NOT NULL,
+    "message" VARCHAR(140) NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "read_at" TIMESTAMP(3),
+    "sender_id" UUID NOT NULL,
+    "receiver_id" UUID NOT NULL,
+
+    CONSTRAINT "DirectMessage_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -122,6 +137,15 @@ CREATE INDEX "Move_game_id_idx" ON "Move"("game_id");
 -- CreateIndex
 CREATE UNIQUE INDEX "Move_game_id_move_number_key" ON "Move"("game_id", "move_number");
 
+-- CreateIndex
+CREATE INDEX "DirectMessage_sender_id_idx" ON "DirectMessage"("sender_id");
+
+-- CreateIndex
+CREATE INDEX "DirectMessage_receiver_id_idx" ON "DirectMessage"("receiver_id");
+
+-- CreateIndex
+CREATE INDEX "DirectMessage_sender_id_receiver_id_idx" ON "DirectMessage"("sender_id", "receiver_id");
+
 -- AddForeignKey
 ALTER TABLE "Auth" ADD CONSTRAINT "Auth_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -146,7 +170,11 @@ ALTER TABLE "Chat" ADD CONSTRAINT "Chat_game_id_fkey" FOREIGN KEY ("game_id") RE
 -- AddForeignKey
 ALTER TABLE "Move" ADD CONSTRAINT "Move_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- AddChecks
+-- AddForeignKey
+ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "Follow"
 ADD CONSTRAINT "follow_user_not_self"
@@ -155,3 +183,7 @@ CHECK ("user_id" != "friend_id");
 ALTER TABLE "Game"
 ADD CONSTRAINT "white_player_not_black"
 CHECK ("white_player_id" != "black_player_id");
+
+ALTER TABLE "DirectMessage"
+ADD CONSTRAINT "sender_to_not_self"
+CHECK ("sender_id" != "receiver_id");
