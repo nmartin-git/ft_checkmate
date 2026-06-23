@@ -15,5 +15,21 @@
     "title": "Play Checkers",
     "subtitle": "Start a wild game of Checkers against your friends!",
     "play": "Play ➔"
+  },
+    "auth": {
+    "login_title": "Login",
+    "sign_in": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "or": "or",
+    "sign_in_google": "Sign in with Google",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
+    "code": "2FA Code",
+    "problem_2fa": "Have a problem with two factor authentication?",
+    "recovery_codes": "Recovery codes",
+    "recovery_code": "Recovery code",
+    "problem_recovery": "Have a problem with recovery codes?",
+    "auth_code": "Authentication code (2FA)"
   }
 }
