@@ -1,0 +1,19 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "notifications": "Notifications",
+    "play": "JOUER"
+  },
+  "game": {
+    "title": "Jeu de Dames",
+    "vs": "Joueur 1 VS Joueur 2"
+  },
+  "home": {
+    "title": "Jouer aux Dames",
+    "subtitle": "Lancez une partie de Dames endiablée contre vos amis !",
+    "play": "Jouer ➔"
+  }
+}

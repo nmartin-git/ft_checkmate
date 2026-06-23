@@ -58,20 +58,11 @@ export default function ParametersPage() {
     
   }
 
-// Gérer l'aperçu de l'image quand l'utilisateur la sélectionne
-//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0]
-//     if (file) {
-//       setAvatar(file)
-//       setPreviewUrl(URL.createObjectURL(file)) // Crée un lien temporaire pour l'afficher
-//     }
-//   }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // On utilise FormData car il y a un fichier (l'avatar)
     const formData = new FormData()
     if (chatEnabled !== initialChatEnabled) {
     formData.append("chatEnable", String(chatEnabled))
@@ -82,14 +73,12 @@ export default function ParametersPage() {
     if (birthdate !== initialBirthdate) {
     formData.append("birthdate", String(birthdate))
     }
-    // if (avatar) {
-    //   formData.append("avatar", avatar)
-    // }
+
 
     try {
       const response = await fetch("/api/parameters", {
         method: "POST",
-        body: formData, // Pas de JSON.stringify ici, on envoie le formData brut
+        body: formData,
       })
 
       if (response.ok) {
@@ -113,11 +102,7 @@ export default function ParametersPage() {
   return (
     <>
     <form onSubmit={onSubmit} className="p-6 max-w-md bg-white text-black space-y-4">
-      {/* Zone Avatar
-      <div className="flex flex-col items-center gap-2">
-        {previewUrl && <img src={previewUrl} alt="Aperçu" className="w-20 h-20 rounded-full object-cover" />}
-        <input type="file" accept="image/*" onChange={handleImageChange} />
-      </div> */}
+      {}
       <label className="flex items-center gap-2">
         Date de naissance
       </label>

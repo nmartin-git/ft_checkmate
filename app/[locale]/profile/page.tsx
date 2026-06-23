@@ -2,30 +2,18 @@
 
 import Button from "@/src/components/ui/Button"
 import { useRouter } from "next/navigation"
-import useLoginModal from "@/src/hooks/useLoginModal"    // Pour pouvoir ouvrir le login si besoin
-import useCurrentUser from "@/src/hooks/useCurrentUser" // On importe ton hook !
+import useLoginModal from "@/src/hooks/useLoginModal"   
+import useCurrentUser from "@/src/hooks/useCurrentUser"
 
 export default function ProfilePage() 
 {
     const router = useRouter();
-    const { user } = useCurrentUser(); // On récupère l'utilisateur connecté
+    const { user } = useCurrentUser();
     const loginModal = useLoginModal();
     const handleEditClick = () => {
         router.push('/profile/parameters');
     };
 
-    // Sécurité : Si l'utilisateur n'est pas connecté
-    // if (!user) {
-    //     return (
-    //         <div className="flex flex-col items-center justify-center w-screen h-96 gap-4">
-    //             <p className="text-xl text-white">Vous devez être connecté pour voir votre profil.</p>
-    //             <Button 
-    //                 label="Se connecter" 
-    //                 onClick={() => loginModal.onOpen()} 
-    //             />
-    //         </div>
-    //     );
-    // }
     if (!user)
     {
         router.push('/');
@@ -35,11 +23,11 @@ export default function ProfilePage()
     return (    
         <div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 md:p-10 select-none">
             
-            {/* Header Profil Réel - Style Fiche Joueur Chess.com */}
+            {}
             <div className="max-w-6xl mx-auto bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
                 
                 <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full">
-                    {/* Avatar carré avec léger arrondi typique de Chess.com */}
+                    {}
                     <div className="w-24 h-24 bg-[#312e2b] border-2 border-[#45423f] rounded-md flex items-center justify-center text-[#81b64c] text-4xl font-black uppercase shadow-inner">
                         {user.username?.charAt(0).toUpperCase()}
                     </div>
@@ -57,7 +45,7 @@ export default function ProfilePage()
                     </div>
                 </div>
                 
-                {/* Bouton paramètres utilisant ton style secondaire gris foncé */}
+                {}
                 <div className="w-full md:w-auto flex justify-center md:justify-end">
                     <Button
                         label="Parameters"
@@ -67,21 +55,21 @@ export default function ProfilePage()
                 </div>
             </div>
 
-            {/* Statistiques et Historique (Layout Grille épurée) */}
+            {}
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                {/* Historique des matchs */}
+                {}
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64">
                     <div>
                         <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">
                             📜 Matchs historics
                         </p>
-                        {/* Plus tard, tu feras un .map() sur tes matchs stockés en BDD */}
+                        {}
                         <p className="text-sm text-gray-500 font-medium mt-6">No matchs played yet</p>
                     </div>
                 </div>   
 
-                {/* Classement / ELO */}
+                {}
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64">
                     <div>
                         <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">
