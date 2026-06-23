@@ -31,5 +31,27 @@
     "recovery_code": "رمز الاسترداد",
     "problem_recovery": "مشكلة مع رموز الاسترداد؟",
     "auth_code": "رمز المصادقة (2FA)"
+  },
+  "profile": {
+    "player": "لاعب",
+    "parameters": "الإعدادات",
+    "matchs_title": "📜 سجل المباريات",
+    "no_matchs": "لم تُلعب أي مباريات بعد",
+    "elo_title": "🏆 إيلو والسجل",
+    "friends_title": "👥 الأصدقاء",
+    "no_friends": "ليس لديك أصدقاء بعد."
+  },
+  "parameters": {
+    "loading": "جارٍ تحميل الإعدادات...",
+    "birthdate": "تاريخ الميلاد",
+    "choose_date": "اختر تاريخاً",
+    "enable_chat": "تفعيل الدردشة",
+    "enable_2fa": "تفعيل المصادقة الثنائية (2FA)",
+    "saving": "جارٍ الحفظ...",
+    "save": "حفظ الإعدادات",
+    "saved": "تم حفظ الإعدادات!"
+  },
+  "notif": {
+    "title": "الإشعارات"
   }
 }

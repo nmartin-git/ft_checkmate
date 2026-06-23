@@ -1,63 +1,144 @@
 'use client'
-import Image from "next/image";
-import DamesImg from "@/public/diagdam1.jpg";
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import useLoginModal from "@/src/hooks/useLoginModal";
-import { useRouter } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
 
-export default function Home() {
-    const searchParams = useSearchParams();
-    const loginModal = useLoginModal();
-    const router = useRouter();
-    const t = useTranslations(); 
-    const locale = useLocale(); 
+import { useEffect, useState } from "react"
+import Button from "@/src/components/ui/Button"
+import { Button as ShadcnButton } from "@/src/components/ui/shadcn/button"
+import ParametersModal from "@/src/components/Modals/ParametersModal"
+import useParametersModal from "@/src/hooks/useParametersModal"
+import { useTranslations } from "next-intl"
+import { format } from "date-fns"
+import { fr } from "date-fns/locale"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "@/src/components/ui/shadcn/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/shadcn/popover"
+import { cn } from "@/src/lib/utils"
 
-    useEffect(() => {
-        if (searchParams.get('auth') === 'required')
-            loginModal.onOpen();
-    }, [searchParams, loginModal]);
+export default function ParametersPage() {
+  const parametersModal = useParametersModal()
+  const t = useTranslations('parameters')
+  const [isLoading, setIsLoading] = useState(false)
+  const [chatEnabled, setChatEnabled] = useState(false)
+  const [twoFactorAuthEnabled, setTwoFactorAuthEnabled] = useState(false)
+  const [birthdate, setBirthdate] = useState<Date | undefined>()
+  const [isFetching, setIsFetching] = useState(true)
+  const [initialChatEnabled, setInitialChatEnabled] = useState(false)
+  const [initialTwoFactorAuthEnabled, setInitialTwoFactorAuthEnabled] = useState(false)
+  const [initialBirthdate, setInitialBirthdate] = useState<Date | undefined>()
 
-    return (
-        <main className="min-h-[calc(100vh-61px)] bg-[#262522] flex items-center justify-center p-4 md:p-8">
-            <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+  useEffect(() => {
+    const loadParameters = async () => {
+      try {
+        const response = await fetch("/api/parameters")
+        if (response.ok) {
+          const data = await response.json()
+          setChatEnabled(Boolean(data.chatEnable))
+          setTwoFactorAuthEnabled(Boolean(data.twoFactorAuthEnable))
+          setInitialChatEnabled(Boolean(data.chatEnable))
+          setInitialTwoFactorAuthEnabled(Boolean(data.twoFactorAuthEnable))
+          if (data.birthdate && data.birthdate !== "null") {
+            const parsedDate = new Date(data.birthdate)
+            setBirthdate(parsedDate)
+            setInitialBirthdate(parsedDate)
+          } else {
+            setBirthdate(undefined)
+            setInitialBirthdate(undefined)
+          }
+        }
+      } catch (error) {
+        console.error("Error: parameters loading failed:", error)
+      } finally {
+        setIsFetching(false)
+      }
+    }
+    loadParameters()
+  }, [])
 
-                <div className="lg:col-span-7 flex justify-center">
-                    <div className="bg-[#1e1c18] p-3 rounded shadow-2xl border border-[#312e2b]">
-                        <div id="board" className="relative cursor-pointer overflow-hidden rounded-sm group">
-                            <Image
-                                onClick={() => alert("click on board")}
-                                src={DamesImg}
-                                alt="jeu de dames"
-                                width={520}
-                                height={520}
-                                priority
-                            />
-                        </div>
-                    </div>
-                </div>
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
 
-                {/* Carte de droite */}
-                <div className="lg:col-span-5 bg-[#1e1c18] border border-[#2b2925] rounded-md p-6 shadow-xl flex flex-col justify-between min-h-[260px]">
-                    <div className="text-center md:text-left">
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-2">
-                            {t('home.title')}
-                        </h1>
-                        <p className="text-gray-400 text-sm">
-                            {t('home.subtitle')}
-                        </p>
-                    </div>
+    const formData = new FormData()
+    if (chatEnabled !== initialChatEnabled)
+      formData.append("chatEnable", String(chatEnabled))
+    if (twoFactorAuthEnabled !== initialTwoFactorAuthEnabled)
+      formData.append("twoFactorAuthEnable", String(twoFactorAuthEnabled))
+    if (birthdate !== initialBirthdate)
+      formData.append("birthdate", String(birthdate))
 
-                    <button
-                        onClick={() => router.push(`/${locale}/game`)}
-                        className="w-full py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white font-black text-xl tracking-wide rounded border-b-[4px] border-[#537631] active:border-b-0 active:mt-[4px] transition-all shadow-lg uppercase"
-                    >
-                        {t('home.play')}
-                    </button>
-                </div>
+    try {
+      const response = await fetch("/api/parameters", {
+        method: "POST",
+        body: formData,
+      })
+      if (response.ok) {
+        alert(t('saved'))
+        const data = await response.json()
+        setInitialChatEnabled(chatEnabled)
+        setInitialTwoFactorAuthEnabled(twoFactorAuthEnabled)
+        setInitialBirthdate(birthdate)
+        if (data.recoveryCodes)
+          parametersModal.onOpen(data.recoveryCodes)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-            </div>
-        </main>
-    );
+  if (isFetching) {
+    return <div className="p-6 text-black">{t('loading')}</div>
+  }
+
+  return (
+    <>
+      <form onSubmit={onSubmit} className="p-6 max-w-md bg-white text-black space-y-4">
+        <label className="flex items-center gap-2">
+          {t('birthdate')}
+        </label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <ShadcnButton
+              variant={"outline"}
+              className={cn(
+                "w-full justify-start text-left font-sans font-normal border-gray-300 bg-white text-black hover:bg-gray-50",
+                !birthdate && "text-gray-400"
+              )}>
+              <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
+              {birthdate ? (
+                format(birthdate, "PPP", { locale: fr })
+              ) : (
+                <span>{t('choose_date')}</span>
+              )}
+            </ShadcnButton>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-md font-sans" align="start">
+            <Calendar
+              mode="single"
+              selected={birthdate}
+              onSelect={(date) => setBirthdate(date)}
+              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+            />
+          </PopoverContent>
+        </Popover>
+
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={chatEnabled} onChange={(e) => setChatEnabled(e.target.checked)} />
+          {t('enable_chat')}
+        </label>
+
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={twoFactorAuthEnabled} onChange={(e) => setTwoFactorAuthEnabled(e.target.checked)} />
+          {t('enable_2fa')}
+        </label>
+
+        <Button
+          label={isLoading ? t('saving') : t('save')}
+          onClick={() => {}}
+          disabled={isLoading}
+        />
+      </form>
+      <ParametersModal />
+    </>
+  )
 }

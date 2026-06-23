@@ -3,12 +3,13 @@
 import { useState, useCallback } from "react";
 import NotifPopup from "@/src/components/ui/NotifPopup";
 import useNotifModal from "@/src/hooks/useNotifModal";
-
+import { useTranslations } from "next-intl";
 
 
 const NotifModal= () => {
     const NotifModal = useNotifModal();
     const [isLoading,setIsLoading] = useState(false);
+    const t = useTranslations('notif');
 
     // const onToggle = useCallback(()=>{
     //     if (isLoading)return;
@@ -52,7 +53,7 @@ const NotifModal= () => {
         <NotifPopup
         disabled={isLoading}
         isOpen={NotifModal.isOpen}
-        title="Notification"
+        title={t('title')}
         onClose={NotifModal.onClose}
         body={bodyContent}
 
