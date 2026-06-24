@@ -120,6 +120,22 @@ async function getAvatar(userId : string) : Promise <string>
 	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
 }
 
+export async function getProfile(userId : string)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			username: true,
+			email: true,
+			club: true,
+			elo: true
+		}
+	})
+	return (user);
+}
+
 export async function getParameters(userId : string)
 {
 	const user = await prisma.user.findUniqueOrThrow({

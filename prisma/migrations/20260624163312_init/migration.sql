@@ -1,7 +1,8 @@
+-- AddExtensionCitext
 CREATE EXTENSION IF NOT EXISTS citext;
 
 -- CreateEnum
-CREATE TYPE "club_names" AS ENUM ('N', 'Y', 'J', 'B', 'M');
+CREATE TYPE "club_names" AS ENUM ('Assembly', 'Order', 'Federation', 'Alliance');
 
 -- CreateEnum
 CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
@@ -108,6 +109,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
+CREATE INDEX "User_elo_idx" ON "User"("elo" DESC);
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Auth_user_id_auth_type_key" ON "Auth"("user_id", "auth_type");
 
 -- CreateIndex
@@ -176,6 +180,7 @@ ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_sender_id_fkey" FOREIG
 -- AddForeignKey
 ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
+-- AddChecks
 ALTER TABLE "Follow"
 ADD CONSTRAINT "follow_user_not_self"
 CHECK ("user_id" != "friend_id");
