@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../globals.css"; 
+import "@/src/app/globals.css"; 
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import Topbar from "@/src/components/Topbar";
+import PlayModal from "@/src/components/Modals/PlayModal";
 import LoginModal from "@/src/components/Modals/LoginModal";
 import RegisterModal from "@/src/components/Modals/RegisterModal";
 import NotifModal from "@/src/components/Modals/NotifModal";
@@ -45,6 +46,7 @@ export default async function RootLayout({
             <LoginModal />
             <NotifModal />
             <Topbar />
+            <PlayModal />
             <div>{children}</div>
           </AuthProvider>
         </NextIntlClientProvider>

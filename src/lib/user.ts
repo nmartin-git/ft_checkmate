@@ -120,6 +120,22 @@ async function getAvatar(userId : string) : Promise <string>
 	return (user.avatar_url ?? DEFAULT_AVATAR_URL);
 }
 
+export async function getParameters(userId : string)
+{
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			avatar_url: true,
+			chat_enable: true,
+			a2f_enable: true,
+			birthdate: true
+		}
+	})
+	return ({avatar: user.avatar_url, chatEnable: user.chat_enable, twoFactorAuthEnable: user.a2f_enable, birthdate: user.birthdate});
+}
+
 export async function getProfile(userId : string)
 {
 	const user = await prisma.user.findUniqueOrThrow({
@@ -136,20 +152,25 @@ export async function getProfile(userId : string)
 	return (user);
 }
 
-export async function getParameters(userId : string)
+export async function searchPlayer(userId: string, query: string)
 {
-	const user = await prisma.user.findUniqueOrThrow({
-		where: {
-			id: userId
-		},
-		select: {
-			avatar_url: true,
-			chat_enable: true,
-			a2f_enable: true,
-			birthdate: true
-		}
-	})
-	return ({avatar: user.avatar_url, chatEnable: user.chat_enable, twoFactorAuthEnable: user.a2f_enable, birthdate: user.birthdate});
+	const users = await prisma.user.findMany({
+        where: {
+            username: {
+                contains: query,
+                mode: 'insensitive'
+            },
+            NOT: {
+                id: userId
+            }
+        },
+        select: {
+            id: true,
+            username: true
+        },
+        take: 10
+    });
+	return (users);
 }
 
 async function generateRecoveryCodes(userId : string) : Promise <string []>

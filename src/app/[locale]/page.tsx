@@ -1,15 +1,17 @@
 'use client'
 import Image from "next/image";
 import DamesImg from "@/public/diagdam1.jpg";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import useLoginModal from "@/src/hooks/useLoginModal";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
+import usePlayModal from "@/src/hooks/usePlayModal";
 
 export default function Home() {
     const searchParams = useSearchParams();
     const loginModal = useLoginModal();
+    const playModal = usePlayModal();
     const router = useRouter();
     const t = useTranslations(); 
     const locale = useLocale(); 
@@ -18,6 +20,10 @@ export default function Home() {
         if (searchParams.get('auth') === 'required')
             loginModal.onOpen();
     }, [searchParams, loginModal]);
+
+    const handlePlayClick = useCallback(() => {
+            playModal.onOpen();
+        }, [playModal]);
 
     return (
         <main className="min-h-[calc(100vh-61px)] bg-[#262522] flex items-center justify-center p-4 md:p-8">
@@ -50,7 +56,7 @@ export default function Home() {
                     </div>
 
                     <button
-                        onClick={() => router.push(`/${locale}/game`)}
+                        onClick={handlePlayClick}
                         className="w-full py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white font-black text-xl tracking-wide rounded border-b-[4px] border-[#537631] active:border-b-0 active:mt-[4px] transition-all shadow-lg uppercase"
                     >
                         {t('home.play')}

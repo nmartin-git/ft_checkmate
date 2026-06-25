@@ -11,9 +11,11 @@ import Profile from "@/src/components/ui/Profile";
 import { useRouter, usePathname } from "next/navigation";
 import handleLogout from "@/src/lib/logout";
 import { useTranslations, useLocale } from "next-intl"; 
+import usePlayModal from "@/src/hooks/usePlayModal";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
+    const playModal = usePlayModal();
     const currentUser = useCurrentUser();
     const router = useRouter();
     const pathname = usePathname(); 
@@ -24,6 +26,9 @@ const Topbar = () => {
         loginModal.onOpen();
     }, [loginModal]);
 
+    const handlePlayClick = useCallback(() => {
+        playModal.onOpen();
+    }, [playModal]);
 
     const switchLocale = (newLocale: string) => {
         const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
@@ -121,7 +126,7 @@ const Topbar = () => {
                     )}
 
                      <button 
-                        onClick={() => router.push(`/${locale}/game`)} 
+                        onClick={handlePlayClick} 
                         className="px-6 
 								py-2.5
 								bg-[#81b64c] 

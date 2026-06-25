@@ -112,6 +112,45 @@ export async function listFriends(userId: string) {
     return rows.map((r) => (r.user_id === userId ? r.friend : r.user))
 }
 
+export async function getFriendsCount(userId: string) : Promise<number>
+{
+    const friendsCount = await prisma.follow.count({
+        where: {
+            OR: [{ user_id: userId }, { friend_id: userId }]
+        }
+    })
+    return (friendsCount);
+}
+
+export async function getFriendsList(userId: string)
+{
+    const rows = await prisma.follow.findMany({
+        where: {
+            status: follow_status.ACCEPTED,
+            OR: [
+                { user_id: userId }, 
+                { friend_id: userId }
+            ],
+        },
+        select: {
+            user_id: true,
+            friend_id: true,
+            user: { select: PUBLIC_USER_SELECT },
+            friend: { select: PUBLIC_USER_SELECT },
+        }
+    });
+
+    return rows.map((r) => {
+        const targetUser = r.user_id === userId ? r.friend : r.user;
+        const targetId = r.user_id === userId ? r.friend_id : r.user_id;
+
+        return {
+            ...targetUser,
+            id: targetId
+        };
+    });
+}
+
 export async function listPendingReceived(userId: string) {
     return prisma.follow.findMany({
         where: { friend_id: userId, status: follow_status.PENDING },

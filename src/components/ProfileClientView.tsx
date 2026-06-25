@@ -6,6 +6,7 @@ import useCurrentUser from "@/src/hooks/useCurrentUser"
 import { club_names } from "@prisma/client"
 import Link from "next/link"
 import { useLocale } from "next-intl"
+import { useEffect } from "react"
 
 interface ProfileClientViewProps {
     userData: {
@@ -15,6 +16,7 @@ interface ProfileClientViewProps {
         elo: number;
     };
     rank: number;
+    friendsCount: number;
     isPublicView?: boolean;
 }
 
@@ -41,7 +43,7 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
     }
 };
 
-export default function ProfileClientView( { userData, rank, isPublicView}: ProfileClientViewProps) 
+export default function ProfileClientView( { userData, rank, isPublicView, friendsCount}: ProfileClientViewProps) 
 {
     const router = useRouter();
 	const locale = useLocale();
@@ -50,11 +52,14 @@ export default function ProfileClientView( { userData, rank, isPublicView}: Prof
         router.push(`/${locale}/profile/parameters`);
     };
 
+    useEffect(() => {
+        if (!user && !isPublicView) {
+            router.push(`/${locale}/`);
+        }
+    }, [user, isPublicView, router, locale]);
+
     if (!user && !isPublicView)
-    {
-        router.push(`/${locale}/`);
         return (null);
-    }
 
     const currentStyle = CLUB_STYLES[userData.club] || {
         badge: "bg-[#81b64c] text-white",
@@ -117,7 +122,7 @@ export default function ProfileClientView( { userData, rank, isPublicView}: Prof
                                 🏆 Elo & historics
                             </p>
                             <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                                Voir le classement →
+                                Classement →
                             </span>
                         </div>
                         <div className="flex items-baseline gap-2 mt-6">
@@ -134,14 +139,25 @@ export default function ProfileClientView( { userData, rank, isPublicView}: Prof
                     </div>
                 </Link>
 
-                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64">
+                <Link 
+                    href={`/${locale}/friends`}
+                    className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer"
+                >
                     <div>
-                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">
-                            👥 Friend(s)
-                        </p>
-                        <p className="text-sm text-gray-500 font-medium mt-6">You doesn't have friends yet.</p>
+                        <div className="flex justify-between items-center mb-4">
+                            <p className="text-gray-300 font-black uppercase tracking-wider text-sm">
+                                👥 Friend(s)
+                            </p>
+                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                                Liste d'amis →
+                            </span>
+                        </div>
+                        <div className="flex items-baseline gap-2 mt-6">
+                            <span className="text-5xl font-black text-white tracking-tight">{friendsCount}</span> 
+                            <span className="text-[#81b64c] font-black text-lg uppercase">friends</span>
+                        </div>
                     </div>
-                </div>
+                </Link>
                 
             </div>
         </div>
