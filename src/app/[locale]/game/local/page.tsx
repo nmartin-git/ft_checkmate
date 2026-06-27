@@ -15,7 +15,7 @@ type Pos = { row: number; col: number };
 export default function LocalGamePage() {
   const [board, setBoard] = useState<number[][]>(() => makeFreshBoard());
   const [selected, setSelected] = useState<Pos | null>(null);
-  const [turn, setTurn] = useState<"white" | "black">("white"); // blancs commencent
+  const [turn, setTurn] = useState<"white" | "black">("white"); 
   const [over, setOver] = useState<{ winner: string | null; reason: string } | null>(null);
   const [eatenByBlack, setEatenByBlack] = useState(0);
   const [eatenByWhite, setEatenByWhite] = useState(0);
@@ -53,9 +53,8 @@ export default function LocalGamePage() {
       if (mine) setSelected({ row, col });
       return;
     }
-    if (mine) { setSelected({ row, col }); return; } // changer de sélection
+    if (mine) { setSelected({ row, col }); return; } 
 
-    // tenter le coup via le moteur partagé
     const move = findMove(board, turn, selected, { row, col });
     if (!move) {
       const lm = legalMoves(board, turn);
@@ -65,11 +64,9 @@ export default function LocalGamePage() {
       return;
     }
 
-    // appliquer sur une copie
     const nb = board.map(r => r.slice());
     applyMove(nb, move, move.type);
 
-    // compteur de pièces mangées
     const { black, white } = countPieces(nb);
     setEatenByWhite(12 - black);
     setEatenByBlack(12 - white);
@@ -79,7 +76,6 @@ export default function LocalGamePage() {
     setSelected(null);
     setTurn(nextTurn);
 
-    // conditions de fin
     const nextMoves = legalMoves(nb, nextTurn);
     if (nextMoves.moves.length === 0) {
       setOver({ winner: turn, reason: "blocked" });

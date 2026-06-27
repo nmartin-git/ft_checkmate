@@ -1,18 +1,13 @@
-// ════════════════════════════════════════════════════════════
-//  MOTEUR DE DAMES PARTAGÉ (utilisé par le serveur ET le mode local)
-//  0 vide | 1 pion noir | 2 pion blanc | 3 dame noire | 4 dame blanche
-//  Les noirs descendent (row +), les blancs montent (row -).
-// ════════════════════════════════════════════════════════════
 
-export const DIRS = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
-export const isBlackPiece = v => v === 1 || v === 3;
-export const isWhitePiece = v => v === 2 || v === 4;
-export const isKing = v => v === 3 || v === 4;
-export const pieceColor = v => isBlackPiece(v) ? "black" : (isWhitePiece(v) ? "white" : null);
-export const enemyColor = c => c === "black" ? "white" : "black";
+const DIRS = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+const isBlackPiece = v => v === 1 || v === 3;
+const isWhitePiece = v => v === 2 || v === 4;
+const isKing = v => v === 3 || v === 4;
+const pieceColor = v => isBlackPiece(v) ? "black" : (isWhitePiece(v) ? "white" : null);
+const enemyColor = c => c === "black" ? "white" : "black";
 const inB = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;
 
-export function makeFreshBoard() {
+function makeFreshBoard() {
   return [
     [1, 0, 1, 0, 1, 0, 1, 0],
     [0, 1, 0, 1, 0, 1, 0, 1],
@@ -25,7 +20,7 @@ export function makeFreshBoard() {
   ];
 }
 
-export function simpleCapturesFrom(board, r, c) {
+function simpleCapturesFrom(board, r, c) {
   const v = board[r][c], color = pieceColor(v);
   if (!color) return [];
   const enemy = enemyColor(color), out = [];
@@ -59,7 +54,7 @@ function applyStep(board, from, to, captured) {
   return nb;
 }
 
-export function captureSequences(board, r, c) {
+function captureSequences(board, r, c) {
   const results = [];
   function recurse(b, cr, cc, capList, cellList) {
     const caps = simpleCapturesFrom(b, cr, cc)
@@ -77,7 +72,7 @@ export function captureSequences(board, r, c) {
   return results;
 }
 
-export function simpleMovesFrom(board, r, c) {
+function simpleMovesFrom(board, r, c) {
   const v = board[r][c], color = pieceColor(v);
   if (!color) return [];
   const out = [];
@@ -90,8 +85,7 @@ export function simpleMovesFrom(board, r, c) {
   return out;
 }
 
-// tous les coups légaux d'un joueur, avec prise obligatoire + majoritaire
-export function legalMoves(board, color) {
+function legalMoves(board, color) {
   let seqs = [];
   for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++)
     if (pieceColor(board[r][c]) === color)
@@ -107,12 +101,11 @@ export function legalMoves(board, color) {
   return { type: "simple", moves: simple };
 }
 
-export function promote(board) {
+function promote(board) {
   for (let c = 0; c < 8; c++) { if (board[7][c] === 1) board[7][c] = 3; if (board[0][c] === 2) board[0][c] = 4; }
 }
 
-// applique un coup complet (simple ou rafle) sur le board (mutation)
-export function applyMove(board, move, type) {
+function applyMove(board, move, type) {
   if (type === "simple") {
     board[move.to.row][move.to.col] = board[move.from.row][move.from.col];
     board[move.from.row][move.from.col] = 0;
@@ -129,7 +122,7 @@ export function applyMove(board, move, type) {
   promote(board);
 }
 
-export function isDrawByMaterial(board) {
+function isDrawByMaterial(board) {
   let bp = 0, wp = 0, bk = 0, wk = 0;
   for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
     const v = board[r][c];
@@ -138,8 +131,7 @@ export function isDrawByMaterial(board) {
   return bp === 0 && wp === 0 && bk === 1 && wk === 1;
 }
 
-// trouve le coup légal qui part de `from` et finit en `to` (ou null)
-export function findMove(board, color, from, to) {
+function findMove(board, color, from, to) {
   const lm = legalMoves(board, color);
   const match = lm.moves.find(m => {
     const start = m.from;
@@ -148,3 +140,9 @@ export function findMove(board, color, from, to) {
   });
   return match ? { ...match, type: lm.type } : null;
 }
+
+module.exports = {
+  DIRS, isBlackPiece, isWhitePiece, isKing, pieceColor, enemyColor,
+  makeFreshBoard, simpleCapturesFrom, captureSequences, simpleMovesFrom,
+  legalMoves, promote, applyMove, isDrawByMaterial, findMove,
+};
