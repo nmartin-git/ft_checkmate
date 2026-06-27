@@ -61,6 +61,18 @@ export async function refuseFriendRequest(userId: string, requesterId: string): 
     })
 }
 
+export async function findRequest(userId: string, friendId: string): Promise<boolean>
+{
+    const existingRequest = await prisma.follow.findFirst({
+        where: {
+            user_id: userId,
+            friend_id: friendId,
+            status: "PENDING"
+        }
+    });
+    return (Boolean(existingRequest));
+}
+
 export async function cancelFriendRequest(userId: string, friendId: string): Promise<void> {
     const request = await prisma.follow.findFirst({
         where: {
@@ -116,7 +128,8 @@ export async function getFriendsCount(userId: string) : Promise<number>
 {
     const friendsCount = await prisma.follow.count({
         where: {
-            OR: [{ user_id: userId }, { friend_id: userId }]
+            OR: [{ user_id: userId }, { friend_id: userId }],
+            status: follow_status.ACCEPTED
         }
     })
     return (friendsCount);
@@ -156,11 +169,4 @@ export async function listPendingReceived(userId: string) {
         where: { friend_id: userId, status: follow_status.PENDING },
         select: { user: { select: PUBLIC_USER_SELECT } },
     }).then(rows => rows.map(r => r.user))
-}
-
-export async function listPendingSent(userId: string) {
-    return prisma.follow.findMany({
-        where: { user_id: userId, status: follow_status.PENDING },
-        select: { friend: { select: PUBLIC_USER_SELECT } },
-    }).then(rows => rows.map(r => r.friend))
 }

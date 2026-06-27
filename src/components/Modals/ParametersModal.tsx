@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Modal from "@/src/components/ui/Modal";
 import useParametersModal from "@/src/hooks/useParametersModal";
-import NotifPopup from "../ui/NotifPopup";
+import NotifPopup from "@/src/components/ui/NotifPopup";
 
 const ParametersModal= () => {
 	const parametersModal = useParametersModal();
