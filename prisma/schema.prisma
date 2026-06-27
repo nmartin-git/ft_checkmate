@@ -49,10 +49,9 @@ model User {
     is_admin           Boolean    @default(false)
     elo                Int        @default(800)
     is_online          Boolean    @default(true)
-    authInformations   Auth[]     @relation("authUserId")
     chatMessages       Chat[]     @relation("authorUserId")
-    followLists        Follow[]   @relation("followUserId")
-    followedBy         Follow[]   @relation("friendUserId")
+    followLists        Friends[]   @relation("followUserId")
+    followedBy         Friends[]   @relation("friendUserId")
     sentMessages       DirectMessage[] @relation("dmSenderId")
     receivedMessages   DirectMessage[] @relation("dmReceiverId")
     whiteGames         Game[]     @relation("whitePlayerId")
@@ -61,17 +60,7 @@ model User {
     @@index([elo(sort: Desc)])
 }
 
-model Auth {
-    id        String  @id @default(uuid()) @db.Uuid
-    auth_type String
-    auth_id   String?
-    user_id   String  @db.Uuid
-    user      User    @relation("authUserId", fields: [user_id], references: [id])
-
-    @@unique([user_id, auth_type])
-}
-
-model Follow {
+model Friends {
     id        String        @id @default(uuid()) @db.Uuid
     user_id   String        @db.Uuid
     user      User          @relation("followUserId", fields: [user_id], references: [id])

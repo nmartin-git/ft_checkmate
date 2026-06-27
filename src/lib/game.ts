@@ -1,5 +1,6 @@
 import { prisma } from "./prisma"
 import { game_results, follow_status } from "@prisma/client"
+import { PUBLIC_USER_SELECT } from "./select"
 
 export async function openGameRequest(userId: string, friendId: string): Promise<void>
 {
@@ -98,6 +99,20 @@ async function addMove(gameId : string, initialPos: number, newPos : number, tim
 			}
 		})
 	})
+}
+
+export async function listPendingGameReceived(userId: string)
+{
+	const rows = await prisma.follow.findMany({
+		where: {
+			friend_id: userId,
+			status: follow_status.GAME_REQUESTED
+		},
+		select: {
+			user: { select: PUBLIC_USER_SELECT }
+		}
+	})
+	return (rows.map((r) => (r.user)));
 }
 
 export async function newGame(whitePlayerId : string, blackPlayerId : string)

@@ -14,7 +14,8 @@ interface PendingUser {
 
 const NotifModal = () => {
     const notifModal = useNotifModal();
-    const [pendingRequests, setPendingRequests] = useState<PendingUser[]>([]);
+    const [friendPendingRequests, setFriendPendingRequests] = useState<PendingUser[]>([]);
+    const [gamePendingRequests, setGamePendingRequests] = useState<PendingUser[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -26,7 +27,12 @@ const NotifModal = () => {
                 const res = await fetch("/api/friends/pending");
                 if (res.ok) {
                     const data = await res.json();
-                    setPendingRequests(data);
+                    setFriendPendingRequests(data);
+                }
+                const gameRes = await fetch("/api/game/online/pending");
+                if (res.ok) {
+                    const data = await res.json();
+                    setGamePendingRequests(data);//TODO tableau recupere, afficher la notif aussi avec un fleche et une croix sois pour accepter sois pour refuser et lancer game en fonction
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des notifications :", error);
@@ -48,7 +54,7 @@ const NotifModal = () => {
 
             if (res.ok) {
                 // Supprime localement la notification de la liste une fois traitée
-                setPendingRequests((prev) => prev.filter((user) => user.id !== requesterId));
+                setFriendPendingRequests((prev) => prev.filter((user) => user.id !== requesterId));
             }
         } catch (error) {
             console.error("Erreur lors du traitement de l'action :", error);
@@ -63,13 +69,13 @@ const NotifModal = () => {
                 </p>
             )}
 
-            {!isLoading && pendingRequests.length === 0 && (
+            {!isLoading && friendPendingRequests.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-6 font-medium">
                     Aucune nouvelle notification.
                 </p>
             )}
 
-            {!isLoading && pendingRequests.map((user) => (
+            {!isLoading && friendPendingRequests.map((user) => (
                 <div 
                     key={user.id} 
                     className="flex items-center justify-between p-3.5 bg-[#211f1b] border border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
