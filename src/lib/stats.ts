@@ -65,3 +65,40 @@ export async function eloHistoric(userId : string, durationStats : number = 0)
 		elo: game.black_player_id === userId ? game.black_player_elo : game.white_player_elo
 	}));
 }
+
+export async function getLeaderboard()
+{
+	const leaderboard = await prisma.user.findMany({
+		take: 50,
+		select: {
+			id: true,
+			username: true,
+			club: true,
+			elo: true
+		},
+		orderBy: {
+			elo: 'desc'
+		}
+	})
+	return (leaderboard);
+}
+
+export async function getPlayerRank(userId : string) : Promise<number>
+{
+	const player = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId
+		},
+		select: {
+			elo: true
+		}
+	})
+	const higherEloCount = await prisma.user.count({
+		where: {
+			elo: {
+				gt: player.elo
+			}
+		}
+	})
+	return (higherEloCount + 1);
+}

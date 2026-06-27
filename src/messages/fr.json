@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "notifications": "Notifications",
+    "play": "JOUER"
+  },
+  "game": {
+    "title": "Jeu de Dames",
+    "vs": "Joueur 1 VS Joueur 2"
+  },
+  "home": {
+    "title": "Jouer aux Dames",
+    "subtitle": "Lancez une partie de Dames endiablée contre vos amis !",
+    "play": "Jouer ➔"
+  },
+  "auth": {
+    "login_title": "Connexion",
+    "sign_in": "Se connecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "or": "ou",
+    "sign_in_google": "Se connecter avec Google",
+    "no_account": "Pas de compte ?",
+    "sign_up": "S'inscrire",
+    "code": "Code 2FA",
+    "problem_2fa": "Problème avec la double authentification ?",
+    "recovery_codes": "Codes de récupération",
+    "recovery_code": "Code de récupération",
+    "problem_recovery": "Problème avec les codes de récupération ?",
+    "auth_code": "Code d'authentification (2FA)"
+  }
+}

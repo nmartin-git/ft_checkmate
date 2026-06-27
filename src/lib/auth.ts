@@ -61,8 +61,8 @@ export async function verifyRecoveryCode(userEmail : string, userRecoveryCode : 
 
 async function sendEmailTwoFactorAuth(userEmail : string, code : string)
 {
-	const subject = "Votre code 2FA"
-	const text = `Votre code 2FA est:\n\n${code}\n\nIl expire dans ${MINUTES_A2F_EXPIRATION} minutes.`
+	const subject = "Verification code"
+	const text = `Your verification code is:\n\n${code}\n\nIt expires in ${MINUTES_A2F_EXPIRATION} minutes.`
 	const result = await resend.emails.send({
 		from: process.env.RESEND_SEND_FROM!,
 		to : userEmail,
