@@ -1,144 +1,76 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from "react"
-import Button from "@/src/components/ui/Button"
-import { Button as ShadcnButton } from "@/src/components/ui/shadcn/button"
-import ParametersModal from "@/src/components/Modals/ParametersModal"
-import useParametersModal from "@/src/hooks/useParametersModal"
-import { useTranslations } from "next-intl"
-import { format } from "date-fns"
-import { fr } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from "@/src/components/ui/shadcn/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/shadcn/popover"
-import { cn } from "@/src/lib/utils"
+import { useEffect } from "react";
+import { io } from "socket.io-client";
+import { initGame, requestRestart } from "@/src/game.js";
 
-export default function ParametersPage() {
-  const parametersModal = useParametersModal()
-  const t = useTranslations('parameters')
-  const [isLoading, setIsLoading] = useState(false)
-  const [chatEnabled, setChatEnabled] = useState(false)
-  const [twoFactorAuthEnabled, setTwoFactorAuthEnabled] = useState(false)
-  const [birthdate, setBirthdate] = useState<Date | undefined>()
-  const [isFetching, setIsFetching] = useState(true)
-  const [initialChatEnabled, setInitialChatEnabled] = useState(false)
-  const [initialTwoFactorAuthEnabled, setInitialTwoFactorAuthEnabled] = useState(false)
-  const [initialBirthdate, setInitialBirthdate] = useState<Date | undefined>()
+const gamePage = () => {
+    useEffect(() => {
+        const socket = io({ forceNew: true, transports: ["websocket"] });
+        initGame(socket);
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
-  useEffect(() => {
-    const loadParameters = async () => {
-      try {
-        const response = await fetch("/api/parameters")
-        if (response.ok) {
-          const data = await response.json()
-          setChatEnabled(Boolean(data.chatEnable))
-          setTwoFactorAuthEnabled(Boolean(data.twoFactorAuthEnable))
-          setInitialChatEnabled(Boolean(data.chatEnable))
-          setInitialTwoFactorAuthEnabled(Boolean(data.twoFactorAuthEnable))
-          if (data.birthdate && data.birthdate !== "null") {
-            const parsedDate = new Date(data.birthdate)
-            setBirthdate(parsedDate)
-            setInitialBirthdate(parsedDate)
-          } else {
-            setBirthdate(undefined)
-            setInitialBirthdate(undefined)
-          }
-        }
-      } catch (error) {
-        console.error("Error: parameters loading failed:", error)
-      } finally {
-        setIsFetching(false)
-      }
-    }
-    loadParameters()
-  }, [])
+    return (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "20px", position: "relative" }}>
+            <h1 className="text-center" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Jeu de Dames</h1>
+            <p id="game-info" style={{ margin: "10px 0", fontWeight: "bold" }}>Connexion…</p>
+            <div
+                id="game-error"
+                style={{
+                    minHeight: "24px",
+                    margin: "4px 0 12px",
+                    padding: "6px 14px",
+                    background: "#b91c1c",
+                    color: "white",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                }}
+            ></div>
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+            <div style={{ position: "relative" }}>
+                <div id="board"></div>
 
-    const formData = new FormData()
-    if (chatEnabled !== initialChatEnabled)
-      formData.append("chatEnable", String(chatEnabled))
-    if (twoFactorAuthEnabled !== initialTwoFactorAuthEnabled)
-      formData.append("twoFactorAuthEnable", String(twoFactorAuthEnabled))
-    if (birthdate !== initialBirthdate)
-      formData.append("birthdate", String(birthdate))
-
-    try {
-      const response = await fetch("/api/parameters", {
-        method: "POST",
-        body: formData,
-      })
-      if (response.ok) {
-        alert(t('saved'))
-        const data = await response.json()
-        setInitialChatEnabled(chatEnabled)
-        setInitialTwoFactorAuthEnabled(twoFactorAuthEnabled)
-        setInitialBirthdate(birthdate)
-        if (data.recoveryCodes)
-          parametersModal.onOpen(data.recoveryCodes)
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  if (isFetching) {
-    return <div className="p-6 text-black">{t('loading')}</div>
-  }
-
-  return (
-    <>
-      <form onSubmit={onSubmit} className="p-6 max-w-md bg-white text-black space-y-4">
-        <label className="flex items-center gap-2">
-          {t('birthdate')}
-        </label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <ShadcnButton
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-sans font-normal border-gray-300 bg-white text-black hover:bg-gray-50",
-                !birthdate && "text-gray-400"
-              )}>
-              <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
-              {birthdate ? (
-                format(birthdate, "PPP", { locale: fr })
-              ) : (
-                <span>{t('choose_date')}</span>
-              )}
-            </ShadcnButton>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-md font-sans" align="start">
-            <Calendar
-              mode="single"
-              selected={birthdate}
-              onSelect={(date) => setBirthdate(date)}
-              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-            />
-          </PopoverContent>
-        </Popover>
-
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={chatEnabled} onChange={(e) => setChatEnabled(e.target.checked)} />
-          {t('enable_chat')}
-        </label>
-
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={twoFactorAuthEnabled} onChange={(e) => setTwoFactorAuthEnabled(e.target.checked)} />
-          {t('enable_2fa')}
-        </label>
-
-        <Button
-          label={isLoading ? t('saving') : t('save')}
-          onClick={() => {}}
-          disabled={isLoading}
-        />
-      </form>
-      <ParametersModal />
-    </>
-  )
+                {/* Panneau de fin de partie (caché par défaut) */}
+                <div
+                    id="game-over"
+                    style={{
+                        display: "none",
+                        position: "absolute",
+                        inset: 0,
+                        background: "rgba(0,0,0,0.75)",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "8px",
+                        gap: "16px",
+                    }}
+                >
+                    <h2 id="game-over-title" style={{ fontSize: "2.5rem", fontWeight: "bold", margin: 0 }}>Fin</h2>
+                    <p id="game-over-sub" style={{ color: "white", fontSize: "1.1rem", margin: 0 }}></p>
+                    <button
+                        onClick={() => requestRestart()}
+                        style={{
+                            padding: "12px 28px",
+                            fontSize: "1.1rem",
+                            fontWeight: "bold",
+                            background: "#16a34a",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Rejouer
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 }
+
+export default gamePage;
