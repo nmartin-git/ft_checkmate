@@ -45,8 +45,6 @@ model User {
     a2f_recovery_codes String?    @db.Text
     chat_enable        Boolean    @default(false)
     club               club_names
-    is_premium         Boolean    @default(false)
-    is_admin           Boolean    @default(false)
     elo                Int        @default(800)
     is_online          Boolean    @default(true)
     chatMessages       Chat[]     @relation("authorUserId")

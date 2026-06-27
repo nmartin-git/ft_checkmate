@@ -4,7 +4,7 @@ import { PUBLIC_USER_SELECT } from "./select"
 
 export async function openGameRequest(userId: string, friendId: string): Promise<void>
 {
-	await prisma.follow.updateMany({
+	await prisma.friends.updateMany({
     	where: {
     	    OR: [
     	        { user_id: userId, friend_id: friendId },
@@ -22,7 +22,7 @@ export async function openGameRequest(userId: string, friendId: string): Promise
 
 export async function closeGameRequest(userId: string, friendId: string): Promise<void>
 {
-	await prisma.follow.updateMany({
+	await prisma.friends.updateMany({
     	where: {
     	    OR: [
     	        { user_id: userId, friend_id: friendId },
@@ -38,7 +38,7 @@ export async function closeGameRequest(userId: string, friendId: string): Promis
 
 export async function isGameRequested(userId: string): Promise<Boolean>
 {
-	const existingRequest = await prisma.follow.findFirst({
+	const existingRequest = await prisma.friends.findFirst({
     	where: {
      	   user_id: userId,
       	  status: follow_status.GAME_REQUESTED
@@ -49,7 +49,7 @@ export async function isGameRequested(userId: string): Promise<Boolean>
 
 export async function isGameRequestedBis(userId: string, friendId: string): Promise<Boolean>
 {
-	const existingRequest = await prisma.follow.findFirst({
+	const existingRequest = await prisma.friends.findFirst({
         where: {
             user_id: userId,
             friend_id: friendId,
@@ -61,7 +61,7 @@ export async function isGameRequestedBis(userId: string, friendId: string): Prom
 
 export async function isActiveRequest(userId: string, friendId: string)
 {
-	const activeRequests = await prisma.follow.findMany({
+	const activeRequests = await prisma.friends.findMany({
         where: {
             status: follow_status.GAME_REQUESTED,
             OR: [{ user_id: userId }, { friend_id: friendId }]
@@ -103,7 +103,7 @@ async function addMove(gameId : string, initialPos: number, newPos : number, tim
 
 export async function listPendingGameReceived(userId: string)
 {
-	const rows = await prisma.follow.findMany({
+	const rows = await prisma.friends.findMany({
 		where: {
 			friend_id: userId,
 			status: follow_status.GAME_REQUESTED

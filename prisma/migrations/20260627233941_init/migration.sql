@@ -25,8 +25,6 @@ CREATE TABLE "User" (
     "a2f_recovery_codes" TEXT,
     "chat_enable" BOOLEAN NOT NULL DEFAULT false,
     "club" "club_names" NOT NULL,
-    "is_premium" BOOLEAN NOT NULL DEFAULT false,
-    "is_admin" BOOLEAN NOT NULL DEFAULT false,
     "elo" INTEGER NOT NULL DEFAULT 800,
     "is_online" BOOLEAN NOT NULL DEFAULT true,
 
