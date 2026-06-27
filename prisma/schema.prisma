@@ -28,6 +28,7 @@ enum game_results {
 enum follow_status {
     PENDING
     ACCEPTED
+    GAME_REQUESTED
 }
 
 model User {

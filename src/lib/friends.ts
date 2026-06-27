@@ -67,10 +67,24 @@ export async function findRequest(userId: string, friendId: string): Promise<boo
         where: {
             user_id: userId,
             friend_id: friendId,
-            status: "PENDING"
+            status: follow_status.PENDING
         }
     });
     return (Boolean(existingRequest));
+}
+
+export async function isFriends(userId: string, friendId: string): Promise<boolean>
+{
+    const friendship = await prisma.follow.findFirst({
+        where: {
+            status: follow_status.ACCEPTED,
+            OR: [
+                { user_id: userId, friend_id: friendId },
+                { user_id: friendId, friend_id: userId },
+            ]
+        }
+    });
+    return (Boolean(friendship));
 }
 
 export async function cancelFriendRequest(userId: string, friendId: string): Promise<void> {

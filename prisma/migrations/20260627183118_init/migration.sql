@@ -8,7 +8,7 @@ CREATE TYPE "club_names" AS ENUM ('Assembly', 'Order', 'Federation', 'Alliance')
 CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
 
 -- CreateEnum
-CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED');
+CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED', 'GAME_REQUESTED');
 
 -- CreateTable
 CREATE TABLE "User" (

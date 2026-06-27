@@ -1,10 +1,9 @@
 import { getPlayerRank } from "@/src/lib/stats";
 import { getProfile } from "@/src/lib/user";
 import ProfileClientView from "@/src/components/ProfileClientView";
-import { findRequest, getFriendsCount } from "@/src/lib/friends";
+import { findRequest, getFriendsCount, isFriends } from "@/src/lib/friends";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
-import { prisma } from "@/src/lib/prisma";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-a-changer');
 interface TokenPayload { id: string; }
@@ -29,14 +28,18 @@ export default async function PublicProfilePage({ params }: PublicProfileProps) 
         const friendsCount = await getFriendsCount(id);
 
         let isInitialPending = false;
+        let isInitialFriend = false;
+
         try {
             const cookieStore = await cookies();
             const token = cookieStore.get('auth-token')?.value;
             if (token) {
                 const { payload } = await jwtVerify<TokenPayload>(token, JWT_SECRET);
                 if (payload && payload.id) {
-                    const pendingRequest = findRequest(payload.id, id);
-                    isInitialPending = !!pendingRequest;
+                    const pendingRequest = await findRequest(payload.id, id);
+                    isInitialPending = pendingRequest;
+                    const friendship = await isFriends(payload.id, id);
+                    isInitialFriend = friendship;
                 }
             }
         } catch {
@@ -47,7 +50,8 @@ export default async function PublicProfilePage({ params }: PublicProfileProps) 
                 userData={{
                     ...userData,
                     id: id,
-                    isInitialPending
+                    isInitialPending,
+                    isInitialFriend
                 }} 
                 rank={rank}
                 isPublicView={true}

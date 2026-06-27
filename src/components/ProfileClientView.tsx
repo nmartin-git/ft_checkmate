@@ -7,7 +7,7 @@ import { club_names } from "@prisma/client"
 import Link from "next/link"
 import { useLocale } from "next-intl"
 import { useEffect, useState } from "react"
-import { AiOutlineUserAdd, AiOutlineUserDelete } from "react-icons/ai"
+import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineCheck } from "react-icons/ai"
 
 interface ProfileClientViewProps {
     userData: {
@@ -17,6 +17,7 @@ interface ProfileClientViewProps {
         club: club_names;
         elo: number;
         isInitialPending?: boolean;
+        isInitialFriend?: boolean;
     };
     rank: number;
     friendsCount: number;
@@ -36,16 +37,11 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
     const { user } = useCurrentUser();
     
     const [isPending, setIsPending] = useState(userData.isInitialPending || false);
+    const [isFriend] = useState(userData.isInitialFriend || false);
 
     const handleEditClick = () => {
         router.push(`/${locale}/profile/parameters`);
     };
-
-    useEffect(() => {
-        if (userData.isInitialPending !== undefined) {
-            setIsPending(userData.isInitialPending);
-        }
-    }, [userData.isInitialPending]);
 
     useEffect(() => {
         if (!user && !isPublicView) {
@@ -55,11 +51,11 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
 
     if (!user && !isPublicView) return null;
 
-    const currentUserId = user?.id || user?.id;
+    const currentUserId = user?.id;
     const isOwnProfile = currentUserId === userData.id;
 
     const handleToggleFriendRequest = async () => {
-        if (isOwnProfile) return;
+        if (isOwnProfile || isFriend) return;
 
         setIsPending((prev) => !prev);
 
@@ -115,28 +111,37 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                             onClick={handleEditClick}
                         />
                     ) : (
-                        // Le bouton s'affiche si ce n'est pas ton propre profil
                         !isOwnProfile && (
-                            <button
-                                onClick={handleToggleFriendRequest}
-                                className={`flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded transition-all duration-150 active:scale-95 shadow-md ${
-                                    isPending 
-                                        ? "bg-[#312e2b] text-gray-400 border border-[#45423f] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50" 
-                                        : "bg-[#81b64c] hover:bg-[#92cb57] text-white shadow-[#81b64c]/10"
-                                }`}
-                            >
-                                {isPending ? (
-                                    <>
-                                        <AiOutlineUserDelete size={16} />
-                                        En attente
-                                    </>
-                                ) : (
-                                    <>
-                                        <AiOutlineUserAdd size={16} />
-                                        Ajouter
-                                    </>
-                                )}
-                            </button>
+                            isFriend ? (
+                                <button
+                                    disabled
+                                    className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#2b2925] text-gray-500 border border-[#312e2b] cursor-not-allowed shadow-inner"
+                                >
+                                    <AiOutlineCheck size={16} className="text-gray-600" />
+                                    Amis
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleToggleFriendRequest}
+                                    className={`flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded transition-all duration-150 active:scale-95 shadow-md ${
+                                        isPending  
+                                            ? "bg-[#312e2b] text-gray-400 border border-[#45423f] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50" 
+                                            : "bg-[#81b64c] hover:bg-[#92cb57] text-white shadow-[#81b64c]/10"
+                                    }`}
+                                >
+                                    {isPending ? (
+                                        <>
+                                            <AiOutlineUserDelete size={16} />
+                                            En attente
+                                        </>
+                                    ) : (
+                                        <>
+                                            <AiOutlineUserAdd size={16} />
+                                            Ajouter
+                                        </>
+                                    )}
+                                </button>
+                            )
                         )
                     )}
                 </div>

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { sendFriendRequest, cancelFriendRequest, findRequest } from "@/src/lib/friends";
-import { prisma } from "@/src/lib/prisma"; // Ajuste selon ton projet
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-a-changer');
 interface TokenPayload { id: string; }

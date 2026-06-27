@@ -1,5 +1,77 @@
 import { prisma } from "./prisma"
-import { game_results } from "@prisma/client"
+import { game_results, follow_status } from "@prisma/client"
+
+export async function openGameRequest(userId: string, friendId: string): Promise<void>
+{
+	await prisma.follow.updateMany({
+    	where: {
+    	    OR: [
+    	        { user_id: userId, friend_id: friendId },
+    	        { user_id: friendId, friend_id: userId }
+    	    ],
+    	    status: follow_status.ACCEPTED
+    	},
+    	data: {
+    	    user_id: userId,
+    	    friend_id: friendId,
+    	    status: follow_status.GAME_REQUESTED
+    	}
+	})
+}
+
+export async function closeGameRequest(userId: string, friendId: string): Promise<void>
+{
+	await prisma.follow.updateMany({
+    	where: {
+    	    OR: [
+    	        { user_id: userId, friend_id: friendId },
+    	        { user_id: friendId, friend_id: userId }
+    	    ],
+    	    status: follow_status.GAME_REQUESTED
+    	},
+    	data: {
+    	    status: follow_status.ACCEPTED
+    	}
+	})
+}
+
+export async function isGameRequested(userId: string): Promise<Boolean>
+{
+	const existingRequest = await prisma.follow.findFirst({
+    	where: {
+     	   user_id: userId,
+      	  status: follow_status.GAME_REQUESTED
+    	}
+	})
+	return (Boolean(existingRequest));
+}
+
+export async function isGameRequestedBis(userId: string, friendId: string): Promise<Boolean>
+{
+	const existingRequest = await prisma.follow.findFirst({
+        where: {
+            user_id: userId,
+            friend_id: friendId,
+            status: follow_status.GAME_REQUESTED
+        }
+    });
+	return (Boolean(existingRequest));
+}
+
+export async function isActiveRequest(userId: string, friendId: string)
+{
+	const activeRequests = await prisma.follow.findMany({
+        where: {
+            status: follow_status.GAME_REQUESTED,
+            OR: [{ user_id: userId }, { friend_id: friendId }]
+        },
+        select: {
+            user_id: true,
+            friend_id: true
+        }
+    });
+	return (activeRequests);
+}
 
 async function addMove(gameId : string, initialPos: number, newPos : number, timeToMove : number)
 {
@@ -28,7 +100,7 @@ async function addMove(gameId : string, initialPos: number, newPos : number, tim
 	})
 }
 
-async function newGame(whitePlayerId : string, blackPlayerId : string)
+export async function newGame(whitePlayerId : string, blackPlayerId : string)
 {
 	if (whitePlayerId === blackPlayerId)
 		throw new Error("You can't play against yourself !");
