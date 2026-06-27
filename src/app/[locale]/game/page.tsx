@@ -15,6 +15,7 @@ const gamePage = () => {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "20px" }}>
             <h1 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Jeu de Dames</h1>
             <p id="game-info" style={{ margin: "10px 0", fontWeight: "bold" }}>Connexion…</p>
+            <div id="game-timer" style={{ fontSize: "1.4rem", fontWeight: "bold", marginBottom: "8px", color: "#bbb" }}>—</div>
             <div id="game-error" style={{ minHeight: "24px", margin: "4px 0 12px", padding: "6px 14px", background: "#b91c1c", color: "white", borderRadius: "6px", fontWeight: "bold", opacity: 0, transition: "opacity 0.3s" }}></div>
             <div style={{ position: "relative" }}>
                 <div id="board"></div>

@@ -17,6 +17,7 @@ const gamePage = () => {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "20px", position: "relative" }}>
             <h1 className="text-center" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Jeu de Dames</h1>
             <p id="game-info" style={{ margin: "10px 0", fontWeight: "bold" }}>Connexion…</p>
+            <div id="game-timer" style={{ fontSize: "1.4rem", fontWeight: "bold", marginBottom: "8px", color: "#bbb" }}>—</div>
             <div
                 id="game-error"
                 style={{

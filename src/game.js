@@ -28,18 +28,46 @@ function showError(msg) {
   errorTimer = setTimeout(() => { box.style.opacity = "0"; }, 3000);
 }
 
-function showGameOver(winner) {
+// affiche le compte à rebours du tour
+function updateTimer(timeLeft, turn) {
+  const el = document.getElementById("game-timer");
+  if (!el) return;
+  const myTurn = turn === myColor;
+  el.textContent = `${timeLeft}s`;
+  // rouge si c'est mon tour et qu'il reste peu de temps
+  if (myTurn && timeLeft <= 5) el.style.color = "#dc2626";
+  else if (myTurn) el.style.color = "#7CFC00";
+  else el.style.color = "#bbb";
+}
+
+function showGameOver(winner, reason) {
   gameEnded = true;
   const overlay = document.getElementById("game-over");
   if (!overlay) return;
-  const winnerFr = winner === "black" ? "Noirs" : "Blancs";
-  const iWon = winner === myColor;
 
   const title = document.getElementById("game-over-title");
   const sub = document.getElementById("game-over-sub");
-  title.textContent = iWon ? "Victoire !" : "Défaite";
-  title.style.color = iWon ? "#16a34a" : "#dc2626";
-  sub.textContent = `Les ${winnerFr} gagnent la partie.`;
+
+  if (winner === null) {
+    // partie nulle
+    title.textContent = "Match nul";
+    title.style.color = "#d97706";
+    sub.textContent = reason === "draw-material"
+      ? "Aucun camp ne peut gagner (dame contre dame)."
+      : "Trop de tours sans prise.";
+  } else {
+    const winnerFr = winner === "black" ? "Noirs" : "Blancs";
+    const iWon = winner === myColor;
+    title.textContent = iWon ? "Victoire !" : "Défaite";
+    title.style.color = iWon ? "#16a34a" : "#dc2626";
+    if (reason === "timeout") {
+      sub.textContent = iWon
+        ? `Les ${winnerFr} gagnent : l'adversaire n'a pas joué à temps.`
+        : `Défaite : temps écoulé, tu n'as pas joué à temps.`;
+    } else {
+      sub.textContent = `Les ${winnerFr} gagnent la partie.`;
+    }
+  }
 
   overlay.style.display = "flex";
 }
@@ -84,7 +112,8 @@ export function initGame(socket) {
   });
   socket.on("error", (data) => showError(data.message));
   socket.on("full", (data) => showError(data.message));
-  socket.on("gameover", (data) => showGameOver(data.winner));
+  socket.on("gameover", (data) => showGameOver(data.winner, data.reason));
+  socket.on("timer", (data) => updateTimer(data.timeLeft, data.turn));
 }
 
 // Anime une rafle saut par saut.
