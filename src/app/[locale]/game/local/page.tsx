@@ -1,26 +1,40 @@
 'use client';
 
-import { useEffect, useState, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import { useState, useEffect } from 'react';
+import {
+  makeFreshBoard,
+  legalMoves,
+  applyMove,
+  isDrawByMaterial,
+  findMove,
+  enemyColor,
+} from "@/src/lib/checkers.js";
 
-type Cell = number;
 type Pos = { row: number; col: number };
 
-export default function OnlineGamePage() {
-  const [board, setBoard] = useState<Cell[][]>([]);
+export default function LocalGamePage() {
+  const [board, setBoard] = useState<number[][]>(() => makeFreshBoard());
   const [selected, setSelected] = useState<Pos | null>(null);
-  const [myColor, setMyColor] = useState<"black" | "white" | null>(null);
-  const [turn, setTurn] = useState<"black" | "white" | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [turn, setTurn] = useState<"white" | "black">("white"); // blancs commencent
+  const [over, setOver] = useState<{ winner: string | null; reason: string } | null>(null);
   const [eatenByBlack, setEatenByBlack] = useState(0);
   const [eatenByWhite, setEatenByWhite] = useState(0);
+  const [seconds, setSeconds] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
-  const [over, setOver] = useState<{ winner: string | null; reason: string } | null>(null);
 
-  const socketRef = useRef<Socket | null>(null);
-  const errorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // chrono qui monte
+  useEffect(() => {
+    if (over) return;
+    const id = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [over]);
 
-  function countPieces(b: Cell[][]) {
+  function showError(msg: string) {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(""), 2500);
+  }
+
+  function countPieces(b: number[][]) {
     let black = 0, white = 0;
     for (const row of b) for (const v of row) {
       if (v === 1 || v === 3) black++;
@@ -29,63 +43,61 @@ export default function OnlineGamePage() {
     return { black, white };
   }
 
-  useEffect(() => {
-    const socket = io({ forceNew: true, transports: ["websocket"] });
-    socketRef.current = socket;
-
-    socket.on("init", (data) => {
-      setMyColor(data.color);
-      setBoard(data.board);
-      setTurn(data.turn);
-      setOver(null);
-      setEatenByBlack(0);
-      setEatenByWhite(0);
-    });
-
-    socket.on("state", (data) => {
-      const { black, white } = countPieces(data.board);
-      setEatenByWhite(12 - black);
-      setEatenByBlack(12 - white);
-      setBoard(data.board);
-      setTurn(data.turn);
-      setSelected(null);
-    });
-
-    socket.on("timer", (data) => setTimeLeft(data.timeLeft));
-    socket.on("gameover", (data) => setOver({ winner: data.winner, reason: data.reason }));
-    socket.on("error", (data) => showError(data.message));
-    socket.on("full", (data) => showError(data.message));
-
-    return () => { socket.disconnect(); };
-  }, []);
-
-  function showError(msg: string) {
-    setErrorMsg(msg);
-    if (errorTimer.current) clearTimeout(errorTimer.current);
-    errorTimer.current = setTimeout(() => setErrorMsg(""), 3000);
-  }
-
   function handleClick(row: number, col: number) {
-    if (over || turn !== myColor) return;
+    if (over) return;
     const v = board[row][col];
-    const mine = (myColor === "black" && (v === 1 || v === 3)) ||
-                 (myColor === "white" && (v === 2 || v === 4));
+    const mine = (turn === "black" && (v === 1 || v === 3)) ||
+                 (turn === "white" && (v === 2 || v === 4));
+
     if (selected === null) {
       if (mine) setSelected({ row, col });
-    } else if (mine) {
-      setSelected({ row, col });
-    } else {
-      socketRef.current?.emit("move", { from: selected, to: { row, col } });
+      return;
+    }
+    if (mine) { setSelected({ row, col }); return; } // changer de sélection
+
+    // tenter le coup via le moteur partagé
+    const move = findMove(board, turn, selected, { row, col });
+    if (!move) {
+      const lm = legalMoves(board, turn);
+      showError(lm.type === "capture"
+        ? "Prise obligatoire : prends le maximum de pions"
+        : "Coup invalide");
+      return;
+    }
+
+    // appliquer sur une copie
+    const nb = board.map(r => r.slice());
+    applyMove(nb, move, move.type);
+
+    // compteur de pièces mangées
+    const { black, white } = countPieces(nb);
+    setEatenByWhite(12 - black);
+    setEatenByBlack(12 - white);
+
+    const nextTurn = enemyColor(turn) as "white" | "black";
+    setBoard(nb);
+    setSelected(null);
+    setTurn(nextTurn);
+
+    // conditions de fin
+    const nextMoves = legalMoves(nb, nextTurn);
+    if (nextMoves.moves.length === 0) {
+      setOver({ winner: turn, reason: "blocked" });
+    } else if (isDrawByMaterial(nb)) {
+      setOver({ winner: null, reason: "draw-material" });
     }
   }
 
-  function requestRestart() {
-    socketRef.current?.emit("restart");
+  function resetGame() {
+    setBoard(makeFreshBoard());
+    setSelected(null);
+    setTurn("white");
     setOver(null);
+    setSeconds(0);
+    setEatenByBlack(0);
+    setEatenByWhite(0);
   }
 
-  const myTurn = turn === myColor;
-  const colorFr = myColor === "black" ? "Noir" : "Blanc";
   const turnFr = turn === "black" ? "Noir" : "Blanc";
 
   return (
@@ -100,10 +112,7 @@ export default function OnlineGamePage() {
           Tour : <span className={turn === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{turnFr}</span>
         </div>
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
-          Temps : <span className={`font-mono font-bold ${myTurn && timeLeft !== null && timeLeft <= 5 ? "text-red-500" : "text-yellow-500"}`}>{timeLeft !== null ? `${timeLeft}s` : "—"}</span>
-        </div>
-        <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
-          Tu joues : <span className={myColor === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{myColor ? colorFr : "…"}</span>
+          ⏱️ Temps : <span className="font-mono font-bold text-yellow-500">{Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
         </div>
       </div>
 
@@ -146,15 +155,15 @@ export default function OnlineGamePage() {
 
         {over && (
           <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center rounded-2xl gap-4 z-20">
-            <h2 className="text-4xl font-extrabold" style={{ color: over.winner === null ? "#d97706" : (over.winner === myColor ? "#16a34a" : "#dc2626") }}>
-              {over.winner === null ? "Match nul" : (over.winner === myColor ? "Victoire !" : "Défaite")}
+            <h2 className="text-4xl font-extrabold" style={{ color: over.winner === null ? "#d97706" : (over.winner === "black" ? "#f59e0b" : "#38bdf8") }}>
+              {over.winner === null ? "Match nul" : `${over.winner === "black" ? "Noir" : "Blanc"} gagne !`}
             </h2>
             <p className="text-white text-lg">
               {over.winner === null
-                ? (over.reason === "draw-material" ? "Dame contre dame." : "Trop de tours sans prise.")
-                : (over.reason === "timeout" ? "Temps écoulé." : `Les ${over.winner === "black" ? "Noirs" : "Blancs"} gagnent.`)}
+                ? (over.reason === "draw-material" ? "Dame contre dame." : "Partie nulle.")
+                : "Plus aucun coup possible pour l'adversaire."}
             </p>
-            <button onClick={requestRestart} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">Rejouer</button>
+            <button onClick={resetGame} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">Rejouer</button>
           </div>
         )}
       </div>

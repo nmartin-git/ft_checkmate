@@ -4,6 +4,7 @@ import { HiOutlineHome } from "react-icons/hi";
 import TopbarItem from "@/src/components/ui/TopbarItem";
 import Button from "@/src/components/ui/Button";
 import useLoginModal from "@/src/hooks/useLoginModal";
+import usePlayModal from "@/src/hooks/usePlayModal";
 import { useCallback } from "react";
 import Notif from "@/src/components/ui/Notif";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
@@ -14,6 +15,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 const Topbar = () => {
     const loginModal = useLoginModal();
+    const playModal = usePlayModal();
     const currentUser = useCurrentUser();
     const router = useRouter();
     const pathname = usePathname(); 
@@ -121,7 +123,7 @@ const Topbar = () => {
                     )}
 
                     <button
-                        onClick={() => router.push(`/${locale}/game`)}
+                        onClick={() => playModal.onOpen()}
                         className="px-6 py-2.5 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-xl font-black tracking-wider rounded-md border-b-[4px] border-[#537631] active:border-b-0 active:mt-[4px] transition-all uppercase">
                         {t('nav.play')}
                     </button>
