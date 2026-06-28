@@ -62,7 +62,7 @@ const NotifModal = () => {
     };
 
     const bodyContent = (
-        <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-3 max-h-100 overflow-y-auto pr-1">
             {isLoading && (
                 <p className="text-sm text-gray-500 text-center py-4 animate-pulse">
                     Chargement des notifications...

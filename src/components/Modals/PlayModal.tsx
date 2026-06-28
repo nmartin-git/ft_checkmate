@@ -48,7 +48,7 @@ export default function PlayModal() {
                         : "border-[#2b2925] bg-[#211f1b] hover:border-[#45423f] hover:bg-[#262522]"
                 }`}
             >
-                <div className="absolute right-4 bottom-[-10px] text-7xl opacity-5 pointer-events-none select-none">⚡</div>
+                <div className="absolute right-4 -bottom-2.5 text-7xl opacity-5 pointer-events-none select-none">⚡</div>
                 <div className={`flex items-center justify-center w-14 h-14 rounded-md text-3xl transition-transform duration-200 group-hover:scale-110 ${
                     selectedMode === "online" ? "bg-[#81b64c]/20" : "bg-[#2b2925]"
                 }`}>
@@ -73,7 +73,7 @@ export default function PlayModal() {
                         : "border-[#2b2925] bg-[#211f1b] hover:border-[#45423f] hover:bg-[#262522]"
                 }`}
             >
-                <div className="absolute right-4 bottom-[-10px] text-7xl opacity-5 pointer-events-none select-none">🤝</div>
+                <div className="absolute right-4 -bottom-2.5 text-7xl opacity-5 pointer-events-none select-none">🤝</div>
                 <div className={`flex items-center justify-center w-14 h-14 rounded-md text-3xl transition-transform duration-200 group-hover:scale-110 ${
                     selectedMode === "local" ? "bg-[#33b4e5]/20" : "bg-[#2b2925]"
                 }`}>

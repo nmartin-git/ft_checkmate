@@ -82,7 +82,7 @@ const Topbar = () => {
 
                 <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
                     {currentUser.user
-                        ? <span className="text-sm text-gray-300 cursor-pointer font-bold max-w-[120px] truncate hover:text-gray-200 text-xl"
+                        ? <span className="text-sm text-gray-300 cursor-pointer font-bold max-w-30 truncate hover:text-gray-200 text-xl"
                             onClick={() => router.push(`/${locale}/profile/`)}>
                             {currentUser.user?.username}
                         </span>
@@ -127,7 +127,7 @@ const Topbar = () => {
 
                     <button
                         onClick={() => playModal.onOpen()}
-                        className="px-6 py-2.5 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-xl font-black tracking-wider rounded-md border-b-[4px] border-[#537631] active:border-b-0 active:mt-[4px] transition-all uppercase">
+                        className="px-6 py-2.5 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-xl font-black tracking-wider rounded-md border-b-4 border-[#537631] active:border-b-0 active:mt-[4px] transition-all uppercase">
                         {t('nav.play')}
                     </button>
                 </div>
