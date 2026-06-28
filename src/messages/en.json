@@ -16,7 +16,7 @@
     "subtitle": "Start a wild game of Checkers against your friends!",
     "play": "Play ➔"
   },
-    "auth": {
+  "auth": {
     "login_title": "Login",
     "sign_in": "Sign in",
     "email": "Email",
@@ -31,5 +31,27 @@
     "recovery_code": "Recovery code",
     "problem_recovery": "Have a problem with recovery codes?",
     "auth_code": "Authentication code (2FA)"
+  },
+  "profile": {
+    "player": "Player",
+    "parameters": "Parameters",
+    "matchs_title": "📜 Match history",
+    "no_matchs": "No matches played yet",
+    "elo_title": "🏆 Elo & history",
+    "friends_title": "👥 Friend(s)",
+    "no_friends": "You don't have friends yet."
+  },
+  "parameters": {
+    "loading": "Loading settings...",
+    "birthdate": "Date of birth",
+    "choose_date": "Pick a date",
+    "enable_chat": "Enable chat",
+    "enable_2fa": "Enable two factor authentication (2FA)",
+    "saving": "Saving...",
+    "save": "Save parameters",
+    "saved": "Parameters saved!"
+  },
+  "notif": {
+    "title": "Notifications"
   }
 }

@@ -23,6 +23,7 @@ export default function PlayModal() {
         if (selectedMode === "online") {
 			if (user)
             	router.push(`/${locale}/game/online/matchmaking`);
+            	// router.push(`/${locale}/game`);
 			else
 			{
 				router.push(`/${locale}/`);

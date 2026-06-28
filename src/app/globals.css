@@ -238,3 +238,103 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+/* ─── Plateau de jeu de dames ─────────────────────────── */
+#board {
+    display: inline-block;
+    border: 3px solid rgb(0, 0, 0);
+    margin: 20px auto;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+}
+
+.dark {
+    background-color: #769656;
+}
+
+.light {
+    background-color: #eeeed2;
+}
+
+.piece {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: auto;
+    margin-top: 5px;
+}
+
+.black {
+    background-color: #1a1a1a;
+    border: 3px solid #555;
+}
+
+.white {
+    background-color: #f0f0f0;
+    border: 3px solid #aaa;
+}
+
+.selected {
+    background-color: yellow;
+}
+/* ─── Plateau de jeu de dames ─────────────────────────── */
+#board {
+    display: inline-block;
+    border: 3px solid #000;
+    margin: 20px;
+}
+.row {
+    display: flex;
+}
+.cell {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cell-dark {
+    background-color: #769656;
+}
+.cell-light {
+    background-color: #eeeed2;
+}
+.piece {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+.piece.black {
+    background-color: #1a1a1a;
+    border: 3px solid #555;
+}
+.piece.white {
+    background-color: #f0f0f0;
+    border: 3px solid #aaa;
+}
+.cell.selected {
+    background-color: yellow;
+}
+
+/* dame : couronne dorée au centre du pion */
+.piece.king {
+    box-shadow: 0 0 0 3px gold inset;
+    position: relative;
+}
+.piece.king::after {
+    content: "♛";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: gold;
+    font-size: 22px;
+}

@@ -31,5 +31,27 @@
     "recovery_code": "Code de récupération",
     "problem_recovery": "Problème avec les codes de récupération ?",
     "auth_code": "Code d'authentification (2FA)"
+  },
+  "profile": {
+    "player": "Joueur",
+    "parameters": "Paramètres",
+    "matchs_title": "📜 Historique des matchs",
+    "no_matchs": "Aucun match joué pour l'instant",
+    "elo_title": "🏆 Elo & historique",
+    "friends_title": "👥 Ami(s)",
+    "no_friends": "Vous n'avez pas encore d'amis."
+  },
+  "parameters": {
+    "loading": "Chargement des paramètres...",
+    "birthdate": "Date de naissance",
+    "choose_date": "Choisir une date",
+    "enable_chat": "Activer le chat",
+    "enable_2fa": "Activer la double authentification (2FA)",
+    "saving": "Sauvegarde...",
+    "save": "Sauvegarder les paramètres",
+    "saved": "Paramètres enregistrés !"
+  },
+  "notif": {
+    "title": "Notifications"
   }
 }
