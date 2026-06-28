@@ -98,7 +98,7 @@ export default function PlayModal() {
             onSubmit={handleGameLaunch}
             title="Mode de jeu"
             body={modalBody}
-            actionLabel={selectedMode === "online" ? "Rejoindre la file d'attente" : "Lancer le match local"}
+            actionLabel={selectedMode === "online" ? "Affronter des amis" : "Lancer le match local"}
             disabled={false}
         />
     );

@@ -5,7 +5,7 @@ import { PUBLIC_USER_SELECT } from "./select"
 export async function sendFriendRequest(userId: string, friendId: string): Promise<void> {
     if (userId === friendId) return
 
-    const existing = await prisma.follow.findFirst({
+    const existing = await prisma.friends.findFirst({
         where: {
             OR: [
                 { user_id: userId, friend_id: friendId },
@@ -17,7 +17,7 @@ export async function sendFriendRequest(userId: string, friendId: string): Promi
     
     if (existing) return
 
-    await prisma.follow.create({
+    await prisma.friends.create({
         data: {
             user_id: userId,
             friend_id: friendId,
@@ -27,7 +27,7 @@ export async function sendFriendRequest(userId: string, friendId: string): Promi
 }
 
 export async function acceptFriendRequest(userId: string, requesterId: string): Promise<void> {
-    const request = await prisma.follow.findFirst({
+    const request = await prisma.friends.findFirst({
         where: {
             user_id: requesterId,
             friend_id: userId,
@@ -38,14 +38,14 @@ export async function acceptFriendRequest(userId: string, requesterId: string): 
 
     if (!request) throw new Error("Friend request not found")
 
-    await prisma.follow.update({
+    await prisma.friends.update({
         where: { id: request.id },
         data: { status: follow_status.ACCEPTED },
     })
 }
 
 export async function refuseFriendRequest(userId: string, requesterId: string): Promise<void> {
-    const request = await prisma.follow.findFirst({
+    const request = await prisma.friends.findFirst({
         where: {
             user_id: requesterId,
             friend_id: userId,
@@ -56,25 +56,39 @@ export async function refuseFriendRequest(userId: string, requesterId: string): 
 
     if (!request) return
 
-    await prisma.follow.delete({
+    await prisma.friends.delete({
         where: { id: request.id },
     })
 }
 
 export async function findRequest(userId: string, friendId: string): Promise<boolean>
 {
-    const existingRequest = await prisma.follow.findFirst({
+    const existingRequest = await prisma.friends.findFirst({
         where: {
             user_id: userId,
             friend_id: friendId,
-            status: "PENDING"
+            status: follow_status.PENDING
         }
     });
     return (Boolean(existingRequest));
 }
 
+export async function isFriends(userId: string, friendId: string): Promise<boolean>
+{
+    const friendship = await prisma.friends.findFirst({
+        where: {
+            status: follow_status.ACCEPTED,
+            OR: [
+                { user_id: userId, friend_id: friendId },
+                { user_id: friendId, friend_id: userId },
+            ]
+        }
+    });
+    return (Boolean(friendship));
+}
+
 export async function cancelFriendRequest(userId: string, friendId: string): Promise<void> {
-    const request = await prisma.follow.findFirst({
+    const request = await prisma.friends.findFirst({
         where: {
             user_id: userId,
             friend_id: friendId,
@@ -85,13 +99,13 @@ export async function cancelFriendRequest(userId: string, friendId: string): Pro
 
     if (!request) return
 
-    await prisma.follow.delete({
+    await prisma.friends.delete({
         where: { id: request.id },
     })
 }
 
 export async function removeFriend(userId: string, friendId: string): Promise<void> {
-    const friendship = await prisma.follow.findFirst({
+    const friendship = await prisma.friends.findFirst({
         where: {
             status: follow_status.ACCEPTED,
             OR: [
@@ -104,13 +118,13 @@ export async function removeFriend(userId: string, friendId: string): Promise<vo
 
     if (!friendship) return
 
-    await prisma.follow.delete({
+    await prisma.friends.delete({
         where: { id: friendship.id },
     })
 }
 
 export async function listFriends(userId: string) {
-    const rows = await prisma.follow.findMany({
+    const rows = await prisma.friends.findMany({
         where: {
             status: follow_status.ACCEPTED,
             OR: [{ user_id: userId }, { friend_id: userId }],
@@ -126,7 +140,7 @@ export async function listFriends(userId: string) {
 
 export async function getFriendsCount(userId: string) : Promise<number>
 {
-    const friendsCount = await prisma.follow.count({
+    const friendsCount = await prisma.friends.count({
         where: {
             OR: [{ user_id: userId }, { friend_id: userId }],
             status: follow_status.ACCEPTED
@@ -137,7 +151,7 @@ export async function getFriendsCount(userId: string) : Promise<number>
 
 export async function getFriendsList(userId: string)
 {
-    const rows = await prisma.follow.findMany({
+    const rows = await prisma.friends.findMany({
         where: {
             status: follow_status.ACCEPTED,
             OR: [
@@ -165,7 +179,7 @@ export async function getFriendsList(userId: string)
 }
 
 export async function listPendingReceived(userId: string) {
-    return prisma.follow.findMany({
+    return prisma.friends.findMany({
         where: { friend_id: userId, status: follow_status.PENDING },
         select: { user: { select: PUBLIC_USER_SELECT } },
     }).then(rows => rows.map(r => r.user))
