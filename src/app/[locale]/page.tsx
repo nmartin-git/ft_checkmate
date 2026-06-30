@@ -1,23 +1,17 @@
 'use client'
-import Image from "next/image";
-import DamesImg from "@/public/board.png";
-import { useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import useLoginModal from "@/src/hooks/useLoginModal";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import usePlayModal from "@/src/hooks/usePlayModal";
 
-export default function Home() {
-    const searchParams = useSearchParams();
-    const loginModal = useLoginModal();
-    const playModal = usePlayModal();
-    const router = useRouter();
-    const t = useTranslations(); 
-    const locale = useLocale(); 
-
 export default function HomePage() {
+  const searchParams = useSearchParams();
+  const loginModal = useLoginModal();
   const playModal = usePlayModal();
+  const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale();
 
   const decoBoard = Array(8).fill(null).map((_, row) =>
     Array(8).fill(null).map((_, col) => {
@@ -42,13 +36,12 @@ export default function HomePage() {
           })
         )}
       </div>
-
       <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 max-w-md w-full">
         <h1 className="text-4xl font-black text-white mb-3 tracking-wide">Jouer aux Dames</h1>
         <p className="text-slate-400 mb-8 text-lg">Lancez une partie de Dames endiablee contre vos amis !</p>
         <button
           onClick={() => playModal.onOpen()}
-          className="w-full px-6 py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-2xl font-black tracking-wider rounded-md border-b-[4px] border-[#537631] active:border-b-0 active:mt-[4px] transition-all uppercase"
+          className="w-full px-6 py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-2xl font-black tracking-wider rounded-md border-b-[4px] border-[#537631] active:border-b-0 active:mt-1 transition-all uppercase"
         >
           Jouer
         </button>

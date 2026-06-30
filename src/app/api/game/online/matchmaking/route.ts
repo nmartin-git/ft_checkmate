@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/src/lib/prisma";
 import { follow_status } from "@prisma/client";
-import { openGameRequest, closeGameRequest, isGameRequested, isGameRequestedBis, isActiveRequest, newGame } from "@/src/lib/game";
+import { openGameRequest, closeGameRequest, isGameRequested, isGameRequestedBis, isActiveRequest, newGame, AcceptGameRequest } from "@/src/lib/game";
 
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || 'secret-a-changer'
@@ -54,12 +54,12 @@ export async function POST(request: Request) {
         const inboundChallenge = await isGameRequestedBis(friendId, payload.id);
 
         if (inboundChallenge) {
-			await closeGameRequest(payload.id, friendId);
-            // TODO lancer la game
-			// faire fonction random joueur blanc/noir
-			// await newGame(payload.id, friendId);
-			// await newGame(payload.id, friendId);
-            return NextResponse.json({ status: "LAUNCHED"/*, gameId: game.id */});
+			await AcceptGameRequest(payload.id, friendId);
+            // TODO lancer lagame
+            const [whitePlayer, blackPlayer] = Math.random() < 0.5 
+                ? [payload.id, friendId] : [friendId,payload.id];
+            const game = await newGame(whitePlayer, blackPlayer);
+            return NextResponse.json({ status: "LAUNCHED", gameID : game.id});
         }
         await openGameRequest(payload.id, friendId);
         return NextResponse.json({ status: "PENDING" });

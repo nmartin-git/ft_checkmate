@@ -8,7 +8,6 @@ import PlayModal from "@/src/components/Modals/PlayModal";
 import LoginModal from "@/src/components/Modals/LoginModal";
 import RegisterModal from "@/src/components/Modals/RegisterModal";
 import NotifModal from "@/src/components/Modals/NotifModal";
-import PlayModal from "@/src/components/Modals/PlayModal";
 import AuthProvider from "@/src/components/AuthProvider";
 
 const geistSans = Geist({

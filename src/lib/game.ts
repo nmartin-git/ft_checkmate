@@ -31,6 +31,22 @@ export async function closeGameRequest(userId: string, friendId: string): Promis
     	    status: follow_status.GAME_REQUESTED
     	},
     	data: {
+    	    status: follow_status.PENDING
+    	}
+	})
+}
+
+export async function AcceptGameRequest(userId: string, friendId: string): Promise<void>
+{
+	await prisma.friends.updateMany({
+    	where: {
+    	    OR: [
+    	        { user_id: userId, friend_id: friendId },
+    	        { user_id: friendId, friend_id: userId }
+    	    ],
+    	    status: follow_status.GAME_REQUESTED
+    	},
+    	data: {
     	    status: follow_status.ACCEPTED
     	}
 	})
@@ -115,6 +131,11 @@ export async function listPendingGameReceived(userId: string)
 	return (rows.map((r) => (r.user)));
 }
 
+export function pickColor(player1 : string, player2: string)
+{
+	const res = [white]
+}
+
 export async function newGame(whitePlayerId : string, blackPlayerId : string)
 {
 	if (whitePlayerId === blackPlayerId)
@@ -135,7 +156,7 @@ export async function newGame(whitePlayerId : string, blackPlayerId : string)
 			elo: true
 		}
 	})
-	await prisma.game.create({
+	const game = await prisma.game.create({
 		data: {
 			white_player_id: whitePlayerId,
 			black_player_id: blackPlayerId,
@@ -143,6 +164,7 @@ export async function newGame(whitePlayerId : string, blackPlayerId : string)
 			black_player_elo: blackPlayer.elo
 		},
 	})
+	return game;
 }
 
 function eloMultiplier(whiteElo : number, blackElo : number)
