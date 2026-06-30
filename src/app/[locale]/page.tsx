@@ -41,7 +41,7 @@ export default function HomePage() {
         <p className="text-slate-400 mb-8 text-lg">Lancez une partie de Dames endiablee contre vos amis !</p>
         <button
           onClick={() => playModal.onOpen()}
-          className="w-full px-6 py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-2xl font-black tracking-wider rounded-md border-b-[4px] border-[#537631] active:border-b-0 active:mt-1 transition-all uppercase"
+          className="w-full px-6 py-4 bg-[#81b64c] hover:bg-[#95ca5f] text-white text-2xl font-black tracking-wider rounded-md border-b-4 border-[#537631] active:border-b-0 active:mt-1 transition-all uppercase"
         >
           Jouer
         </button>

@@ -19,6 +19,7 @@ const LoginModal = () => {
     const [isLoading, setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
     const t = useTranslations('auth');
+    const [errorMessage, setErrorMessage] = useState('');
 
     let bodyContent;
     let footerContent;
@@ -43,6 +44,7 @@ const LoginModal = () => {
 
     const onSubmitStep1 = useCallback(async () => {
         try {
+            setErrorMessage('');
             setIsLoading(true);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -60,7 +62,7 @@ const LoginModal = () => {
             alert('Utilisateur log avec succes!');
             handleClose();
         } catch (error: any) {
-            console.log(error.message);
+            setErrorMessage(error);
         } finally {
             setIsLoading(false);
         }
@@ -68,6 +70,7 @@ const LoginModal = () => {
 
     const onSubmitStep2 = useCallback(async () => {
         try {
+            setErrorMessage('');
             setIsLoading(true);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -80,7 +83,7 @@ const LoginModal = () => {
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
             handleClose();
         } catch (error: any) {
-            console.log(error.message);
+            setErrorMessage(error);
         } finally {
             setIsLoading(false);
         }
@@ -88,6 +91,7 @@ const LoginModal = () => {
 
     const onSubmitStep3 = useCallback(async () => {
         try {
+            setErrorMessage('');
             setIsLoading(true);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -100,7 +104,7 @@ const LoginModal = () => {
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
             handleClose();
         } catch (error: any) {
-            console.log(error.message);
+            setErrorMessage(error);
         } finally {
             setIsLoading(false);
         }
@@ -108,9 +112,14 @@ const LoginModal = () => {
 
     let currentOnSubmit = onSubmitStep1;
 
+    const errortext = errorMessage ?(<p className="text-sm text-red-500 font-medium text-center bg-red-500/10 rounded-md py-2 px-3">
+        {errorMessage}
+    </p>) : null;
+
     if (step === 1) {
         bodyContent = (
             <div className="flex flex-col gap-4">
+                {errortext}
                 <Input
                     placeholder={t('email')}
                     onChange={(e) => setEmail(e.target.value)}
@@ -128,9 +137,9 @@ const LoginModal = () => {
         footerContent = (
             <div className="flex flex-col py-2">
                 <div className="relative flex py-2 items-center w-full">
-                    <div className="flex-grow border-t border-gray-300"></div>
-                    <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('or')}</span>
-                    <div className="flex-grow border-t border-gray-300"></div>
+                    <div className="grow border-t border-gray-300"></div>
+                    <span className="shrink mx-4 text-gray-400 text-sm">{t('or')}</span>
+                    <div className="grow border-t border-gray-300"></div>
                 </div>
                 <div className="w-full">
                     <button className="gsi-material-button w-full" onClick={() => redirectAuthGoogle()}>
@@ -162,6 +171,7 @@ const LoginModal = () => {
         currentOnSubmit = onSubmitStep2;
         bodyContent = (
             <div className="flex flex-col gap-4">
+                {errortext}
                 <Input
                     placeholder={t('code')}
                     onChange={(e) => setCode(e.target.value)}
@@ -182,6 +192,7 @@ const LoginModal = () => {
         currentOnSubmit = onSubmitStep3;
         bodyContent = (
             <div className="flex flex-col gap-4">
+                {errortext}
                 <Input
                     placeholder={t('recovery_code')}
                     onChange={(e) => setRecoveryCode(e.target.value)}

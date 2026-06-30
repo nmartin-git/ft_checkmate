@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
         if (inboundChallenge) {
 			await AcceptGameRequest(payload.id, friendId);
-            // TODO lancer lagame
+            // FAIT JE CROIS TODO lancer lagame
             const [whitePlayer, blackPlayer] = Math.random() < 0.5 
                 ? [payload.id, friendId] : [friendId,payload.id];
             const game = await newGame(whitePlayer, blackPlayer);
