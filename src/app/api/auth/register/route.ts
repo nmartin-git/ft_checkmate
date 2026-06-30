@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
     // Validation
     if (!username || !email || !password) {
       return NextResponse.json(
-        { error: 'Tous les champs sont obligatoires' },
+        { error: 'All fields are required.' },
         { status: 400 }
       );
     }
     const userId = await inscriptionClassic(email, username, password)
     if (!userId) {
       return NextResponse.json(
-        { error: 'Cet email ou nom d\'utilisateur existe déjà' },
+        { error: 'This email or username already exists' },
         { status: 409 }
       );
     }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Erreur:', error);
     return NextResponse.json(
-      { error: 'Erreur serveur' },
+      { error: 'Server error' },
       { status: 500 }
     );
   }

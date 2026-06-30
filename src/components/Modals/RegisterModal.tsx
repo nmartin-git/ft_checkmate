@@ -7,6 +7,7 @@ import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import { redirectAuthGoogle } from "@/src/lib/google";
+import { error } from "node:console";
 
 
 const RegisterModal= () => {
@@ -17,10 +18,12 @@ const RegisterModal= () => {
     const [password,setPassword] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
+    const [errorMessage, setErrorMessage] = useState('');
 
     const onSubmit =useCallback(async () =>{
         try{
             setIsLoading(true);
+            setErrorMessage('');
             const response = await fetch('/api/auth/register',{
                 method : 'POST',
                 headers : {
@@ -32,13 +35,13 @@ const RegisterModal= () => {
                     password
                 })
             });
-            if (!response.ok){
-                const text = await response.text();
-                console.log("Registor error;", text);
-                return;
-            }
-            console.log("on arrive ici on submite bien")
             const data = await response.json();
+            if (!response.ok){
+                // const text = await response.text();
+                // console.log("Registor error;", text);
+                // return;
+                throw new Error(data.error);
+            }
             currentUser.setUser({
                 id : data.user.id,
                 username : data.user.username,
@@ -46,10 +49,10 @@ const RegisterModal= () => {
             })
             alert('user creer avec succes');
             RegisterModal.onClose();
-        } catch (error)
+        } catch (error : any)
         {
 			//MESSAGE DERREUR
-            console.log(error);
+            setErrorMessage(error.error);
         } finally {
             setIsLoading(false);
         }
@@ -61,9 +64,12 @@ const RegisterModal= () => {
          RegisterModal.onClose();
          LoginModal.onOpen();
      },[RegisterModal, LoginModal, isLoading]);
-
+    const errorText = errorMessage ? (<p className="text-sm text-red-500 font-medium text-center bg-red-500/10 rounded-md py-2 px-3">
+        {errorMessage}
+    </p>) : null;
     const bodyContent = (
         <div className="flex flex-col gap-4">
+            {errorText}
              <Input
             placeholder="Username"
             onChange={(e)=>setUsername(e.target.value)}
