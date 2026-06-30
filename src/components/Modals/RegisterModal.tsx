@@ -7,7 +7,6 @@ import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import { redirectAuthGoogle } from "@/src/lib/google";
-import { error } from "node:console";
 
 
 const RegisterModal= () => {
@@ -40,7 +39,7 @@ const RegisterModal= () => {
                 // const text = await response.text();
                 // console.log("Registor error;", text);
                 // return;
-                throw new Error(data.error);
+                throw new Error(data.error || 'An error occured');
             }
             currentUser.setUser({
                 id : data.user.id,
@@ -51,16 +50,16 @@ const RegisterModal= () => {
             RegisterModal.onClose();
         } catch (error : any)
         {
-			//MESSAGE DERREUR
-            setErrorMessage(error.error);
+            setErrorMessage(error.message);
         } finally {
             setIsLoading(false);
         }
         
-    }, [RegisterModal, LoginModal, email, username, password]);
+    }, [RegisterModal, email, username, password, currentUser]);
 
      const onToggle = useCallback(()=>{
          if (isLoading)return;
+         setErrorMessage('');
          RegisterModal.onClose();
          LoginModal.onOpen();
      },[RegisterModal, LoginModal, isLoading]);

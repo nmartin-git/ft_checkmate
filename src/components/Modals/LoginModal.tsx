@@ -99,7 +99,7 @@ const LoginModal = () => {
                 body: JSON.stringify({ email, recoveryCode })
             });
             const data = await response.json();
-            if (!response.ok || data.success === false) throw new Error(data.error || 'response pas ok');
+            if (!response.ok || data.success === false) throw new Error(data.error || 'An error occured');
             alert('Utilisateur log avec succes!');
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
             handleClose();
