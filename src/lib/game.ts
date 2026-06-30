@@ -36,6 +36,22 @@ export async function closeGameRequest(userId: string, friendId: string): Promis
 	})
 }
 
+export async function refuseGameRequest(userId: string, friendId: string): Promise<void>
+{
+	await prisma.friends.updateMany({
+    	where: {
+    	    OR: [
+    	        { user_id: userId, friend_id: friendId },
+    	        { user_id: friendId, friend_id: userId }
+    	    ],
+    	    status: follow_status.GAME_REQUESTED
+    	},
+    	data: {
+    	    status: follow_status.REFUSED
+    	}
+	})
+}
+
 export async function AcceptGameRequest(userId: string, friendId: string): Promise<void>
 {
 	await prisma.friends.updateMany({
@@ -131,10 +147,6 @@ export async function listPendingGameReceived(userId: string)
 	return (rows.map((r) => (r.user)));
 }
 
-export function pickColor(player1 : string, player2: string)
-{
-	const res = [white]
-}
 
 export async function newGame(whitePlayerId : string, blackPlayerId : string)
 {

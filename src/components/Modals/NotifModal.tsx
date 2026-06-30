@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import NotifPopup from "@/src/components/ui/NotifPopup";
 import useNotifModal from "@/src/hooks/useNotifModal";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
+import { useRouter } from "next/navigation";
+import { request } from "node:http";
 
 interface PendingUser {
     id: string;
@@ -17,6 +19,7 @@ const NotifModal = () => {
     const [friendPendingRequests, setFriendPendingRequests] = useState<PendingUser[]>([]);
     const [gamePendingRequests, setGamePendingRequests] = useState<PendingUser[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (!notifModal.isOpen) return;
@@ -30,9 +33,9 @@ const NotifModal = () => {
                     setFriendPendingRequests(data);
                 }
                 const gameRes = await fetch("/api/game/online/pending");
-                if (res.ok) {
-                    const data = await res.json();
-                    setGamePendingRequests(data);//TODO tableau recupere, afficher la notif aussi avec un fleche et une croix sois pour accepter sois pour refuser et lancer game en fonction
+                if (gameRes.ok) {
+                    const data = await gameRes.json();
+                    setGamePendingRequests(data);// FAIT TODO tableau recupere, afficher la notif aussi avec un fleche et une croix sois pour accepter sois pour refuser et lancer game en fonction
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des notifications :", error);
@@ -44,22 +47,47 @@ const NotifModal = () => {
         fetchNotifications();
     }, [notifModal.isOpen]);
 
-    const handleAction = async (requesterId: string, action: "accept" | "refuse") => {
+    const handleGamesAction = async (requesterID : string , action : "accept" | "refuse") => {
         try {
-            const res = await fetch("/api/friends/action", {
+            const res = await fetch("/api/game/action", {
+                method : "POST",
+                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ requesterID, action })
+            });
+            if (res.ok){
+                setGamePendingRequests((prev) =>prev.filter((user)=>user.id !== requesterID));
+                if (action === "accept")
+                    {
+                        const data = await res.json();
+                        if (data.status === "LAUNCHED" && data.gameId){
+                            notifModal.onClose();
+                            router.push('/game/${data.gameId}');
+                        }
+                    }
+            }
+        } catch (error) {
+             console.error("Erreur lors du traitement de l'action :", error);
+        }
+
+    }
+
+    const handleFriendsAction = async (requesterId: string, action: "accept" | "refuse") => {
+        try {
+            const res = await fetch("/api/game/action", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ requesterId, action })
             });
 
             if (res.ok) {
-                // Supprime localement la notification de la liste une fois traitée
+                //  FAIT Supprime localement la notification de la liste une fois traitée
                 setFriendPendingRequests((prev) => prev.filter((user) => user.id !== requesterId));
             }
         } catch (error) {
             console.error("Erreur lors du traitement de l'action :", error);
         }
     };
+
 
     const bodyContent = (
         <div className="flex flex-col gap-3 max-h-100 overflow-y-auto pr-1">
@@ -69,7 +97,7 @@ const NotifModal = () => {
                 </p>
             )}
 
-            {!isLoading && friendPendingRequests.length === 0 && (
+            {!isLoading && friendPendingRequests.length === 0 && gamePendingRequests.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-6 font-medium">
                     Aucune nouvelle notification.
                 </p>
@@ -93,14 +121,14 @@ const NotifModal = () => {
                     {/* Boutons d'actions rapides */}
                     <div className="flex items-center gap-2 shrink-0">
                         <button
-                            onClick={() => handleAction(user.id, "accept")}
+                            onClick={() => handleFriendsAction(user.id, "accept")}
                             title="Accepter"
                             className="flex items-center justify-center w-8 h-8 rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#81b64c]/10"
                         >
                             <AiOutlineCheck size={16} />
                         </button>
                         <button
-                            onClick={() => handleAction(user.id, "refuse")}
+                            onClick={() => handleFriendsAction(user.id, "refuse")}
                             title="Refuser"
                             className="flex items-center justify-center w-8 h-8 rounded bg-[#e24c3c] hover:bg-[#ef5343] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#e24c3c]/10"
                         >
@@ -109,6 +137,40 @@ const NotifModal = () => {
                     </div>
                 </div>
             ))}
+                {!isLoading && gamePendingRequests.map((user) => (
+        <div
+            key={user.id}
+            className="flex items-center justify-between p-3.5 bg-[#211f1b] border border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
+        >
+            {/* Infos du joueur qui défie */}
+            <div className="flex flex-col min-w-0">
+                <span className="text-white font-bold tracking-wide text-sm truncate">
+                    {user.username}
+                </span>
+                <span className="text-[11px] text-gray-400 mt-0.5 font-semibold uppercase tracking-wider">
+                    Vous défie en partie
+                </span>
+            </div>
+
+            {/* Accepter (lance la game) / Refuser */}
+            <div className="flex items-center gap-2 shrink-0">
+                <button
+                    onClick={() => handleGamesAction(user.id, "accept")}
+                    title="Accepter le défi"
+                    className="flex items-center justify-center w-8 h-8 rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#81b64c]/10"
+                >
+                    <AiOutlineCheck size={16} />
+                </button>
+                <button
+                    onClick={() => handleGamesAction(user.id, "refuse")}
+                    title="Refuser le défi"
+                    className="flex items-center justify-center w-8 h-8 rounded bg-[#e24c3c] hover:bg-[#ef5343] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#e24c3c]/10"
+                >
+                    <AiOutlineClose size={16} />
+                </button>
+            </div>
+        </div>
+    ))}
         </div>
     );
 
