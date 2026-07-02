@@ -26,7 +26,7 @@ export async function GET(request: NextRequest)
                 code: code,
                 client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
                 client_secret: process.env.GOOGLE_CLIENT_SECRET || "", // CLÉ SECRÈTE (Serveur uniquement)
-                redirect_uri: "http://localhost:3000/api/auth/callback/google",
+                redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`,
                 grant_type: "authorization_code",
             }),
         });

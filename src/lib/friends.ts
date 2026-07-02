@@ -77,7 +77,7 @@ export async function isFriends(userId: string, friendId: string): Promise<boole
 {
     const friendship = await prisma.friends.findFirst({
         where: {
-            status: follow_status.,
+            status: follow_status.ACCEPTED,
             OR: [
                 { user_id: userId, friend_id: friendId },
                 { user_id: friendId, friend_id: userId },
