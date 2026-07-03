@@ -14,6 +14,8 @@ interface PendingUser {
     elo: number;
 }
 
+//TODO REFAIRE LA DA DE NOTIF
+
 const NotifModal = () => {
     const notifModal = useNotifModal();
     const [friendPendingRequests, setFriendPendingRequests] = useState<PendingUser[]>([]);

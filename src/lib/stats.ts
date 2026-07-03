@@ -75,7 +75,7 @@ export async function eloHistoric(userId : string, durationStats : number = 0)
 {
 	const cutoffDate = new Date();
 	if (durationStats === 0)
-		cutoffDate.setTime(Number.MIN_SAFE_INTEGER);
+		cutoffDate.setTime(0);
 	else
 		cutoffDate.setDate(cutoffDate.getDate() - durationStats);
 	const games = await prisma.game.findMany({
