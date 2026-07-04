@@ -62,7 +62,7 @@ const LoginModal = () => {
             alert('Utilisateur log avec succes!');
             handleClose();
         } catch (error: any) {
-            setErrorMessage(error);
+            setErrorMessage(error.message);
         } finally {
             setIsLoading(false);
         }
