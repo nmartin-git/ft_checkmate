@@ -59,7 +59,7 @@ export async function POST(request: Request) {
             const [whitePlayer, blackPlayer] = Math.random() < 0.5 
                 ? [payload.id, friendId] : [friendId,payload.id];
             const game = await newGame(whitePlayer, blackPlayer);
-            return NextResponse.json({ status: "LAUNCHED", gameID : game.id});
+            return NextResponse.json({ status: "LAUNCHED", gameId : game.id});
         }
         await openGameRequest(payload.id, friendId);
         return NextResponse.json({ status: "PENDING" });

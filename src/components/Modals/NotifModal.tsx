@@ -64,7 +64,7 @@ const NotifModal = () => {
                         const data = await res.json();
                         if (data.status === "LAUNCHED" && data.gameId){
                             notifModal.onClose();
-                            router.push(`/${locale}/game/`);
+                            router.push(`/${locale}/game/${data.gameId}`);
                         }
                     }
             }
