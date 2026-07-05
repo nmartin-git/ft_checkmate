@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/src/lib/prisma";
 import { follow_status } from "@prisma/client";
-import { openGameRequest, closeGameRequest, isGameRequested, isGameRequestedBis, isActiveRequest, newGame, AcceptGameRequest } from "@/src/lib/game";
+import { openGameRequest, closeGameRequest, isGameRequested, isGameRequestedBis, isActiveRequest, newGame } from "@/src/lib/game";
 
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || 'secret-a-changer'
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         const inboundChallenge = await isGameRequestedBis(friendId, payload.id);
 
         if (inboundChallenge) {
-			await AcceptGameRequest(payload.id, friendId);
+			await closeGameRequest(payload.id, friendId);
             // FAIT JE CROIS TODO lancer lagame
             const [whitePlayer, blackPlayer] = Math.random() < 0.5 
                 ? [payload.id, friendId] : [friendId,payload.id];

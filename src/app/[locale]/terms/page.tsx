@@ -20,7 +20,6 @@ const TermsPage= () => {
                 <ul className="list-disc ml-6 mt-2 space-y-1">
                     <li>Interdiction d'usurper l'identité d'un autre utilisateur</li>
                     <li>Interdiction de tricher (bots, scripts automatisés, exploits)</li>
-                    <li>Respect des autres joueurs (pas de harcèlement, propos injurieux)</li>
                 </ul>
             </section>
 

@@ -138,7 +138,7 @@ export default function OnlineGamePage() {
             })
           )}
         </div>
-
+{/* TODO REMPLACER JOUEUR BLANC JOUEUR NOIR PAR USERNAME  */}
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-sky-500/20 w-44 shadow-inner">
           <p className="font-bold text-sky-400 text-lg">Joueur Blanc</p>
           <p className="text-slate-400 mt-1 text-sm">Mangées : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>

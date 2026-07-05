@@ -68,21 +68,21 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
 
         try {
             if (isSentByMe) {
-                const res = await fetch(`/api/game/matchmaking?friendId=${friendId}`, {
-                    method: "DELETE"
+                const res = await fetch(`/api/game/online/matchmaking?friendId=${friendId}`, {
+                    method: "POST"
                 });
                 if (res.ok) {
                     setActiveRequests(prev => prev.filter(r => !(r.friend_id === friendId || r.user_id === friendId)));
                 }
             } else {
-                const res = await fetch(`/api/game/matchmaking?friendId=${friendId}`, {
+                const res = await fetch(`/api/game/online/matchmaking?friendId=${friendId}`, {
                     method: "POST"
     			});
 
             if (res.ok) {
                 const data = await res.json();
                 if (data.status === "LAUNCHED" && data.gameId) {
-                    router.push(`/${locale}/game/${data.gameId}`);
+                    router.push(`/${locale}/game`); //TODO rediriger vers lid game propre
                 } else {
                     setActiveRequests(prev => [...prev, { user_id: "me", friend_id: friendId }]);
                 }
