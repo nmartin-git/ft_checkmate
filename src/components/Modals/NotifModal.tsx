@@ -14,7 +14,7 @@ interface PendingUser {
     elo: number;
 }
 
-//TODO REFAIRE LA DA DE NOTIF
+// fait TODO REFAIRE LA DA DE NOTIF
 
 const NotifModal = () => {
     const notifModal = useNotifModal();

@@ -2,6 +2,7 @@ import { SignJWT } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmail, setTwoFactorAuth, verifyPassword, verifyTwoFactorAuth, verifyRecoveryCode } from '@/src/lib/auth';
 
+//TODO DEBUG LOGIN POUR SAVOIR OU CA PECHE (AVEC LES ERREURS )
 
 const JWT_SECRET =new TextEncoder().encode(
     process.env.JWT_SECRET || 'secret-temporaire-a-changer'

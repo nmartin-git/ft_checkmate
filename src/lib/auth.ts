@@ -10,7 +10,7 @@ const MINUTES_A2F_EXPIRATION = 5;
 const MAX_A2F_LOG_ATTEMPS = 5;
 
 
-export async function getUserByEmail(userEmail : string) : Promise<{ userId: string | null; userUsername: string | null }>
+export async function qgetUserByEmail(userEmail : string) : Promise<{ userId: string | null; userUsername: string | null }>
 {
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {

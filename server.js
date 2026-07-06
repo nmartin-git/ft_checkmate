@@ -39,6 +39,24 @@ async function getUserIdFromCookie(cookieHeader) {
   }
 }
 
+function toResult(winner){
+  if (winner==='white') return "WHITE";
+  if (winner==='black') return "BLACK";
+  return "DRAW";
+}
+
+async function pushResult(gameId, winner){
+  try {
+    await fetch('http://localhost:3000/api/game/result', {
+      method : "POST",
+      headers : {"Content-Type" : "application/json"},
+      body : JSON.stringify({gameId, result: toResult(winner),secret :process.env.GAME_SERVER_SECRET})
+    });
+  } catch (error) {
+    console.error("pushResult",error);
+  }
+}
+
 // ════════ SERVEUR ════════
 const TURN_SECONDS = 30;       // temps par tour
 const DRAW_NO_CAPTURE = 10;    // nulle après X tours sans prise
@@ -66,9 +84,12 @@ app.prepare().then(() => {
         const winner = enemyColor(loser);
         room.ended = true;
         io.to(roomId).emit("gameover", { winner, reason: "timeout" });
+        pushResult(roomId, winner);
       }
     }, 1000);
   }
+
+
 
   function stopTimer(roomId) {
     const room = rooms[roomId];
@@ -149,18 +170,21 @@ app.prepare().then(() => {
       if (nextMoves.moves.length === 0) {
         room.ended = true; stopTimer(gameId);
         io.to(gameId).emit("gameover", { winner: pColor, reason: "blocked" });
+        pushResult(gameId, pColor);
         return;
       }
       // 2. nulle par matériel (dame vs dame)
       if (isDrawByMaterial(room.board)) {
         room.ended = true; stopTimer(gameId);
         io.to(gameId).emit("gameover", { winner: null, reason: "draw-material" });
+        pushResult(gameId, null);
         return;
       }
       // 3. nulle par inaction (X tours sans prise)
       if (room.noCapture >= DRAW_NO_CAPTURE * 2) { // *2 car 1 tour = 1 coup par couleur
         room.ended = true; stopTimer(gameId);
         io.to(gameId).emit("gameover", { winner: null, reason: "draw-nocapture" });
+        pushResult(gameId, null);
         return;
       }
       // sinon : on relance le timer pour le joueur suivant
