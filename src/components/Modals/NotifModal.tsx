@@ -38,7 +38,7 @@ const NotifModal = () => {
                 const gameRes = await fetch("/api/game/online/pending");
                 if (gameRes.ok) {
                     const data = await gameRes.json();
-                    setGamePendingRequests(data);// FAIT TODO tableau recupere, afficher la notif aussi avec un fleche et une croix sois pour accepter sois pour refuser et lancer game en fonction
+                    setGamePendingRequests(data);
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des notifications :", error);

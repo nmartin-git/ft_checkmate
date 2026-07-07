@@ -95,7 +95,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
             if (res.ok) {
                 const data = await res.json();
                 if (data.status === "LAUNCHED" && data.gameId) {
-                    router.push(`/${locale}/game/${data.gameId}`); //TODO rediriger vers lid game propre
+                    router.push(`/${locale}/game/${data.gameId}`); 
                 } else {
                     challengedFriendIdRef.current = friendId;
                     setActiveRequests(prev => [...prev, { user_id: "me", friend_id: friendId }]);
