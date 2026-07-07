@@ -26,6 +26,8 @@ export default function ParametersPage() {
   // const [avatar, setAvatar] = useState<File | null>(null)
   // const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
+  //REFAIRE LA DA DE PARAMETERS
+
 	useEffect(() => {
 		const loadParameters = async () => {
 			try {

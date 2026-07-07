@@ -5,7 +5,7 @@ import NotifPopup from "@/src/components/ui/NotifPopup";
 import useNotifModal from "@/src/hooks/useNotifModal";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import { request } from "node:http";
+import { useLocale } from "next-intl";
 
 interface PendingUser {
     id: string;
@@ -14,12 +14,15 @@ interface PendingUser {
     elo: number;
 }
 
+// fait TODO REFAIRE LA DA DE NOTIF
+
 const NotifModal = () => {
     const notifModal = useNotifModal();
     const [friendPendingRequests, setFriendPendingRequests] = useState<PendingUser[]>([]);
     const [gamePendingRequests, setGamePendingRequests] = useState<PendingUser[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const locale = useLocale();
 
     useEffect(() => {
         if (!notifModal.isOpen) return;
@@ -35,7 +38,7 @@ const NotifModal = () => {
                 const gameRes = await fetch("/api/game/online/pending");
                 if (gameRes.ok) {
                     const data = await gameRes.json();
-                    setGamePendingRequests(data);// FAIT TODO tableau recupere, afficher la notif aussi avec un fleche et une croix sois pour accepter sois pour refuser et lancer game en fonction
+                    setGamePendingRequests(data);
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des notifications :", error);
@@ -47,21 +50,21 @@ const NotifModal = () => {
         fetchNotifications();
     }, [notifModal.isOpen]);
 
-    const handleGamesAction = async (requesterID : string , action : "accept" | "refuse") => {
+    const handleGamesAction = async (requesterId : string , action : "accept" | "refuse") => {
         try {
             const res = await fetch("/api/game/action", {
                 method : "POST",
                  headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ requesterID, action })
+                body: JSON.stringify({ requesterId, action })
             });
             if (res.ok){
-                setGamePendingRequests((prev) =>prev.filter((user)=>user.id !== requesterID));
+                setGamePendingRequests((prev) =>prev.filter((user)=>user.id !== requesterId));
                 if (action === "accept")
                     {
                         const data = await res.json();
                         if (data.status === "LAUNCHED" && data.gameId){
                             notifModal.onClose();
-                            router.push('/game/${data.gameId}');
+                            router.push(`/${locale}/game/${data.gameId}`);
                         }
                     }
             }
@@ -73,7 +76,7 @@ const NotifModal = () => {
 
     const handleFriendsAction = async (requesterId: string, action: "accept" | "refuse") => {
         try {
-            const res = await fetch("/api/game/action", {
+            const res = await fetch("/api/friends/action", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ requesterId, action })
@@ -106,7 +109,8 @@ const NotifModal = () => {
             {!isLoading && friendPendingRequests.map((user) => (
                 <div 
                     key={user.id} 
-                    className="flex items-center justify-between p-3.5 bg-[#211f1b] border border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
+                    className="flex items-center justify-between p-3.5 bg-[#211f1b] border
+                     border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
                 >
                     {/* Infos du joueur demandeur */}
                     <div className="flex flex-col min-w-0">

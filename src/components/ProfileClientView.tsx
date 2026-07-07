@@ -1,5 +1,6 @@
 'use client'
 
+import EloChart from "./EloChart"
 import Button from "@/src/components/ui/Button"
 import { useRouter } from "next/navigation"
 import useCurrentUser from "@/src/hooks/useCurrentUser"
@@ -22,6 +23,15 @@ interface ProfileClientViewProps {
     rank: number;
     friendsCount: number;
     isPublicView?: boolean;
+    matchHistory: {
+        id:string;
+        date: Date | string;
+        opponent : string | null;
+        outcome : 'WIN' | 'LOSS' | 'DRAW';
+        color : 'white' | 'black';
+    }[];
+    eloHistory : {date : Date|string;elo:number}[]
+
 }
 
 const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; text: string }> = {
@@ -31,7 +41,7 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
     [club_names.Order]: { badge: "bg-[#ffc107] text-black", avatarBorder: "border-[#ffc107]", text: "text-[#ffc107]" }
 };
 
-export default function ProfileClientView({ userData, rank, isPublicView, friendsCount }: ProfileClientViewProps) {
+export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
     const router = useRouter();
     const locale = useLocale();
     const { user } = useCurrentUser();
@@ -148,12 +158,37 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
             </div>
 
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64">
-                    <div>
-                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 Matchs historics</p>
-                        <p className="text-sm text-gray-500 font-medium mt-6">No matchs played yet</p>
-                    </div>
-                </div>   
+                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col min-h-64">
+                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 Derniers matchs</p>
+
+                {matchHistory.length === 0 ? (
+                    <p className="text-sm text-gray-500 font-medium mt-6">Aucune partie jouée</p>
+                ) : (
+                    <ul className="space-y-2">
+                        {matchHistory.map((m) => (
+                            <li key={m.id} className="flex items-center justify-between bg-[#262522] rounded px-3 py-2">
+                                <div className="flex items-center gap-2">
+                                    <span className={`w-2 h-2 rounded-full ${
+                                        m.outcome === 'WIN' ? 'bg-[#81b64c]'
+                                        : m.outcome === 'LOSS' ? 'bg-red-500' : 'bg-gray-400'
+                                    }`} />
+                                    <span className="text-sm text-white font-semibold">vs {m.opponent ?? '—'}</span>
+                                </div>
+                                <span className={`text-xs font-black uppercase ${
+                                    m.outcome === 'WIN' ? 'text-[#81b64c]'
+                                    : m.outcome === 'LOSS' ? 'text-red-400' : 'text-gray-400'
+                                }`}>
+                                    {m.outcome === 'WIN' ? 'Victoire' : m.outcome === 'LOSS' ? 'Défaite' : 'Nulle'}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>  
+            <div className="max-w-6xl mx-auto mt-6 bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
+                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 Évolution de l'elo</p>
+                <EloChart data={eloHistory} />
+            </div>
 
                 <Link href={`/${locale}/leaderboard`} className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer">
                     <div>

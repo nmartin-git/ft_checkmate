@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
-import { acceptFriendRequest, refuseFriendRequest } from "@/src/lib/friends";
-import { AcceptGameRequest, newGame, refuseGameRequest } from "@/src/lib/game";
+import { closeGameRequest, newGame} from "@/src/lib/game";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-a-changer');
 
@@ -20,12 +19,13 @@ export async function POST(request: Request) {
         if (!requesterId) return new NextResponse("ID manquant", { status: 400 });
 
         if (action === "accept") {
-            await AcceptGameRequest(payload.id, requesterId);
+            await closeGameRequest(payload.id, requesterId);
             const [whitePlayerID, blackPlayerID] = Math.random() < 0.5 ? [payload.id, requesterId] : [requesterId, payload.id];
             const game = await newGame(whitePlayerID, blackPlayerID);
+        
             return NextResponse.json({ status: "LAUNCHED", gameId: game.id });
         } else if (action === "refuse") {
-            await refuseGameRequest(payload.id, requesterId);
+            await closeGameRequest(payload.id, requesterId);
             return NextResponse.json({ status: "REFUSED" });
         } else {
             return new NextResponse("Action invalide", { status: 400 });

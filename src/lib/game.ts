@@ -2,6 +2,24 @@ import { prisma } from "./prisma"
 import { game_results, follow_status } from "@prisma/client"
 import { PUBLIC_USER_SELECT } from "./select"
 
+export async function getGameId(userId : string, friend_id:string)
+{
+	const game = await prisma.game.findFirst({
+		where : {
+			OR :[{white_player_id : userId, black_player_id : friend_id},
+				{ black_player_id: userId, white_player_id : friend_id}
+			],
+			result : null,
+		},
+		orderBy: {date : 'desc'},
+		select : {
+			id : true
+		}
+	});
+	return game?.id ?? null;
+}
+
+
 export async function openGameRequest(userId: string, friendId: string): Promise<void>
 {
 	await prisma.friends.updateMany({
@@ -31,42 +49,43 @@ export async function closeGameRequest(userId: string, friendId: string): Promis
     	    status: follow_status.GAME_REQUESTED
     	},
     	data: {
-    	    status: follow_status.PENDING
-    	}
-	})
-}
-
-export async function refuseGameRequest(userId: string, friendId: string): Promise<void>
-{
-	await prisma.friends.updateMany({
-    	where: {
-    	    OR: [
-    	        { user_id: userId, friend_id: friendId },
-    	        { user_id: friendId, friend_id: userId }
-    	    ],
-    	    status: follow_status.GAME_REQUESTED
-    	},
-    	data: {
-    	    status: follow_status.REFUSED
-    	}
-	})
-}
-
-export async function AcceptGameRequest(userId: string, friendId: string): Promise<void>
-{
-	await prisma.friends.updateMany({
-    	where: {
-    	    OR: [
-    	        { user_id: userId, friend_id: friendId },
-    	        { user_id: friendId, friend_id: userId }
-    	    ],
-    	    status: follow_status.GAME_REQUESTED
-    	},
-    	data: {
     	    status: follow_status.ACCEPTED
     	}
 	})
 }
+
+// export async function refuseGameRequest(userId: string, friendId: string): Promise<void>
+// {
+// 	await prisma.friends.updateMany({
+//     	where: {
+//     	    OR: [
+//     	        { user_id: userId, friend_id: friendId },
+//     	        { user_id: friendId, friend_id: userId }
+//     	    ],
+//     	    status: follow_status.GAME_REQUESTED
+//     	},
+//     	data: {
+//     	    status: follow_status.REFUSED
+//     	}
+// 	})
+// }
+
+
+// export async function AcceptGameRequest(userId: string, friendId: string): Promise<void>
+// {
+// 	await prisma.friends.updateMany({
+//     	where: {
+//     	    OR: [
+//     	        { user_id: userId, friend_id: friendId },
+//     	        { user_id: friendId, friend_id: userId }
+//     	    ],
+//     	    status: follow_status.GAME_REQUESTED
+//     	},
+//     	data: {
+//     	    status: follow_status.ACCEPTED
+//     	}
+// 	})
+// }
 
 export async function isGameRequested(userId: string): Promise<Boolean>
 {
@@ -205,7 +224,7 @@ function eloCalculator(whiteElo : number, blackElo : number, result : game_resul
 	}
 }
 
-async function addResult(gameId : string, gameResult : game_results)
+export async function addResult(gameId : string, gameResult : game_results)
 {
 	const game = await prisma.game.findUniqueOrThrow({
 		where: {

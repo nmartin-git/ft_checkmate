@@ -56,11 +56,11 @@ export default function PlayModal() {
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="font-black text-white text-lg tracking-wide uppercase flex items-center gap-2">
-                        Partie en ligne
+                        Partie entre amis
                         <span className="bg-[#81b64c] text-white text-[10px] font-black px-1.5 py-0.5 rounded normal-case tracking-normal">Ranked</span>
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5 font-medium leading-relaxed">
-                        Défiez un joueur du classement mondial. Les gains et pertes de points affectent votre ELO.
+                        Défiez vos amis. Les gains et pertes de points affectent votre ELO.
                     </div>
                 </div>
             </button>

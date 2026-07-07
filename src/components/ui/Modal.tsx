@@ -40,44 +40,12 @@ const Modal: React.FC<ModalProps> = ({
     return (
         <>
             {/* BACKDROP : Fond flouté sombre façon Chess.com */}
-            <div className="
-                justify-center
-                items-center
-                flex
-                overflow-x-hidden 
-                overflow-y-auto
-                fixed
-                inset-0
-                z-50
-                outline-none 
-                focus:outline-none
-                bg-black/70
-                backdrop-blur-sm
-                p-4
-            ">
-                <div className="
-                    relative
-                    w-full
-                    md:max-w-md
-                    my-6
-                    mx-auto
-                    h-auto
-                ">
+            <div className=" justify-center items-center flex overflow-x-hidden  overflow-y-auto 
+                fixed inset-0 z-50 outline-none  focus:outline-none bg-black/70 backdrop-blur-sm p-4">
+                <div className="relative w-full md:max-w-md my-6 mx-auto h-auto">
                     {/* CONTENT : Le conteneur principal de la modal */}
-                    <div className="
-                        h-full 
-                        border-2
-                        border-[#2b2925]
-                        rounded-lg
-                        shadow-2xl
-                        relative
-                        flex
-                        flex-col
-                        w-full
-                        bg-[#1e1c18]
-                        outline-none
-                        focus:outline-none
-                    ">
+                    <div className="h-full  border-2 border-[#2b2925] rounded-lg shadow-2xl relative flex flex-col w-full 
+                        bg-[#1e1c18] outline-none focus:outline-none">
                         {/* HEADER */}
                         <div className="
                             flex
@@ -89,26 +57,14 @@ const Modal: React.FC<ModalProps> = ({
                             rounded-t
                         ">
                             <h3 className="
-                                text-2xl
-                                font-black
-                                text-white
-                                uppercase
-                                tracking-wide
+                                text-2xl font-black text-white uppercase tracking-wide
                             ">
                                 {title}
                             </h3>
                             <button 
                                 onClick={handleClose} 
                                 className="
-                                    p-2
-                                    ml-auto
-                                    text-gray-400
-                                    hover:text-white
-                                    transition
-                                    rounded-md
-                                    hover:bg-[#262522]
-                                "
-                            >
+                                    p-2 ml-auto text-gray-400 hover:text-white transition rounded-md hover:bg-[#262522]">
                                 <AiOutlineClose size={22}/>
                             </button>
                         </div>

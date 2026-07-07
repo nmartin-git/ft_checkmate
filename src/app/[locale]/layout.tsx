@@ -9,6 +9,7 @@ import LoginModal from "@/src/components/Modals/LoginModal";
 import RegisterModal from "@/src/components/Modals/RegisterModal";
 import NotifModal from "@/src/components/Modals/NotifModal";
 import AuthProvider from "@/src/components/AuthProvider";
+import Footer from "@/src/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="bg-green-800">
+    <html lang={locale} className=" bg-[#262522]">
       <body className="h-full text-white">
         {}
         <NextIntlClientProvider locale={locale} messages={messages}>
@@ -49,6 +50,7 @@ export default async function RootLayout({
             <Topbar />
             <PlayModal />
             <div>{children}</div>
+            <Footer />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

@@ -1,5 +1,44 @@
 import { prisma } from "./prisma"
 
+
+export async function getRecentMatches(userID: string, limit:number =3){
+	const games = await prisma.game.findMany({
+		where :{
+			OR : [{white_player_id:userID},{black_player_id:userID}],
+			result :{not:null}
+		},
+		select : {
+			id:true,
+			date:true,
+			result:true,
+			white_player_id:true,
+			white_player_elo:true,
+			black_player_elo:true,
+			white_user : {select:{username:true}},
+			black_user : {select: {username:true}}
+		},
+		orderBy: {date:'desc'},
+		take:limit
+	});
+	return games.map((g)=>{
+		const isWhite = g.white_player_id === userID;
+		const opponent = isWhite ? g.black_user.username : g.white_user.username;
+		let outcome : 'WIN' | 'LOSS' | 'DRAW';
+		if (g.result === 'DRAW') outcome = 'DRAW';
+		else if (g.result === 'WHITE') outcome = isWhite ? 'WIN' : 'LOSS';
+		else outcome = isWhite ? 'LOSS' : 'WIN';
+		return {
+			id : g.id,
+			date : g.date,
+			opponent,
+			outcome,
+			color : (isWhite ? 'white' : 'black') as 'white' | 'black',
+			myElo : isWhite ? g.white_player_elo : g.black_player_elo
+		};
+
+	});
+}
+
 export async function getStats(userId : string)
 {
     const games = await prisma.game.findMany({
@@ -36,7 +75,7 @@ export async function eloHistoric(userId : string, durationStats : number = 0)
 {
 	const cutoffDate = new Date();
 	if (durationStats === 0)
-		cutoffDate.setTime(Number.MIN_SAFE_INTEGER);
+		cutoffDate.setTime(0);
 	else
 		cutoffDate.setDate(cutoffDate.getDate() - durationStats);
 	const games = await prisma.game.findMany({

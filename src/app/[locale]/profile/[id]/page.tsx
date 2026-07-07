@@ -1,4 +1,4 @@
-import { getPlayerRank } from "@/src/lib/stats";
+import { getPlayerRank, getRecentMatches, eloHistoric} from "@/src/lib/stats";
 import { getProfile } from "@/src/lib/user";
 import ProfileClientView from "@/src/components/ProfileClientView";
 import { findRequest, getFriendsCount, isFriends } from "@/src/lib/friends";
@@ -26,6 +26,8 @@ export default async function PublicProfilePage({ params }: PublicProfileProps) 
 
         const rank = await getPlayerRank(id);
         const friendsCount = await getFriendsCount(id);
+        const matchHistory = await getRecentMatches(id, 3);
+        const eloHistory = await eloHistoric(id);
 
         let isInitialPending = false;
         let isInitialFriend = false;
@@ -46,12 +48,14 @@ export default async function PublicProfilePage({ params }: PublicProfileProps) 
         }
 
         return (
-            <ProfileClientView 
+            <ProfileClientView
+            matchHistory={matchHistory}
+            eloHistory={eloHistory}
                 userData={{
                     ...userData,
                     id: id,
                     isInitialPending,
-                    isInitialFriend
+                    isInitialFriend,
                 }} 
                 rank={rank}
                 isPublicView={true}

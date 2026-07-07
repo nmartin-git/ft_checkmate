@@ -6,6 +6,7 @@ import { useLocale } from "next-intl";
 import SearchBar from "./ui/search";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 interface PlayerRow {
     id: string;
@@ -36,14 +37,25 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
     const [list] = useState<PlayerRow[]>(friendsList);
     const [activeRequests, setActiveRequests] = useState<ActiveRequest[]>([]);
     const [isProcessing, setIsProcessing] = useState<string | null>(null);
+    const challengedFriendIdRef = useRef<string | null>(null);
 
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const res = await fetch("/api/game/online/matchmaking");
-                if (res.ok) {
-                    const data = await res.json();
-                    setActiveRequests(data);
+                const friendId = challengedFriendIdRef.current;      // valeur à jour
+                const url = friendId
+                    ? `/api/game/online/matchmaking?friendId=${friendId}`
+                    : "/api/game/online/matchmaking";
+
+                const res = await fetch(url);
+                if (!res.ok) return;
+
+                const data = await res.json();
+                setActiveRequests(data.activeRequests);              // ← objet, plus tableau
+
+                if (data.gameId) {                                   // l'ami a accepté !
+                    clearInterval(interval);
+                    router.push(`/${locale}/game/${data.gameId}`);
                 }
             } catch (err) {
                 console.error("Erreur de récupération des défis:", err);
@@ -68,22 +80,24 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
 
         try {
             if (isSentByMe) {
-                const res = await fetch(`/api/game/matchmaking?friendId=${friendId}`, {
-                    method: "DELETE"
+                const res = await fetch(`/api/game/online/matchmaking?friendId=${friendId}`, {
+                    method: "POST"
                 });
                 if (res.ok) {
+                    challengedFriendIdRef.current = null;        // ← on arrête de chercher une partie
                     setActiveRequests(prev => prev.filter(r => !(r.friend_id === friendId || r.user_id === friendId)));
                 }
             } else {
-                const res = await fetch(`/api/game/matchmaking?friendId=${friendId}`, {
+                const res = await fetch(`/api/game/online/matchmaking?friendId=${friendId}`, {
                     method: "POST"
     			});
 
             if (res.ok) {
                 const data = await res.json();
                 if (data.status === "LAUNCHED" && data.gameId) {
-                    router.push(`/${locale}/game/${data.gameId}`);
+                    router.push(`/${locale}/game/${data.gameId}`); 
                 } else {
+                    challengedFriendIdRef.current = friendId;
                     setActiveRequests(prev => [...prev, { user_id: "me", friend_id: friendId }]);
                 }
             } else {
