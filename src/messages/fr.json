@@ -74,7 +74,14 @@
     "recovery_title": "Codes de récupération",
     "recovery_warn": "Conservez ces codes en lieu sûr. Ils ne seront affichés qu'une seule fois.",
     "copy_codes": "Copier tous les codes",
-    "copied": "Codes copiés !"
+    "copied": "Codes copiés !",
+    "danger_zone": "Zone de danger",
+    "delete_account": "Supprimer le compte",
+    "delete_warning": "Cette action est irréversible. Toutes vos données (parties, amis, statistiques) seront définitivement supprimées.",
+    "delete_confirm": "Confirmer la suppression",
+    "delete_cancel": "Annuler",
+    "deleting": "Suppression...",
+    "delete_error": "Erreur lors de la suppression du compte."
   },
   "notif": {
     "title": "Notifications",

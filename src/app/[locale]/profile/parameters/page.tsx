@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import Button from "@/src/components/ui/Button"
 import { Button as ShadcnButton } from "@/src/components/ui/shadcn/button"
 import ParametersModal from "@/src/components/Modals/ParametersModal"
@@ -16,6 +17,27 @@ import { cn } from "@/src/lib/utils"
 
 export default function ParametersPage() {
   const t = useTranslations("parameters");
+  const locale = useLocale();
+  const router = useRouter();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch("/api/auth/delete", { method: "POST" });
+      if (res.ok) {
+        // rechargement complet (pas router.push) pour vider l'état de connexion en mémoire
+        window.location.href = `/${locale}/`;
+      } else {
+        alert(t("delete_error"));
+        setIsDeleting(false);
+      }
+    } catch {
+      alert(t("delete_error"));
+      setIsDeleting(false);
+    }
+  };
   const parametersModal = useParametersModal()
   const [isLoading, setIsLoading] = useState(false)
   const [chatEnabled, setChatEnabled] = useState(false)
@@ -150,6 +172,38 @@ export default function ParametersPage() {
 		disabled={isLoading}
         />
     </form>
+    <div className="mt-10 border-2 border-red-900/50 rounded-lg p-6 bg-red-950/10">
+      <h3 className="text-red-400 font-black uppercase tracking-wider text-sm mb-2">{t("danger_zone")}</h3>
+      <p className="text-gray-400 text-sm mb-4">{t("delete_warning")}</p>
+      {!showDeleteConfirm ? (
+        <button
+          type="button"
+          onClick={() => setShowDeleteConfirm(true)}
+          className="px-5 py-2.5 bg-red-700 hover:bg-red-600 text-white font-bold rounded transition-colors"
+        >
+          {t("delete_account")}
+        </button>
+      ) : (
+        <div className="flex gap-3 items-center">
+          <button
+            type="button"
+            onClick={handleDeleteAccount}
+            disabled={isDeleting}
+            className="px-5 py-2.5 bg-red-700 hover:bg-red-600 text-white font-bold rounded transition-colors disabled:opacity-50"
+          >
+            {isDeleting ? t("deleting") : t("delete_confirm")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(false)}
+            disabled={isDeleting}
+            className="px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded transition-colors"
+          >
+            {t("delete_cancel")}
+          </button>
+        </div>
+      )}
+    </div>
     <ParametersModal />
     </>
   )

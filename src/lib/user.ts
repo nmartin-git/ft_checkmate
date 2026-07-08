@@ -295,3 +295,33 @@ export async function inscriptionClassic(inputEmail : string, inputUsername : st
 //     .finally(async() => {
 //         await prisma.$disconnect()
 //     })
+
+export async function deleteAccount(userId: string): Promise<void> {
+	await prisma.$transaction(async (tx) => {
+		const games = await tx.game.findMany({
+			where: { OR: [{ white_player_id: userId }, { black_player_id: userId }] },
+			select: { id: true },
+		});
+		const gameIds = games.map((g) => g.id);
+
+		if (gameIds.length > 0) {
+			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
+			await tx.chat.deleteMany({ where: { game_id: { in: gameIds } } });
+		}
+		await tx.chat.deleteMany({ where: { author_user_id: userId } });
+
+		await tx.directMessage.deleteMany({
+			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
+		});
+
+		await tx.friends.deleteMany({
+			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
+		});
+
+		if (gameIds.length > 0) {
+			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
+		}
+
+		await tx.user.delete({ where: { id: userId } });
+	});
+}

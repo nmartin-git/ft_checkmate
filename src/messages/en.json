@@ -74,7 +74,14 @@
     "recovery_title": "Recovery codes",
     "recovery_warn": "Keep these codes in a safe place. They will only be shown once.",
     "copy_codes": "Copy all codes",
-    "copied": "Codes copied!"
+    "copied": "Codes copied!",
+    "danger_zone": "Danger zone",
+    "delete_account": "Delete account",
+    "delete_warning": "This action is irreversible. All your data (games, friends, statistics) will be permanently deleted.",
+    "delete_confirm": "Confirm deletion",
+    "delete_cancel": "Cancel",
+    "deleting": "Deleting...",
+    "delete_error": "Error while deleting the account."
   },
   "notif": {
     "title": "Notifications",
