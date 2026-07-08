@@ -30,7 +30,13 @@
     "recovery_codes": "Codes de récupération",
     "recovery_code": "Code de récupération",
     "problem_recovery": "Problème avec les codes de récupération ?",
-    "auth_code": "Code d'authentification (2FA)"
+    "auth_code": "Code d'authentification (2FA)",
+    "username": "Nom d'utilisateur",
+    "register_title": "Créer un compte",
+    "register": "S'inscrire",
+    "sign_up_google": "S'inscrire avec Google",
+    "already_account": "Vous avez déjà un compte ?",
+    "log_in": "Se connecter"
   },
   "profile": {
     "player": "Joueur",
@@ -64,7 +70,11 @@
     "enable_2fa": "Activer la double authentification (2FA)",
     "saving": "Sauvegarde...",
     "save": "Sauvegarder les paramètres",
-    "saved": "Paramètres enregistrés !"
+    "saved": "Paramètres enregistrés !",
+    "recovery_title": "Codes de récupération",
+    "recovery_warn": "Conservez ces codes en lieu sûr. Ils ne seront affichés qu'une seule fois.",
+    "copy_codes": "Copier tous les codes",
+    "copied": "Codes copiés !"
   },
   "notif": {
     "title": "Notifications",
@@ -133,5 +143,43 @@
     "profile_load_error": "Une erreur est survenue lors du chargement du profil.",
     "generic": "Une erreur est survenue.",
     "player_not_found": "Joueur introuvable."
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "updated": "Dernière mise à jour",
+    "s1_title": "1. Objet",
+    "s1_body": "Dames.com est une plateforme de jeu en ligne développée dans le cadre du projet ft_transcendence de l'école 42. Ce site est un projet pédagogique et n'a pas de vocation commerciale.",
+    "s2_title": "2. Inscription",
+    "s2_body": "L'inscription nécessite un nom d'utilisateur unique et une adresse e-mail valide, ou une connexion via l'authentification 42 (OAuth). Vous êtes responsable de la confidentialité de vos identifiants.",
+    "s3_title": "3. Règles d'usage",
+    "s3_li1": "Interdiction d'usurper l'identité d'un autre utilisateur",
+    "s3_li2": "Interdiction de tricher (bots, scripts automatisés, exploits)",
+    "s4_title": "4. Suppression de compte",
+    "s4_body": "Vous pouvez supprimer votre compte à tout moment depuis votre page de profil. Cette action entraîne la suppression de vos données personnelles conformément à notre politique de confidentialité.",
+    "s5_title": "5. Responsabilité",
+    "s5_body": "Ce projet étant réalisé à des fins éducatives, aucune garantie de disponibilité, de performance ou d'absence de bug n'est fournie."
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "updated": "Dernière mise à jour",
+    "s1_title": "1. Données collectées",
+    "s1_intro": "Lors de votre inscription et utilisation de Dames.com, nous collectons :",
+    "s1_li1": "Votre nom d'utilisateur et adresse e-mail",
+    "s1_li2": "Votre avatar",
+    "s1_li3": "Votre historique de parties et statistiques de jeu",
+    "s1_li4": "Vos données d'authentification (via l'API 42 si connexion OAuth)",
+    "s2_title": "2. Utilisation des données",
+    "s2_intro": "Ces données sont utilisées uniquement pour :",
+    "s2_li1": "Vous permettre de jouer et suivre vos statistiques",
+    "s2_li2": "Gérer votre compte et session (via cookies/tokens JWT)",
+    "s2_li3": "Afficher votre profil aux autres joueurs",
+    "s3_title": "3. Cookies",
+    "s3_body": "Nous utilisons des cookies techniques (session, authentification) nécessaires au fonctionnement du site. Aucun cookie publicitaire ou de tracking tiers n'est utilisé.",
+    "s4_title": "4. Partage des données",
+    "s4_body": "Vos données ne sont jamais vendues ni partagées avec des tiers à des fins commerciales. Elles restent strictement internes au fonctionnement de l'application.",
+    "s5_title": "5. Vos droits",
+    "s5_body": "Conformément au RGPD, vous pouvez à tout moment demander l'accès, la modification ou la suppression de vos données personnelles en supprimant votre compte depuis votre profil, ou en nous contactant.",
+    "s6_title": "6. Contact",
+    "s6_body": "Pour toute question relative à vos données, contactez l'équipe de développement via le dépôt du projet."
   }
 }

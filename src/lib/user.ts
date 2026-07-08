@@ -184,7 +184,6 @@ async function generateRecoveryCodes(userId : string) : Promise <string []>
 		rawRecoveryCodes.push(code)
 		recoveryCodes.push({hash: codeHash, usedAt: null})
 	}
-	// TODO afficher sur l'ecran les codes de rawRecoveryCodes
 	await prisma.user.update({
 		where: {
 			id: userId
