@@ -14,7 +14,7 @@
   "home": {
     "title": "Jouer aux Dames",
     "subtitle": "Lancez une partie de Dames endiablée contre vos amis !",
-    "play": "Jouer ➔"
+    "play": "Jouer"
   },
   "auth": {
     "login_title": "Connexion",
@@ -39,7 +39,22 @@
     "no_matchs": "Aucun match joué pour l'instant",
     "elo_title": "🏆 Elo & historique",
     "friends_title": "👥 Ami(s)",
-    "no_friends": "Vous n'avez pas encore d'amis."
+    "no_friends": "Vous n'avez pas encore d'amis.",
+    "rank_world": "Classement mondial",
+    "order": "MEMBRE",
+    "matchs_title_short": "Derniers matchs",
+    "no_matchs_short": "Aucune partie jouée",
+    "elo_evolution": "Évolution de l'elo",
+    "friends_short": "Amis",
+    "elo_historics": "Elo & historique",
+    "friends_card": "Ami(s)",
+    "friends_label": "amis",
+    "friends_list_link": "Liste d'amis",
+    "win": "Victoire",
+    "loss": "Défaite",
+    "draw_result": "Nulle",
+    "add_friend": "Ajouter",
+    "pending": "En attente"
   },
   "parameters": {
     "loading": "Chargement des paramètres...",
@@ -52,6 +67,54 @@
     "saved": "Paramètres enregistrés !"
   },
   "notif": {
-    "title": "Notifications"
+    "title": "Notifications",
+    "no_new": "Aucune nouvelle notification.",
+    "challenges_you": "Vous défie en partie",
+    "accept": "Accepter",
+    "refuse": "Refuser",
+    "accept_challenge": "Accepter le défi",
+    "refuse_challenge": "Refuser le défi"
+  },
+  "footer": {
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "chart": {
+    "not_enough_games": "Pas assez de parties pour afficher le graphique."
+  },
+  "lobby": {
+    "mode": "Mode de jeu",
+    "ranked": "Classé",
+    "local": "Partie locale",
+    "local_desc": "Jouez à deux sur le même écran en mode « Pass & Play ». Idéal pour s'entraîner ou analyser.",
+    "online": "Partie en ligne",
+    "online_desc": "Affrontez vos amis en ligne dans une partie classée qui compte pour votre ELO.",
+    "challenge_friends": "Affronter des amis",
+    "launch_local": "Lancer le match local"
+  },
+  "board": {
+    "black_player": "Joueur Noir",
+    "white_player": "Joueur Blanc",
+    "eaten": "Mangées",
+    "turn": "Tour",
+    "time": "Temps",
+    "you_play": "Tu joues",
+    "black": "Noir",
+    "white": "Blanc",
+    "victory": "Victoire !",
+    "defeat": "Défaite",
+    "draw": "Match nul",
+    "replay": "Rejouer",
+    "back_home": "Retour à l'accueil",
+    "draw_material": "Dame contre dame.",
+    "draw_nocapture": "Trop de tours sans prise.",
+    "timeout": "Temps écoulé.",
+    "blacks_win": "Les Noirs gagnent.",
+    "whites_win": "Les Blancs gagnent.",
+    "mandatory_capture": "Prise obligatoire : prends le maximum de pions",
+    "invalid_move": "Coup invalide",
+    "not_your_turn": "Ce n'est pas ton tour",
+    "opponent_left": "Ton adversaire s'est déconnecté…",
+    "game_full": "La partie est déjà pleine"
   }
 }

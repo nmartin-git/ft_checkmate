@@ -2,6 +2,7 @@
 
 import { LineChart, Line, XAxis, YAxis, Tooltip,CartesianGrid, ResponsiveContainer} from "recharts"
 import {format} from "date-fns"
+import { useTranslations } from "next-intl"
 
 interface EloPoint{
     date : Date | string;
@@ -9,14 +10,15 @@ interface EloPoint{
 }
 
 export default function EloChart({data} : {data : EloPoint[]}){
+    const t = useTranslations("chart");
     const chartData = data.map((p)=>({
         label : format(new Date(p.date), "dd,MM"),
         elo : p.elo
     }));
     if (chartData.length < 2){
-        return (//TODO a traduire
+        return (
             <p className="text-sm text-gray-500 font-medium mt-6">
-                Pas assez de parties pour afficher le graphique.
+                {t("not_enough_games")}
             </p>
         );
     }

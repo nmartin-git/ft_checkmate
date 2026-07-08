@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl";
 import Button from "@/src/components/ui/Button"
 import { Button as ShadcnButton } from "@/src/components/ui/shadcn/button"
 import ParametersModal from "@/src/components/Modals/ParametersModal"
@@ -14,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/sha
 import { cn } from "@/src/lib/utils"
 
 export default function ParametersPage() {
+  const t = useTranslations("parameters");
   const parametersModal = useParametersModal()
   const [isLoading, setIsLoading] = useState(false)
   const [chatEnabled, setChatEnabled] = useState(false)
@@ -99,14 +101,14 @@ export default function ParametersPage() {
     }
   }
   if (isFetching) {
-    return <div className="p-6 text-black">Loading settings...</div>
+    return <div className="p-6 text-black">{t("loading")}</div>
   }
   return (
     <>
     <form onSubmit={onSubmit} className="p-6 max-w-md bg-white text-black space-y-4">
       {}
       <label className="flex items-center gap-2">
-        Date de naissance
+        {t("birthdate")}
       </label>
       <Popover>
         <PopoverTrigger asChild>
@@ -120,7 +122,7 @@ export default function ParametersPage() {
             {birthdate ? (
               format(birthdate, "PPP", { locale: fr })
             ) : (
-              <span>Choisir une date</span>
+              <span>{t("choose_date")}</span>
             )}
           </ShadcnButton>
         </PopoverTrigger>
@@ -136,14 +138,14 @@ export default function ParametersPage() {
       {/* Zone Booréen */}
     	<label className="flex items-center gap-2">
         <input type="checkbox" checked={chatEnabled} onChange={(e) => setChatEnabled(e.target.checked)} />
-        Enable chat
+        {t("enable_chat")}
     	</label>
 		<label className="flex items-center gap-2">
         <input type="checkbox" checked={twoFactorAuthEnabled} onChange={(e) => setTwoFactorAuthEnabled(e.target.checked)} />
-        Enable two factor authentification (2fa)
+        {t("enable_2fa")}
     	</label>
         <Button 
-		label={isLoading ? "Saving..." : "Save parameters"} 
+		label={isLoading ? t("saving") : t("save")} 
 		onClick={() => {}}
 		disabled={isLoading}
         />

@@ -13,8 +13,8 @@
   },
   "home": {
     "title": "Play Checkers",
-    "subtitle": "Start a wild game of Checkers against your friends!",
-    "play": "Play ➔"
+    "subtitle": "Start a thrilling game of Checkers against your friends!",
+    "play": "Play"
   },
   "auth": {
     "login_title": "Login",
@@ -39,7 +39,22 @@
     "no_matchs": "No matches played yet",
     "elo_title": "🏆 Elo & history",
     "friends_title": "👥 Friend(s)",
-    "no_friends": "You don't have friends yet."
+    "no_friends": "You don't have friends yet.",
+    "rank_world": "World ranking",
+    "order": "MEMBER",
+    "matchs_title_short": "Recent matches",
+    "no_matchs_short": "No game played",
+    "elo_evolution": "ELO evolution",
+    "friends_short": "Friends",
+    "elo_historics": "Elo & history",
+    "friends_card": "Friend(s)",
+    "friends_label": "friends",
+    "friends_list_link": "Friends list",
+    "win": "Victory",
+    "loss": "Defeat",
+    "draw_result": "Draw",
+    "add_friend": "Add",
+    "pending": "Pending"
   },
   "parameters": {
     "loading": "Loading settings...",
@@ -52,6 +67,54 @@
     "saved": "Parameters saved!"
   },
   "notif": {
-    "title": "Notifications"
+    "title": "Notifications",
+    "no_new": "No new notification.",
+    "challenges_you": "challenges you to a game",
+    "accept": "Accept",
+    "refuse": "Decline",
+    "accept_challenge": "Accept challenge",
+    "refuse_challenge": "Decline challenge"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "chart": {
+    "not_enough_games": "Not enough games to display the chart."
+  },
+  "lobby": {
+    "mode": "Game mode",
+    "ranked": "Ranked",
+    "local": "Local game",
+    "local_desc": "Play with two on the same screen in \"Pass & Play\" mode. Perfect to practice or analyze.",
+    "online": "Online game",
+    "online_desc": "Face your friends online in a ranked game that counts toward your ELO.",
+    "challenge_friends": "Challenge friends",
+    "launch_local": "Start local match"
+  },
+  "board": {
+    "black_player": "Black Player",
+    "white_player": "White Player",
+    "eaten": "Captured",
+    "turn": "Turn",
+    "time": "Time",
+    "you_play": "You play",
+    "black": "Black",
+    "white": "White",
+    "victory": "Victory!",
+    "defeat": "Defeat",
+    "draw": "Draw",
+    "replay": "Play again",
+    "back_home": "Back to home",
+    "draw_material": "King versus king.",
+    "draw_nocapture": "Too many turns without a capture.",
+    "timeout": "Time is up.",
+    "blacks_win": "Black wins.",
+    "whites_win": "White wins.",
+    "mandatory_capture": "Mandatory capture: take the most pieces",
+    "invalid_move": "Invalid move",
+    "not_your_turn": "It's not your turn",
+    "opponent_left": "Your opponent disconnected…",
+    "game_full": "The game is already full"
   }
 }

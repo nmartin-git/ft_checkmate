@@ -1,16 +1,28 @@
 'use client';
 
 import { useEffect, useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { io, Socket } from "socket.io-client";
 
 type Cell = number;
 type Pos = { row: number; col: number };
 
+interface PlayerInfo {
+  id: string;
+  username: string;
+  avatar_url: string | null;
+  elo: number;
+  club: string | null;
+}
+
 interface OnlineGameClientProps {
-  gameId : string
+  gameId : string;
+  whitePlayer?: PlayerInfo | null;
+  blackPlayer?: PlayerInfo | null;
 };
 
-export default function OnlineGameClient({gameId} : OnlineGameClientProps) {
+export default function OnlineGameClient({gameId, whitePlayer, blackPlayer} : OnlineGameClientProps) {
+  const t = useTranslations("board");
   const [board, setBoard] = useState<Cell[][]>([]);
   const [selected, setSelected] = useState<Pos | null>(null);
   const [myColor, setMyColor] = useState<"black" | "white" | null>(null);
@@ -101,13 +113,13 @@ export default function OnlineGameClient({gameId} : OnlineGameClientProps) {
       <div className="flex gap-4 mb-4 flex-wrap justify-center">
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-current animate-pulse"></span>
-          Tour : <span className={turn === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{turnFr}</span>
+          {t("turn")} : <span className={turn === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{turnFr}</span>
         </div>
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
-          Temps : <span className={`font-mono font-bold ${myTurn && timeLeft !== null && timeLeft <= 5 ? "text-red-500" : "text-yellow-500"}`}>{timeLeft !== null ? `${timeLeft}s` : "—"}</span>
+          {t("time")} : <span className={`font-mono font-bold ${myTurn && timeLeft !== null && timeLeft <= 5 ? "text-red-500" : "text-yellow-500"}`}>{timeLeft !== null ? `${timeLeft}s` : "—"}</span>
         </div>
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
-          Tu joues : <span className={myColor === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{myColor ? colorFr : "…"}</span>
+          {t("you_play")} : <span className={myColor === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{myColor ? colorFr : "…"}</span>
         </div>
       </div>
 
@@ -117,8 +129,9 @@ export default function OnlineGameClient({gameId} : OnlineGameClientProps) {
 
       <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700/50">
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-amber-500/20 w-44 shadow-inner">
-          <p className="font-bold text-amber-500 text-lg">Joueur Noir</p>
-          <p className="text-slate-400 mt-1 text-sm">Mangées : <span className="text-white font-extrabold text-base">{eatenByBlack}</span></p>
+          <p className="font-bold text-amber-500 text-lg">{blackPlayer?.username ?? t("black_player")}</p>
+          {blackPlayer && <p className="text-xs text-slate-500 mb-1">{blackPlayer.elo} ELO</p>}
+          <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByBlack}</span></p>
         </div>
 
         <div className="grid grid-cols-8 border-4 border-slate-950 shadow-2xl rounded-lg overflow-hidden bg-slate-950" style={{ width: "400px", height: "400px" }}>
@@ -142,23 +155,23 @@ export default function OnlineGameClient({gameId} : OnlineGameClientProps) {
             })
           )}
         </div>
-{/* TODO REMPLACER JOUEUR BLANC JOUEUR NOIR PAR USERNAME  */}
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-sky-500/20 w-44 shadow-inner">
-          <p className="font-bold text-sky-400 text-lg">Joueur Blanc</p>
-          <p className="text-slate-400 mt-1 text-sm">Mangées : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>
+          <p className="font-bold text-sky-400 text-lg">{whitePlayer?.username ?? t("white_player")}</p>
+          {whitePlayer && <p className="text-xs text-slate-500 mb-1">{whitePlayer.elo} ELO</p>}
+          <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>
         </div>
 
         {over && (
           <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center rounded-2xl gap-4 z-20">
             <h2 className="text-4xl font-extrabold" style={{ color: over.winner === null ? "#d97706" : (over.winner === myColor ? "#16a34a" : "#dc2626") }}>
-              {over.winner === null ? "Match nul" : (over.winner === myColor ? "Victoire !" : "Défaite")}
+              {over.winner === null ? t("draw") : (over.winner === myColor ? t("victory") : t("defeat"))}
             </h2>
             <p className="text-white text-lg">
               {over.winner === null
-                ? (over.reason === "draw-material" ? "Dame contre dame." : "Trop de tours sans prise.")
-                : (over.reason === "timeout" ? "Temps écoulé." : `Les ${over.winner === "black" ? "Noirs" : "Blancs"} gagnent.`)}
+                ? (over.reason === "draw-material" ? t("draw_material") : t("draw_nocapture"))
+                : (over.reason === "timeout" ? t("timeout") : (over.winner === "black" ? t("blacks_win") : t("whites_win")))}
             </p>
-            <button onClick={requestRestart} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">Rejouer</button>
+            <button onClick={requestRestart} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">{t("replay")}</button>
           </div>
         )}
       </div>

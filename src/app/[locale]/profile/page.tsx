@@ -1,4 +1,4 @@
-import { getPlayerRank } from "@/src/lib/stats";
+import { getPlayerRank, getRecentMatches, eloHistoric } from "@/src/lib/stats";
 import { getProfile } from "@/src/lib/user";
 import ProfileClientView from "@/src/components/ProfileClientView";
 import { getFriendsCount } from "@/src/lib/friends";
@@ -34,6 +34,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         const userData = await getProfile(userId);
         const rank = await getPlayerRank(userId);
         const friendsCount = await getFriendsCount(userId);
+        const matchHistory = await getRecentMatches(userId, 3);
+        const eloHistory = await eloHistoric(userId);
 
         return (
             <ProfileClientView
@@ -41,6 +43,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 rank={rank}
                 isPublicView={false}
                 friendsCount={friendsCount}
+                matchHistory={matchHistory}
+                eloHistory={eloHistory}
             />
         );
     } catch (error) {

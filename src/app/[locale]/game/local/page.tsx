@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from "next-intl";
 import {
   makeFreshBoard,
   legalMoves,
@@ -13,6 +14,7 @@ import {
 type Pos = { row: number; col: number };
 
 export default function LocalGamePage() {
+  const t = useTranslations("board");
   const [board, setBoard] = useState<number[][]>(() => makeFreshBoard());
   const [selected, setSelected] = useState<Pos | null>(null);
   const [turn, setTurn] = useState<"white" | "black">("white"); 
@@ -60,7 +62,7 @@ export default function LocalGamePage() {
       const lm = legalMoves(board, turn);
       showError(lm.type === "capture"
         ? "Prise obligatoire : prends le maximum de pions"
-        : "Coup invalide");
+        : t("invalid_move"));
       return;
     }
 
@@ -105,10 +107,10 @@ export default function LocalGamePage() {
       <div className="flex gap-4 mb-4 flex-wrap justify-center">
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-current animate-pulse"></span>
-          Tour : <span className={turn === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{turnFr}</span>
+          {t("turn")} : <span className={turn === "black" ? "text-amber-500 font-bold" : "text-sky-400 font-bold"}>{turnFr}</span>
         </div>
         <div className="bg-slate-800 px-5 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-white shadow-md flex items-center gap-2">
-          ⏱️ Temps : <span className="font-mono font-bold text-yellow-500">{Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
+          ⏱️ {t("time")} : <span className="font-mono font-bold text-yellow-500">{Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</span>
         </div>
       </div>
 
@@ -118,8 +120,8 @@ export default function LocalGamePage() {
 
       <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700/50">
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-amber-500/20 w-44 shadow-inner">
-          <p className="font-bold text-amber-500 text-lg">Joueur Noir</p>
-          <p className="text-slate-400 mt-1 text-sm">Mangées : <span className="text-white font-extrabold text-base">{eatenByBlack}</span></p>
+          <p className="font-bold text-amber-500 text-lg">{t("black_player")}</p>
+          <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByBlack}</span></p>
         </div>
 
         <div className="grid grid-cols-8 border-4 border-slate-950 shadow-2xl rounded-lg overflow-hidden bg-slate-950" style={{ width: "400px", height: "400px" }}>
@@ -145,21 +147,21 @@ export default function LocalGamePage() {
         </div>
 
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-sky-500/20 w-44 shadow-inner">
-          <p className="font-bold text-sky-400 text-lg">Joueur Blanc</p>
-          <p className="text-slate-400 mt-1 text-sm">Mangées : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>
+          <p className="font-bold text-sky-400 text-lg">{t("white_player")}</p>
+          <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>
         </div>
 
         {over && (
           <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center rounded-2xl gap-4 z-20">
             <h2 className="text-4xl font-extrabold" style={{ color: over.winner === null ? "#d97706" : (over.winner === "black" ? "#f59e0b" : "#38bdf8") }}>
-              {over.winner === null ? "Match nul" : `${over.winner === "black" ? "Noir" : "Blanc"} gagne !`}
+              {over.winner === null ? t("draw") : `${over.winner === "black" ? "Noir" : "Blanc"} gagne !`}
             </h2>
             <p className="text-white text-lg">
               {over.winner === null
-                ? (over.reason === "draw-material" ? "Dame contre dame." : "Partie nulle.")
+                ? (over.reason === "draw-material" ? t("draw_material") : "Partie nulle.")
                 : "Plus aucun coup possible pour l'adversaire."}
             </p>
-            <button onClick={resetGame} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">Rejouer</button>
+            <button onClick={resetGame} className="px-7 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg">{t("replay")}</button>
           </div>
         )}
       </div>

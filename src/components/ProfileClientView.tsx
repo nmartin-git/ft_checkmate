@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import useCurrentUser from "@/src/hooks/useCurrentUser"
 import { club_names } from "@prisma/client"
 import Link from "next/link"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineCheck } from "react-icons/ai"
 
@@ -42,6 +42,7 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
 };
 
 export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
+    const t = useTranslations("profile");
     const router = useRouter();
     const locale = useLocale();
     const { user } = useCurrentUser();
@@ -116,7 +117,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                 <div className="w-full md:w-auto flex justify-center md:justify-end">
                     {!isPublicView ? (
                         <Button
-                            label="Parameters"
+                            label={t("parameters")}
                             secondary
                             onClick={handleEditClick}
                         />
@@ -128,7 +129,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                                     className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#2b2925] text-gray-500 border border-[#312e2b] cursor-not-allowed shadow-inner"
                                 >
                                     <AiOutlineCheck size={16} className="text-gray-600" />
-                                    Amis
+                                    {t("friends_short")}
                                 </button>
                             ) : (
                                 <button
@@ -142,12 +143,12 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                                     {isPending ? (
                                         <>
                                             <AiOutlineUserDelete size={16} />
-                                            En attente
+                                            {t("pending")}
                                         </>
                                     ) : (
                                         <>
                                             <AiOutlineUserAdd size={16} />
-                                            Ajouter
+                                            {t("add_friend")}
                                         </>
                                     )}
                                 </button>
@@ -159,10 +160,10 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
 
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col min-h-64">
-                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 Derniers matchs</p>
+                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 {t("matchs_title_short")}</p>
 
                 {matchHistory.length === 0 ? (
-                    <p className="text-sm text-gray-500 font-medium mt-6">Aucune partie jouée</p>
+                    <p className="text-sm text-gray-500 font-medium mt-6">{t("no_matchs_short")}</p>
                 ) : (
                     <ul className="space-y-2">
                         {matchHistory.map((m) => (
@@ -178,7 +179,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                                     m.outcome === 'WIN' ? 'text-[#81b64c]'
                                     : m.outcome === 'LOSS' ? 'text-red-400' : 'text-gray-400'
                                 }`}>
-                                    {m.outcome === 'WIN' ? 'Victoire' : m.outcome === 'LOSS' ? 'Défaite' : 'Nulle'}
+                                    {m.outcome === "WIN" ? t("win") : m.outcome === "LOSS" ? t("loss") : t("draw_result")}
                                 </span>
                             </li>
                         ))}
@@ -186,14 +187,14 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                 )}
             </div>  
             <div className="max-w-6xl mx-auto mt-6 bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
-                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 Évolution de l'elo</p>
+                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 {t("elo_evolution")}</p>
                 <EloChart data={eloHistory} />
             </div>
 
                 <Link href={`/${locale}/leaderboard`} className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer">
                     <div>
                         <div className="flex justify-between items-center mb-4">
-                            <p className="text-gray-300 font-black uppercase tracking-wider text-sm">🏆 Elo & historics</p>
+                            <p className="text-gray-300 font-black uppercase tracking-wider text-sm">🏆 {t("elo_historics")}</p>
                             <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Classement →</span>
                         </div>
                         <div className="flex items-baseline gap-2 mt-6">
@@ -201,7 +202,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                             <span className="text-[#81b64c] font-black text-lg uppercase">elo</span>
                         </div>
                         <div className="mt-4 pt-4 border-t border-[#2b2925]">
-                            <span className="text-sm text-gray-400">Classement mondial : </span>
+                            <span className="text-sm text-gray-400">{t("rank_world")} : </span>
                             <span className="font-mono font-black text-blue-400 tracking-wide group-hover:scale-105 inline-block transition-transform">#{rank}</span>
                         </div>
                     </div>
@@ -210,12 +211,12 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                 <Link href={`/${locale}/friends`} className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer">
                     <div>
                         <div className="flex justify-between items-center mb-4">
-                            <p className="text-gray-300 font-black uppercase tracking-wider text-sm">👥 Friend(s)</p>
-                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Liste d'amis →</span>
+                            <p className="text-gray-300 font-black uppercase tracking-wider text-sm">👥 {t("friends_card")}</p>
+                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("friends_list_link")} →</span>
                         </div>
                         <div className="flex items-baseline gap-2 mt-6">
                             <span className="text-5xl font-black text-white tracking-tight">{friendsCount}</span> 
-                            <span className="text-[#81b64c] font-black text-lg uppercase">friends</span>
+                            <span className="text-[#81b64c] font-black text-lg uppercase">{t("friends_label")}</span>
                         </div>
                     </div>
                 </Link>

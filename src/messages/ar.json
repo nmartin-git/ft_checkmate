@@ -13,8 +13,8 @@
   },
   "home": {
     "title": "العب الداما",
-    "subtitle": "ابدأ مباراة داما مجنونة مع أصدقائك!",
-    "play": "العب ➔"
+    "subtitle": "ابدأ مباراة داما مثيرة ضد أصدقائك!",
+    "play": "العب"
   },
   "auth": {
     "login_title": "تسجيل الدخول",
@@ -39,7 +39,22 @@
     "no_matchs": "لم تُلعب أي مباريات بعد",
     "elo_title": "🏆 إيلو والسجل",
     "friends_title": "👥 الأصدقاء",
-    "no_friends": "ليس لديك أصدقاء بعد."
+    "no_friends": "ليس لديك أصدقاء بعد.",
+    "rank_world": "التصنيف العالمي",
+    "order": "عضو",
+    "matchs_title_short": "آخر المباريات",
+    "no_matchs_short": "لا مباريات",
+    "elo_evolution": "تطور التصنيف",
+    "friends_short": "الأصدقاء",
+    "elo_historics": "التصنيف والسجل",
+    "friends_card": "الأصدقاء",
+    "friends_label": "أصدقاء",
+    "friends_list_link": "قائمة الأصدقاء",
+    "win": "فوز",
+    "loss": "هزيمة",
+    "draw_result": "تعادل",
+    "add_friend": "إضافة",
+    "pending": "قيد الانتظار"
   },
   "parameters": {
     "loading": "جارٍ تحميل الإعدادات...",
@@ -52,6 +67,54 @@
     "saved": "تم حفظ الإعدادات!"
   },
   "notif": {
-    "title": "الإشعارات"
+    "title": "الإشعارات",
+    "no_new": "لا إشعارات جديدة.",
+    "challenges_you": "يتحداك في مباراة",
+    "accept": "قبول",
+    "refuse": "رفض",
+    "accept_challenge": "قبول التحدي",
+    "refuse_challenge": "رفض التحدي"
+  },
+  "footer": {
+    "privacy": "الخصوصية",
+    "terms": "الشروط"
+  },
+  "chart": {
+    "not_enough_games": "لا توجد مباريات كافية لعرض الرسم البياني."
+  },
+  "lobby": {
+    "mode": "وضع اللعب",
+    "ranked": "مصنّف",
+    "local": "لعبة محلية",
+    "local_desc": "العبوا اثنان على نفس الشاشة بنظام «مرر والعب». مثالي للتدريب أو التحليل.",
+    "online": "لعبة عبر الإنترنت",
+    "online_desc": "واجه أصدقاءك عبر الإنترنت في مباراة مصنّفة تُحتسب في تصنيفك.",
+    "challenge_friends": "تحدَّ الأصدقاء",
+    "launch_local": "ابدأ المباراة المحلية"
+  },
+  "board": {
+    "black_player": "اللاعب الأسود",
+    "white_player": "اللاعب الأبيض",
+    "eaten": "المأكولة",
+    "turn": "الدور",
+    "time": "الوقت",
+    "you_play": "أنت تلعب",
+    "black": "أسود",
+    "white": "أبيض",
+    "victory": "فوز!",
+    "defeat": "هزيمة",
+    "draw": "تعادل",
+    "replay": "أعد اللعب",
+    "back_home": "العودة إلى الرئيسية",
+    "draw_material": "ملكة ضد ملكة.",
+    "draw_nocapture": "أدوار كثيرة دون أكل.",
+    "timeout": "انتهى الوقت.",
+    "blacks_win": "فاز الأسود.",
+    "whites_win": "فاز الأبيض.",
+    "mandatory_capture": "الأكل إجباري: خذ أكبر عدد من القطع",
+    "invalid_move": "حركة غير صالحة",
+    "not_your_turn": "ليس دورك",
+    "opponent_left": "انقطع اتصال خصمك…",
+    "game_full": "اللعبة ممتلئة بالفعل"
   }
 }
