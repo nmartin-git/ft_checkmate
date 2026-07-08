@@ -2,7 +2,7 @@
 
 import { club_names } from "@prisma/client";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations} from "next-intl";
 import SearchBar from "./ui/search";
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
@@ -26,6 +26,7 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
 };
 
 export default function FriendsClientView({ friendsList }: FriendsClientViewProps) {
+    const t = useTranslations("social");
     const locale = useLocale();
     const [list, setList] = useState<PlayerRow[]>(friendsList);
 
@@ -48,12 +49,12 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
     return (
         <div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 select-none">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">👥 Liste d'amis</h1>
+                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">👥 {t("friends_list")}</h1>
                 <SearchBar/>
                 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg overflow-hidden shadow-xl">
                     {list.length === 0 ? (
-                        <p className="text-sm text-gray-500 text-center py-8">Vous n'avez pas encore d'amis.</p>
+                        <p className="text-sm text-gray-500 text-center py-8">{t("no_friends")}</p>
                     ) : (
                         list.map((player, index) => {
                             const textColor = CLUB_TEXT_COLORS[player.club] || "text-gray-400";
@@ -82,7 +83,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                         <button
                                             onClick={(e) => handleRemove(e, player.id)}
                                             className="text-gray-500 hover:text-red-500 p-1 rounded transition-colors duration-150 active:scale-90"
-                                            title="Supprimer l'ami"
+                                            title={t("remove_friend")}
                                         >
                                             <AiOutlineClose size={18} className="stroke-[2px]" />
                                         </button>

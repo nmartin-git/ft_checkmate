@@ -116,5 +116,22 @@
     "not_your_turn": "ليس دورك",
     "opponent_left": "انقطع اتصال خصمك…",
     "game_full": "اللعبة ممتلئة بالفعل"
+  },
+  "social": {
+    "friends_list": "قائمة الأصدقاء",
+    "no_friends": "ليس لديك أصدقاء بعد.",
+    "remove_friend": "إزالة الصديق",
+    "leaderboard": "التصنيف العام",
+    "challenge": "تحدَّ",
+    "waiting": "في الانتظار...",
+    "join": "انضم!",
+    "search_placeholder": "ابحث عن لاعب باسم المستخدم..."
+  },
+  "errors": {
+    "not_connected": "غير متصل",
+    "invalid_session": "جلسة غير صالحة",
+    "profile_load_error": "حدث خطأ أثناء تحميل الملف الشخصي.",
+    "generic": "حدث خطأ.",
+    "player_not_found": "اللاعب غير موجود."
   }
 }

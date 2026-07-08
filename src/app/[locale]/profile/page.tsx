@@ -1,4 +1,5 @@
 import { getPlayerRank, getRecentMatches, eloHistoric } from "@/src/lib/stats";
+import { getTranslations } from "next-intl/server";
 import { getProfile } from "@/src/lib/user";
 import ProfileClientView from "@/src/components/ProfileClientView";
 import { getFriendsCount } from "@/src/lib/friends";
@@ -14,6 +15,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
+    const t = await getTranslations("errors");
     const { locale } = await params;
 
     const cookieStore = await cookies();
@@ -49,6 +51,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         );
     } catch (error) {
         console.error("Erreur profil:", error);
-        return <p className="text-white text-center mt-10">Une erreur est survenue.</p>;
+        return <p className="text-white text-center mt-10">{t("generic")}</p>;
     }
 }

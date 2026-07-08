@@ -116,5 +116,22 @@
     "not_your_turn": "It's not your turn",
     "opponent_left": "Your opponent disconnected…",
     "game_full": "The game is already full"
+  },
+  "social": {
+    "friends_list": "Friends list",
+    "no_friends": "You don't have any friends yet.",
+    "remove_friend": "Remove friend",
+    "leaderboard": "Global Ranking",
+    "challenge": "Challenge",
+    "waiting": "Waiting...",
+    "join": "Join!",
+    "search_placeholder": "Search for a player by username..."
+  },
+  "errors": {
+    "not_connected": "Not connected",
+    "invalid_session": "Invalid session",
+    "profile_load_error": "An error occurred while loading the profile.",
+    "generic": "An error occurred.",
+    "player_not_found": "Player not found."
   }
 }
