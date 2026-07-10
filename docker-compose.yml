@@ -12,6 +12,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
 
   frontend:
     build:
@@ -21,6 +23,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       db:
         condition: service_healthy
@@ -32,10 +36,17 @@ services:
     container_name: ft_checkmate_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
       - "443:443"
     depends_on:
       - frontend
-
+  adminer:
+    image: adminer
+    container_name: ft_checkmate_adminer
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
 volumes:
   postgres_data:

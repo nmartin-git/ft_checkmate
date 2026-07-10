@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+	
+}
+
+enum club_names {
+    Assembly
+    Order
+    Federation
+    Alliance
+}
+
+enum game_results {
+    WHITE
+    BLACK
+    DRAW
+}
+
+enum follow_status {
+    PENDING
+    ACCEPTED
+    REFUSED
+    GAME_REQUESTED
+}
+
+model User {
+    id                 String     @id @default(uuid()) @db.Uuid
+    email              String     @unique @db.Citext
+	username		   String	  @unique @db.VarChar(12)
+    password           String?
+    birthdate          DateTime?  @db.Date
+	avatar_url	       String?
+    a2f_enable         Boolean    @default(false)
+    a2f_opt_hash       String?    @db.Text
+    a2f_expires_at     DateTime?
+    a2f_log_attemps    Int        @default(0)
+    a2f_recovery_codes String?    @db.Text
+    chat_enable        Boolean    @default(false)
+    club               club_names
+    elo                Int        @default(800)
+    is_online          Boolean    @default(true)
+    chatMessages       Chat[]     @relation("authorUserId")
+    followLists        Friends[]   @relation("followUserId")
+    followedBy         Friends[]   @relation("friendUserId")
+    sentMessages       DirectMessage[] @relation("dmSenderId")
+    receivedMessages   DirectMessage[] @relation("dmReceiverId")
+    whiteGames         Game[]     @relation("whitePlayerId")
+    blackGames         Game[]     @relation("blackPlayerId")
+
+    @@index([elo(sort: Desc)])
+}
+
+model Friends {
+    id        String        @id @default(uuid()) @db.Uuid
+    user_id   String        @db.Uuid
+    user      User          @relation("followUserId", fields: [user_id], references: [id])
+    friend_id String        @db.Uuid
+    friend    User          @relation("friendUserId", fields: [friend_id], references: [id])
+    status    follow_status @default(PENDING)
+    //check CHECK user_id != friend_id
+
+    @@unique([user_id, friend_id])
+    @@index([user_id])
+    @@index([friend_id])
+}
+
+model Game {
+    id               String        @id @default(uuid()) @db.Uuid
+    date             DateTime      @default(now())
+    white_player_elo Int
+    black_player_elo Int
+    white_player_id  String		   @db.Uuid
+    white_user       User          @relation("whitePlayerId", fields: [white_player_id], references: [id])
+    black_player_id  String		   @db.Uuid
+    black_user       User          @relation("blackPlayerId", fields: [black_player_id], references: [id])
+    result           game_results?
+    chats            Chat[]        @relation("chatGameId")
+    moves            Move[]        @relation("moveGameId")
+    // check CHECK white_player_id != black_player_id
+
+    @@index([white_player_id])
+    @@index([black_player_id])
+}
+
+model Chat {
+    id             String   @id @default(uuid()) @db.Uuid
+    message        String   @db.VarChar(140)
+    date           DateTime @updatedAt
+    author_user_id String	@db.Uuid
+    author_user    User     @relation("authorUserId", fields: [author_user_id], references: [id])
+    game_id        String	@db.Uuid
+    game           Game     @relation("chatGameId", fields: [game_id], references: [id])
+
+    @@index([author_user_id])
+    @@index([game_id])
+}
+
+model Move {
+    id               String   @id @default(uuid()) @db.Uuid
+    move_number      Int
+    initial_position Int      @db.SmallInt
+    new_position     Int      @db.SmallInt
+    time_to_move     Int
+    game_id          String	  @db.Uuid
+    game             Game     @relation("moveGameId", fields: [game_id], references: [id])
+
+    @@unique([game_id, move_number])
+    @@index([game_id])
+}
+
+model DirectMessage {
+    id          String    @id @default(uuid()) @db.Uuid
+    message     String    @db.VarChar(140)
+    date        DateTime  @default(now())
+    read_at     DateTime?
+    sender_id   String    @db.Uuid
+    sender      User      @relation("dmSenderId", fields: [sender_id], references: [id])
+    receiver_id String    @db.Uuid
+    receiver    User      @relation("dmReceiverId", fields: [receiver_id], references: [id])
+    //check CHECK sender_id != receiver_id
+
+    @@index([sender_id])
+    @@index([receiver_id])
+    @@index([sender_id, receiver_id])
+}

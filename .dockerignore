@@ -1,0 +1,16 @@
+# Dépendances : installées proprement par npm ci dans l'image
+node_modules
+
+# Caches de build locaux (contiennent des chemins absolus de la machine hôte !)
+.next
+.turbo
+
+# Git et fichiers inutiles dans l'image
+.git
+.gitignore
+*.log
+
+# Docker lui-même
+Dockerfile
+docker-compose.yml
+.dockerignore
