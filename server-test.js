@@ -266,5 +266,5 @@ app.prepare().then(() => {
   });
 
   const PORT = 3000;
-  httpServer.listen(PORT, () => console.log(`> Serveur prêt sur http://localhost:${PORT}`));
+  httpServer.listen(PORT, () => console.log(`> Serveur prêt sur https://localhost:${PORT}`));
 });

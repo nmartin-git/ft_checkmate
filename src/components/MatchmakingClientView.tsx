@@ -2,7 +2,7 @@
 
 import { club_names } from "@prisma/client";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations} from "next-intl";
 import SearchBar from "./ui/search";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -32,6 +32,7 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
 };
 
 export default function FriendsClientView({ friendsList }: FriendsClientViewProps) {
+    const t = useTranslations("social");
     const locale = useLocale();
     const router = useRouter();
     const [list] = useState<PlayerRow[]>(friendsList);
@@ -137,14 +138,14 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                             
                             const isAnyOtherRequestActive = activeRequests.some(r => r.friend_id !== player.id && r.friend_id !== "me");
 
-                            let buttonLabel = "Affronter";
+                            let buttonLabel = t("challenge");
                             let buttonStyle = "bg-[#81b64c] hover:bg-[#92cb57] text-white shadow-[#81b64c]/10";
 
                             if (isSentToHim) {
-                                buttonLabel = "En attente...";
+                                buttonLabel = t("waiting");
                                 buttonStyle = "bg-[#312e2b] text-gray-400 border border-[#45423f] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50";
                             } else if (isReceivedFromHim) {
-                                buttonLabel = "Rejoindre !";
+                                buttonLabel = t("join");
                                 buttonStyle = "bg-blue-600 hover:bg-blue-500 text-white animate-pulse";
                             } else if (isAnyOtherRequestActive) {
                                 buttonStyle = "bg-gray-800 text-gray-600 cursor-not-allowed opacity-40";

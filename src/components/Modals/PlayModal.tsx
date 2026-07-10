@@ -5,7 +5,7 @@ import Modal from "@/src/components/ui/Modal";
 import usePlayModal from "@/src/hooks/usePlayModal";
 import useLoginModal from "@/src/hooks/useLoginModal";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 
 export default function PlayModal() {
@@ -13,6 +13,7 @@ export default function PlayModal() {
     const [selectedMode, setSelectedMode] = useState<"online" | "local">("local");
     const router = useRouter();
     const locale = useLocale();
+    const t = useTranslations("lobby");
 	const loginModal = useLoginModal();
 	const { user } = useCurrentUser();
 
@@ -37,7 +38,7 @@ export default function PlayModal() {
     const modalBody = (
         <div className="flex flex-col gap-4 mt-2">
             <p className="text-sm text-gray-400 mb-2 font-medium">
-                Sélectionnez le type d'affrontement que vous souhaitez lancer :
+                {t("mode")}
             </p>
             
             <button
@@ -56,11 +57,11 @@ export default function PlayModal() {
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="font-black text-white text-lg tracking-wide uppercase flex items-center gap-2">
-                        Partie entre amis
-                        <span className="bg-[#81b64c] text-white text-[10px] font-black px-1.5 py-0.5 rounded normal-case tracking-normal">Ranked</span>
+                        {t("online")}
+                        <span className="bg-[#81b64c] text-white text-[10px] font-black px-1.5 py-0.5 rounded normal-case tracking-normal">{t("ranked")}</span>
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5 font-medium leading-relaxed">
-                        Défiez vos amis. Les gains et pertes de points affectent votre ELO.
+                        {t("online_desc")}
                     </div>
                 </div>
             </button>
@@ -80,9 +81,9 @@ export default function PlayModal() {
                     🖥️
                 </div>
                 <div className="flex-1 min-w-0">
-                    <div className="font-black text-white text-lg tracking-wide uppercase">Partie locale</div>
+                    <div className="font-black text-white text-lg tracking-wide uppercase">{t("local")}</div>
                     <div className="text-xs text-gray-400 mt-0.5 font-medium leading-relaxed">
-                        Jouez à deux sur le même écran en mode "Pass & Play". Idéal pour s'entraîner ou analyser.
+                        {t("local_desc")}
                     </div>
                 </div>
             </button>
@@ -97,9 +98,9 @@ export default function PlayModal() {
                 setSelectedMode("local");
             }}
             onSubmit={handleGameLaunch}
-            title="Mode de jeu"
+            title={t("mode")}
             body={modalBody}
-            actionLabel={selectedMode === "online" ? "Affronter des amis" : "Lancer le match local"}
+            actionLabel={selectedMode === "online" ? t("challenge_friends") : t("launch_local")}
             disabled={false}
         />
     );

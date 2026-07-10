@@ -7,16 +7,18 @@ const JWT_SECRET =new TextEncoder().encode(
     process.env.JWT_SECRET || 'secret-temporaire-a-changer'
 );
 
+const PUBLIC_ORIGIN = process.env.NEXTAUTH_URL || 'https://localhost';
+
 export async function GET(request: NextRequest)
 {
 	const searchParams = request.nextUrl.searchParams;
 	const code = searchParams.get("code");
 	const error = searchParams.get("error");
 	if (error) {
-		return NextResponse.redirect(new URL("/login?error=access_denied", request.url));
+		return NextResponse.redirect(new URL("/login?error=access_denied", PUBLIC_ORIGIN));
 	}
 	if (!code) {
-	    return NextResponse.redirect(new URL("/login?error=missing_code", request.url));
+	    return NextResponse.redirect(new URL("/login?error=missing_code", PUBLIC_ORIGIN));
 	}
 	try {
 		const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest)
                 code: code,
                 client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
                 client_secret: process.env.GOOGLE_CLIENT_SECRET || "", // CLÉ SECRÈTE (Serveur uniquement)
-                redirect_uri: "http://localhost:3000/api/auth/callback/google",
+                redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`,
                 grant_type: "authorization_code",
             }),
         });
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest)
 		}).setProtectedHeader({alg :'HS256'})
 		.setExpirationTime('1d')
 		.sign(JWT_SECRET);
-		const response = NextResponse.redirect(new URL("/", request.url));
+		const response = NextResponse.redirect(new URL("/", PUBLIC_ORIGIN));
 		response.cookies.set('auth-token', token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',

@@ -1,4 +1,5 @@
 import { getPlayerRank, getRecentMatches, eloHistoric} from "@/src/lib/stats";
+import { getTranslations } from "next-intl/server";
 import { getProfile } from "@/src/lib/user";
 import ProfileClientView from "@/src/components/ProfileClientView";
 import { findRequest, getFriendsCount, isFriends } from "@/src/lib/friends";
@@ -16,12 +17,13 @@ interface PublicProfileProps {
 }
 
 export default async function PublicProfilePage({ params }: PublicProfileProps) {
+    const t = await getTranslations("errors");
     try {
         const { id } = await params;
         const userData = await getProfile(id);
         
         if (!userData) {
-            return <p className="text-white text-center mt-10">Joueur introuvable.</p>;
+            return <p className="text-white text-center mt-10">{t("player_not_found")}</p>;
         }
 
         const rank = await getPlayerRank(id);
@@ -64,6 +66,6 @@ export default async function PublicProfilePage({ params }: PublicProfileProps) 
         );
     } catch (error) {
         console.error("Erreur profil public:", error);
-        return <p className="text-white text-center mt-10">Une erreur est survenue.</p>;
+        return <p className="text-white text-center mt-10">{t("generic")}</p>;
     }
 }

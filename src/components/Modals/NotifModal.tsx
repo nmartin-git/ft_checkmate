@@ -5,7 +5,7 @@ import NotifPopup from "@/src/components/ui/NotifPopup";
 import useNotifModal from "@/src/hooks/useNotifModal";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface PendingUser {
     id: string;
@@ -23,6 +23,7 @@ const NotifModal = () => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const locale = useLocale();
+    const t = useTranslations("notif");
 
     useEffect(() => {
         if (!notifModal.isOpen) return;
@@ -83,7 +84,6 @@ const NotifModal = () => {
             });
 
             if (res.ok) {
-                //  FAIT Supprime localement la notification de la liste une fois traitée
                 setFriendPendingRequests((prev) => prev.filter((user) => user.id !== requesterId));
             }
         } catch (error) {
@@ -102,7 +102,7 @@ const NotifModal = () => {
 
             {!isLoading && friendPendingRequests.length === 0 && gamePendingRequests.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-6 font-medium">
-                    Aucune nouvelle notification.
+                    {t("no_new")}
                 </p>
             )}
 
@@ -126,14 +126,14 @@ const NotifModal = () => {
                     <div className="flex items-center gap-2 shrink-0">
                         <button
                             onClick={() => handleFriendsAction(user.id, "accept")}
-                            title="Accepter"
+                            title={t("accept")}
                             className="flex items-center justify-center w-8 h-8 rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#81b64c]/10"
                         >
                             <AiOutlineCheck size={16} />
                         </button>
                         <button
                             onClick={() => handleFriendsAction(user.id, "refuse")}
-                            title="Refuser"
+                            title={t("refuse")}
                             className="flex items-center justify-center w-8 h-8 rounded bg-[#e24c3c] hover:bg-[#ef5343] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#e24c3c]/10"
                         >
                             <AiOutlineClose size={16} />
@@ -152,7 +152,7 @@ const NotifModal = () => {
                     {user.username}
                 </span>
                 <span className="text-[11px] text-gray-400 mt-0.5 font-semibold uppercase tracking-wider">
-                    Vous défie en partie
+                    {t("challenges_you")}
                 </span>
             </div>
 
@@ -160,14 +160,14 @@ const NotifModal = () => {
             <div className="flex items-center gap-2 shrink-0">
                 <button
                     onClick={() => handleGamesAction(user.id, "accept")}
-                    title="Accepter le défi"
+                    title={t("accept_challenge")}
                     className="flex items-center justify-center w-8 h-8 rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#81b64c]/10"
                 >
                     <AiOutlineCheck size={16} />
                 </button>
                 <button
                     onClick={() => handleGamesAction(user.id, "refuse")}
-                    title="Refuser le défi"
+                    title={t("refuse_challenge")}
                     className="flex items-center justify-center w-8 h-8 rounded bg-[#e24c3c] hover:bg-[#ef5343] text-white transition-all duration-150 active:scale-90 shadow-md shadow-[#e24c3c]/10"
                 >
                     <AiOutlineClose size={16} />
@@ -183,7 +183,7 @@ const NotifModal = () => {
             <NotifPopup
                 disabled={isLoading}
                 isOpen={notifModal.isOpen}
-                title="Notifications"
+                title={t("title")}
                 onClose={notifModal.onClose}
                 body={bodyContent}
             />

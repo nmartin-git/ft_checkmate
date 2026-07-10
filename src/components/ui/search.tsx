@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { AiOutlineSearch, AiOutlineUserAdd, AiOutlineUserDelete } from "react-icons/ai";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations} from "next-intl";
 
 interface SearchedUser {
     id: string;
@@ -12,6 +12,7 @@ interface SearchedUser {
 }
 
 export default function SearchBar() {
+    const t = useTranslations("social");
     const locale = useLocale();
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchedUser[]>([]);
@@ -71,7 +72,7 @@ export default function SearchBar() {
             <div className="relative w-full">
                 <input
                     type="text"
-                    placeholder="Rechercher un joueur par son pseudo..."
+                    placeholder={t("search_placeholder")}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="w-full p-4 pl-12 bg-[#211f1b] border-2 border-[#2b2925] rounded-lg text-white font-medium placeholder-gray-500 outline-none focus:border-[#45423f] transition-all duration-200"

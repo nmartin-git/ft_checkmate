@@ -2,7 +2,7 @@
 
 import { club_names } from "@prisma/client";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations} from "next-intl";
 
 interface PlayerRow {
     id: string;
@@ -23,12 +23,13 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
 };
 
 export default function LeaderboardClientView({ leaderboard }: LeaderboardClientViewProps) {
+    const t = useTranslations("social");
     const locale = useLocale();
 	
 	return (
  		<div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 select-none">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">🏆 Classement Général</h1>
+                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">🏆 {t("leaderboard")}</h1>
                 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg overflow-hidden shadow-xl">
                     {leaderboard.map((player, index) => {

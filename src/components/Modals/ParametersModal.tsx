@@ -1,18 +1,20 @@
 'use client'
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import Modal from "@/src/components/ui/Modal";
 import useParametersModal from "@/src/hooks/useParametersModal";
 import NotifPopup from "@/src/components/ui/NotifPopup";
 
 const ParametersModal= () => {
 	const parametersModal = useParametersModal();
+	const t = useTranslations("parameters");
 	const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
 
 	const bodyContent = (
   		<div className="space-y-4 text-black">
   		  <p className="text-sm text-gray-600">
-  		    Conservez ces codes en lieu sûr. **Ils ne seront affichés qu'une seule fois.**
+  		    {t("recovery_warn")}
   		  </p>
 
   		  <div className="bg-gray-100 p-3 rounded font-mono text-sm space-y-1 select-all">
@@ -28,12 +30,12 @@ const ParametersModal= () => {
   		    onClick={() => {
   		      if (parametersModal.recoveryCodes) {
   		        navigator.clipboard.writeText(parametersModal.recoveryCodes.join("\n"));
-  		        alert("Codes copiés !");
+  		        alert(t("copied"));
   		      }
   		    }}
   		    className="w-full bg-black text-white text-sm py-2 rounded hover:bg-gray-800 transition-colors"
   		  >
-  		    Copier tous les codes
+  		    {t("copy_codes")}
   		  </button>
   		</div>
 	);
@@ -42,7 +44,7 @@ const ParametersModal= () => {
         <NotifPopup
         disabled={false}
         isOpen={parametersModal.isOpen}
-        title="Recovery codes"
+        title={t("recovery_title")}
         onClose={parametersModal.onClose}
         body={bodyContent}
         />

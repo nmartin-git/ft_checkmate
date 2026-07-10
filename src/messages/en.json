@@ -13,8 +13,8 @@
   },
   "home": {
     "title": "Play Checkers",
-    "subtitle": "Start a wild game of Checkers against your friends!",
-    "play": "Play ➔"
+    "subtitle": "Start a thrilling game of Checkers against your friends!",
+    "play": "Play"
   },
   "auth": {
     "login_title": "Login",
@@ -30,7 +30,13 @@
     "recovery_codes": "Recovery codes",
     "recovery_code": "Recovery code",
     "problem_recovery": "Have a problem with recovery codes?",
-    "auth_code": "Authentication code (2FA)"
+    "auth_code": "Authentication code (2FA)",
+    "username": "Username",
+    "register_title": "Create an account",
+    "register": "Register",
+    "sign_up_google": "Sign up with Google",
+    "already_account": "You already have an account?",
+    "log_in": "Log in"
   },
   "profile": {
     "player": "Player",
@@ -39,7 +45,22 @@
     "no_matchs": "No matches played yet",
     "elo_title": "🏆 Elo & history",
     "friends_title": "👥 Friend(s)",
-    "no_friends": "You don't have friends yet."
+    "no_friends": "You don't have friends yet.",
+    "rank_world": "World ranking",
+    "order": "MEMBER",
+    "matchs_title_short": "Recent matches",
+    "no_matchs_short": "No game played",
+    "elo_evolution": "ELO evolution",
+    "friends_short": "Friends",
+    "elo_historics": "Elo & history",
+    "friends_card": "Friend(s)",
+    "friends_label": "friends",
+    "friends_list_link": "Friends list",
+    "win": "Victory",
+    "loss": "Defeat",
+    "draw_result": "Draw",
+    "add_friend": "Add",
+    "pending": "Pending"
   },
   "parameters": {
     "loading": "Loading settings...",
@@ -49,9 +70,123 @@
     "enable_2fa": "Enable two factor authentication (2FA)",
     "saving": "Saving...",
     "save": "Save parameters",
-    "saved": "Parameters saved!"
+    "saved": "Parameters saved!",
+    "recovery_title": "Recovery codes",
+    "recovery_warn": "Keep these codes in a safe place. They will only be shown once.",
+    "copy_codes": "Copy all codes",
+    "copied": "Codes copied!",
+    "danger_zone": "Danger zone",
+    "delete_account": "Delete account",
+    "delete_warning": "This action is irreversible. All your data (games, friends, statistics) will be permanently deleted.",
+    "delete_confirm": "Confirm deletion",
+    "delete_cancel": "Cancel",
+    "deleting": "Deleting...",
+    "delete_error": "Error while deleting the account."
   },
   "notif": {
-    "title": "Notifications"
+    "title": "Notifications",
+    "no_new": "No new notification.",
+    "challenges_you": "challenges you to a game",
+    "accept": "Accept",
+    "refuse": "Decline",
+    "accept_challenge": "Accept challenge",
+    "refuse_challenge": "Decline challenge"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "chart": {
+    "not_enough_games": "Not enough games to display the chart."
+  },
+  "lobby": {
+    "mode": "Game mode",
+    "ranked": "Ranked",
+    "local": "Local game",
+    "local_desc": "Play with two on the same screen in \"Pass & Play\" mode. Perfect to practice or analyze.",
+    "online": "Online game",
+    "online_desc": "Face your friends online in a ranked game that counts toward your ELO.",
+    "challenge_friends": "Challenge friends",
+    "launch_local": "Start local match"
+  },
+  "board": {
+    "black_player": "Black Player",
+    "white_player": "White Player",
+    "eaten": "Captured",
+    "turn": "Turn",
+    "time": "Time",
+    "you_play": "You play",
+    "black": "Black",
+    "white": "White",
+    "victory": "Victory!",
+    "defeat": "Defeat",
+    "draw": "Draw",
+    "replay": "Play again",
+    "back_home": "Back to home",
+    "draw_material": "King versus king.",
+    "draw_nocapture": "Too many turns without a capture.",
+    "timeout": "Time is up.",
+    "blacks_win": "Black wins.",
+    "whites_win": "White wins.",
+    "mandatory_capture": "Mandatory capture: take the most pieces",
+    "invalid_move": "Invalid move",
+    "not_your_turn": "It's not your turn",
+    "opponent_left": "Your opponent disconnected…",
+    "game_full": "The game is already full"
+  },
+  "social": {
+    "friends_list": "Friends list",
+    "no_friends": "You don't have any friends yet.",
+    "remove_friend": "Remove friend",
+    "leaderboard": "Global Ranking",
+    "challenge": "Challenge",
+    "waiting": "Waiting...",
+    "join": "Join!",
+    "search_placeholder": "Search for a player by username..."
+  },
+  "errors": {
+    "not_connected": "Not connected",
+    "invalid_session": "Invalid session",
+    "profile_load_error": "An error occurred while loading the profile.",
+    "generic": "An error occurred.",
+    "player_not_found": "Player not found."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "updated": "Last updated",
+    "s1_title": "1. Purpose",
+    "s1_body": "Dames.com is an online gaming platform developed as part of the ft_transcendence project at 42 school. This site is an educational project with no commercial purpose.",
+    "s2_title": "2. Registration",
+    "s2_body": "Registration requires a unique username and a valid email address, or a login via 42 authentication (OAuth). You are responsible for keeping your credentials confidential.",
+    "s3_title": "3. Usage rules",
+    "s3_li1": "Impersonating another user is prohibited",
+    "s3_li2": "Cheating is prohibited (bots, automated scripts, exploits)",
+    "s4_title": "4. Account deletion",
+    "s4_body": "You can delete your account at any time from your profile page. This action removes your personal data in accordance with our privacy policy.",
+    "s5_title": "5. Liability",
+    "s5_body": "As this project is made for educational purposes, no guarantee of availability, performance, or absence of bugs is provided."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last updated",
+    "s1_title": "1. Data collected",
+    "s1_intro": "When you register and use Dames.com, we collect:",
+    "s1_li1": "Your username and email address",
+    "s1_li2": "Your avatar",
+    "s1_li3": "Your game history and play statistics",
+    "s1_li4": "Your authentication data (via the 42 API if OAuth login)",
+    "s2_title": "2. Use of data",
+    "s2_intro": "This data is used only to:",
+    "s2_li1": "Let you play and track your statistics",
+    "s2_li2": "Manage your account and session (via cookies/JWT tokens)",
+    "s2_li3": "Display your profile to other players",
+    "s3_title": "3. Cookies",
+    "s3_body": "We use technical cookies (session, authentication) necessary for the site to function. No advertising or third-party tracking cookies are used.",
+    "s4_title": "4. Data sharing",
+    "s4_body": "Your data is never sold or shared with third parties for commercial purposes. It remains strictly internal to the application.",
+    "s5_title": "5. Your rights",
+    "s5_body": "In accordance with GDPR, you can at any time request access, modification, or deletion of your personal data by deleting your account from your profile, or by contacting us.",
+    "s6_title": "6. Contact",
+    "s6_body": "For any question about your data, contact the development team via the project repository."
   }
 }
