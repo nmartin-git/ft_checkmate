@@ -99,13 +99,13 @@ export default function ParametersPage() {
     }
   }
   if (isFetching) {
-    return <div className="p-6 text-black">Loading settings...</div>
+    return <div className="p-6 min-h-[calc(100vh-100px)] bg-[#262522] text-gray-400 font-medium text-sm">Loading settings...</div>
   }
   return (
     <>
-    <form onSubmit={onSubmit} className="p-6 max-w-md bg-white text-black space-y-4">
+    <form onSubmit={onSubmit} className="p-10 max-w-2xl mx-auto my-12 bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg shadow-xl text-white space-y-6">
       {}
-      <label className="flex items-center gap-2">
+      <label className="flex items-center gap-2 text-gray-300 font-black uppercase tracking-wider text-base">
         Date de naissance
       </label>
       <Popover>
@@ -113,10 +113,10 @@ export default function ParametersPage() {
           <ShadcnButton
             variant={"outline"}
             className={cn(
-              "w-full justify-start text-left font-sans font-normal border-gray-300 bg-white text-black hover:bg-gray-50",
-              !birthdate && "text-gray-400"
+              "w-full justify-start text-left font-sans font-semibold rounded bg-[#262522] border-2 border-[#312e2b] text-white hover:bg-[#312e2b] hover:text-white text-lg py-6",
+              !birthdate && "text-gray-500 font-medium"
             )}>
-            <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
+            <CalendarIcon className="mr-2 h-8 w-8 text-[#81b64c]" />
             {birthdate ? (
               format(birthdate, "PPP", { locale: fr })
             ) : (
@@ -124,7 +124,7 @@ export default function ParametersPage() {
             )}
           </ShadcnButton>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-md font-sans" align="start">
+        <PopoverContent className="w-auto p-0 bg-[#1e1c18] border-2 border-[#2b2925] shadow-xl font-sans" align="start">
           <Calendar
             mode="single"
             selected={birthdate}
@@ -134,12 +134,12 @@ export default function ParametersPage() {
         </PopoverContent>
       </Popover>
       {/* Zone Booréen */}
-    	<label className="flex items-center gap-2">
-        <input type="checkbox" checked={chatEnabled} onChange={(e) => setChatEnabled(e.target.checked)} />
+    	<label className="flex items-center gap-3 text-lg font-bold text-gray-200">
+        <input type="checkbox" checked={chatEnabled} onChange={(e) => setChatEnabled(e.target.checked)} className="w-7 h-7 accent-[#81b64c] cursor-pointer" />
         Enable chat
     	</label>
-		<label className="flex items-center gap-2">
-        <input type="checkbox" checked={twoFactorAuthEnabled} onChange={(e) => setTwoFactorAuthEnabled(e.target.checked)} />
+		<label className="flex items-center gap-3 text-lg font-bold text-gray-200">
+        <input type="checkbox" checked={twoFactorAuthEnabled} onChange={(e) => setTwoFactorAuthEnabled(e.target.checked)} className="w-7 h-7 accent-[#81b64c] cursor-pointer" />
         Enable two factor authentification (2fa)
     	</label>
         <Button 

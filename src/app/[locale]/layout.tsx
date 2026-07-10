@@ -38,22 +38,22 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className=" bg-[#262522]">
-      <body className="h-full text-white">
-        {}
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>
-            <RegisterModal />
-            <LoginModal />
-            <NotifModal />
-            <PlayModal />
-            <Topbar />
-            <PlayModal />
-            <div>{children}</div>
-            <Footer />
-          </AuthProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
-  );
+  <html lang={locale} className="bg-[#262522]">
+    <body className="min-h-screen flex flex-col text-white">
+      {}
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <AuthProvider>
+          <RegisterModal />
+          <LoginModal />
+          <NotifModal />
+          <PlayModal />
+          <Topbar />
+          <PlayModal />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </AuthProvider>
+      </NextIntlClientProvider>
+    </body>
+  </html>
+);
 }
