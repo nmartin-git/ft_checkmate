@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/src/lib/prisma"
-import { writeFile } from "fs/promises"
-import { join } from "path"
 import { updateChatEnable, updateTwoFactorAuth, getParameters, updateUserField } from "@/src/lib/user"
-import { jwtVerify, JWTPayload } from "jose";
+import { jwtVerify} from "jose";
 import { cookies } from "next/headers";
 
 

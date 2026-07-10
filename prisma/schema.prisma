@@ -48,7 +48,6 @@ model User {
     club               club_names
     elo                Int        @default(800)
     is_online          Boolean    @default(true)
-    chatMessages       Chat[]     @relation("authorUserId")
     followLists        Friends[]   @relation("followUserId")
     followedBy         Friends[]   @relation("friendUserId")
     sentMessages       DirectMessage[] @relation("dmSenderId")
@@ -83,25 +82,11 @@ model Game {
     black_player_id  String		   @db.Uuid
     black_user       User          @relation("blackPlayerId", fields: [black_player_id], references: [id])
     result           game_results?
-    chats            Chat[]        @relation("chatGameId")
     moves            Move[]        @relation("moveGameId")
     // check CHECK white_player_id != black_player_id
 
     @@index([white_player_id])
     @@index([black_player_id])
-}
-
-model Chat {
-    id             String   @id @default(uuid()) @db.Uuid
-    message        String   @db.VarChar(140)
-    date           DateTime @updatedAt
-    author_user_id String	@db.Uuid
-    author_user    User     @relation("authorUserId", fields: [author_user_id], references: [id])
-    game_id        String	@db.Uuid
-    game           Game     @relation("chatGameId", fields: [game_id], references: [id])
-
-    @@index([author_user_id])
-    @@index([game_id])
 }
 
 model Move {

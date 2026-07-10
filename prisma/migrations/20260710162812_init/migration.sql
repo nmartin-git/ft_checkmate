@@ -8,7 +8,7 @@ CREATE TYPE "club_names" AS ENUM ('Assembly', 'Order', 'Federation', 'Alliance')
 CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
 
 -- CreateEnum
-CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED', 'GAME_REQUESTED');
+CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED', 'REFUSED', 'GAME_REQUESTED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -53,17 +53,6 @@ CREATE TABLE "Game" (
     "result" "game_results",
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Chat" (
-    "id" UUID NOT NULL,
-    "message" VARCHAR(140) NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-    "author_user_id" UUID NOT NULL,
-    "game_id" UUID NOT NULL,
-
-    CONSTRAINT "Chat_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -115,12 +104,6 @@ CREATE INDEX "Game_white_player_id_idx" ON "Game"("white_player_id");
 CREATE INDEX "Game_black_player_id_idx" ON "Game"("black_player_id");
 
 -- CreateIndex
-CREATE INDEX "Chat_author_user_id_idx" ON "Chat"("author_user_id");
-
--- CreateIndex
-CREATE INDEX "Chat_game_id_idx" ON "Chat"("game_id");
-
--- CreateIndex
 CREATE INDEX "Move_game_id_idx" ON "Move"("game_id");
 
 -- CreateIndex
@@ -148,12 +131,6 @@ ALTER TABLE "Game" ADD CONSTRAINT "Game_white_player_id_fkey" FOREIGN KEY ("whit
 ALTER TABLE "Game" ADD CONSTRAINT "Game_black_player_id_fkey" FOREIGN KEY ("black_player_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Chat" ADD CONSTRAINT "Chat_author_user_id_fkey" FOREIGN KEY ("author_user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Chat" ADD CONSTRAINT "Chat_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Move" ADD CONSTRAINT "Move_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -163,6 +140,7 @@ ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_sender_id_fkey" FOREIG
 ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddChecks
+
 ALTER TABLE "Friends"
 ADD CONSTRAINT "friend_user_not_self"
 CHECK ("user_id" != "friend_id");
@@ -173,4 +151,4 @@ CHECK ("white_player_id" != "black_player_id");
 
 ALTER TABLE "DirectMessage"
 ADD CONSTRAINT "sender_to_not_self"
-CHECK ("sender_id" != "receiver_id");
+CHECK ("sender_id" != "receiver_id"); 
