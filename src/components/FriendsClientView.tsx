@@ -12,6 +12,7 @@ interface PlayerRow {
     username: string | null;
     club: club_names;
     elo: number;
+    is_online : boolean;
 }
 
 interface FriendsClientViewProps {
@@ -58,6 +59,8 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                     ) : (
                         list.map((player, index) => {
                             const textColor = CLUB_TEXT_COLORS[player.club] || "text-gray-400";
+                            // const response = await fetch('api/friends/isOnline');
+                            // const isOnline = response.is_online; 
                             
                             return (
                                 <Link 
@@ -74,6 +77,9 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                         </span>
                                         <span className={`text-xs px-2 py-0.5 rounded uppercase font-black bg-[#312e2b] ${textColor}`}>
                                             {player.club}
+                                        </span>
+                                        <span className={player.is_online ? "text-green-500" : "text-red-500"}>
+                                            {player.is_online ? "En ligne" : "Hors ligne"}
                                         </span>
                                     </div>
                                     

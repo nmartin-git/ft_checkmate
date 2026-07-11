@@ -47,7 +47,7 @@ model User {
     chat_enable        Boolean    @default(false)
     club               club_names
     elo                Int        @default(800)
-    is_online          Boolean    @default(true)
+    is_online          Boolean    @default(false)
     chatMessages       Chat[]     @relation("authorUserId")
     followLists        Friends[]   @relation("followUserId")
     followedBy         Friends[]   @relation("friendUserId")
