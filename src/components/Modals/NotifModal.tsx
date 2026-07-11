@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
+import Avatar from "@/src/components/ui/Avatar"
 import NotifPopup from "@/src/components/ui/NotifPopup";
 import useNotifModal from "@/src/hooks/useNotifModal";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
@@ -12,9 +13,9 @@ interface PendingUser {
     username: string;
     club: string;
     elo: number;
+    avatar_url?: string | null;
 }
 
-// fait TODO REFAIRE LA DA DE NOTIF
 
 const NotifModal = () => {
     const notifModal = useNotifModal();
@@ -112,17 +113,18 @@ const NotifModal = () => {
                     className="flex items-center justify-between p-3.5 bg-[#211f1b] border
                      border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
                 >
-                    {/* Infos du joueur demandeur */}
+                    <div className="flex items-center gap-3 min-w-0">
+                    <Avatar src={user.avatar_url} username={user.username} size={40} />
                     <div className="flex flex-col min-w-0">
                         <span className="text-white font-bold tracking-wide text-sm truncate">
                             {user.username}
                         </span>
                         <span className="text-[11px] text-gray-400 mt-0.5 font-semibold uppercase tracking-wider">
-                            Souhaite vous ajouter en ami
+                            {t("wants_to_add")}
                         </span>
                     </div>
+                    </div>
 
-                    {/* Boutons d'actions rapides */}
                     <div className="flex items-center gap-2 shrink-0">
                         <button
                             onClick={() => handleFriendsAction(user.id, "accept")}
@@ -146,7 +148,6 @@ const NotifModal = () => {
             key={user.id}
             className="flex items-center justify-between p-3.5 bg-[#211f1b] border border-[#2b2925] rounded-lg group hover:border-[#45423f] transition-all duration-150"
         >
-            {/* Infos du joueur qui défie */}
             <div className="flex flex-col min-w-0">
                 <span className="text-white font-bold tracking-wide text-sm truncate">
                     {user.username}
@@ -156,7 +157,6 @@ const NotifModal = () => {
                 </span>
             </div>
 
-            {/* Accepter (lance la game) / Refuser */}
             <div className="flex items-center gap-2 shrink-0">
                 <button
                     onClick={() => handleGamesAction(user.id, "accept")}

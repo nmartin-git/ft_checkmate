@@ -1,6 +1,7 @@
 'use client'
 
 import { club_names } from "@prisma/client";
+import Avatar from "@/src/components/ui/Avatar"
 import Link from "next/link";
 import { useLocale, useTranslations} from "next-intl";
 import SearchBar from "./ui/search";
@@ -12,6 +13,7 @@ interface PlayerRow {
     username: string | null;
     club: club_names;
     elo: number;
+    avatar_url?: string | null;
 }
 
 interface FriendsClientViewProps {
@@ -69,6 +71,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                         <span className="font-mono font-black text-gray-500 w-6 text-center">
                                             #{index + 1}
                                         </span>
+                                        <Avatar src={player.avatar_url} username={player.username} size={36} />
                                         <span className="font-bold text-white hover:text-[#81b64c] transition-colors">
                                             {player.username}
                                         </span>

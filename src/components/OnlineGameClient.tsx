@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
+import Avatar from "@/src/components/ui/Avatar";
 import { io, Socket } from "socket.io-client";
 
 type Cell = number;
@@ -129,6 +130,9 @@ export default function OnlineGameClient({gameId, whitePlayer, blackPlayer} : On
 
       <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700/50">
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-amber-500/20 w-44 shadow-inner">
+          <div className="flex justify-center mb-2">
+            <Avatar src={blackPlayer?.avatar_url} username={blackPlayer?.username} size={56} className="border-amber-500/40" />
+          </div>
           <p className="font-bold text-amber-500 text-lg">{blackPlayer?.username ?? t("black_player")}</p>
           {blackPlayer && <p className="text-xs text-slate-500 mb-1">{blackPlayer.elo} ELO</p>}
           <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByBlack}</span></p>
@@ -156,6 +160,9 @@ export default function OnlineGameClient({gameId, whitePlayer, blackPlayer} : On
           )}
         </div>
         <div className="text-white text-center bg-slate-950 p-4 rounded-xl border border-sky-500/20 w-44 shadow-inner">
+          <div className="flex justify-center mb-2">
+            <Avatar src={whitePlayer?.avatar_url} username={whitePlayer?.username} size={56} className="border-sky-500/40" />
+          </div>
           <p className="font-bold text-sky-400 text-lg">{whitePlayer?.username ?? t("white_player")}</p>
           {whitePlayer && <p className="text-xs text-slate-500 mb-1">{whitePlayer.elo} ELO</p>}
           <p className="text-slate-400 mt-1 text-sm">{t("eaten")} : <span className="text-white font-extrabold text-base">{eatenByWhite}</span></p>

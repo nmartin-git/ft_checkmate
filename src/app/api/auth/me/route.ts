@@ -24,10 +24,16 @@ export async function GET(request: Request) {
     if (!token)
         return NextResponse.json({user:null},{status : 401});
     const {payload} = await jwtVerify<TokenPayload>(token, JWT_SECRET)
+    const dbUser = await prisma.user.findUnique({
+      where: { id: payload.id },
+      select: { avatar_url: true }
+    });
+
     return NextResponse.json({ success: true, user:{
       id : payload.id,
       email : payload.email,
-      username : payload.username
+      username : payload.username,
+      avatar_url : dbUser?.avatar_url ?? null
     } });
   } catch (error) {
     console.error(error)

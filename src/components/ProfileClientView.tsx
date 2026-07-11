@@ -9,6 +9,8 @@ import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineCheck } from "react-icons/ai"
+import Avatar from "@/src/components/ui/Avatar"
+import AvatarModal from "@/src/components/Modals/AvatarModal"
 
 interface ProfileClientViewProps {
     userData: {
@@ -17,6 +19,7 @@ interface ProfileClientViewProps {
         email: string | null;
         club: club_names;
         elo: number;
+        avatar_url?: string | null;
         isInitialPending?: boolean;
         isInitialFriend?: boolean;
     };
@@ -43,12 +46,16 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
 
 export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
     const t = useTranslations("profile");
+    const tAvatar = useTranslations("avatar");
     const router = useRouter();
     const locale = useLocale();
-    const { user } = useCurrentUser();
+    const { user, setAvatar } = useCurrentUser();
     
     const [isPending, setIsPending] = useState(userData.isInitialPending || false);
     const [isFriend] = useState(userData.isInitialFriend || false);
+    // RÈGLE REACT : tous les hooks AVANT le moindre return conditionnel
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(userData.avatar_url ?? null);
+    const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
     const handleEditClick = () => {
         router.push(`/${locale}/profile/parameters`);
@@ -64,6 +71,12 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
 
     const currentUserId = user?.id;
     const isOwnProfile = currentUserId === userData.id;
+
+    const handleAvatarChanged = (url: string) => {
+        setAvatarUrl(url);        
+        if (isOwnProfile) setAvatar(url);  
+        router.refresh();
+    };
 
     const handleToggleFriendRequest = async () => {
         if (isOwnProfile || isFriend) return;
@@ -97,8 +110,17 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
             <div className="max-w-6xl mx-auto bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
                 
                 <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full">
-                    <div className="w-24 h-24 bg-[#312e2b] border-2 border-[#45423f] rounded-md flex items-center justify-center text-[#81b64c] text-4xl font-black uppercase shadow-inner">
-                        {userData.username?.charAt(0).toUpperCase()}
+                    <div className="relative group">
+                        <Avatar src={avatarUrl} username={userData.username} size={96} className={currentStyle.avatarBorder} />
+                        {isOwnProfile && (
+                            <button
+                                onClick={() => setAvatarModalOpen(true)}
+                                className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity rounded-md flex items-center justify-center text-white text-xs font-bold px-2 text-center"
+                                title={tAvatar("change_avatar")}
+                            >
+                                {tAvatar("change_avatar")}
+                            </button>
+                        )}
                     </div>
                     
                     <div className="space-y-1">
@@ -221,6 +243,16 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                     </div>
                 </Link>
             </div>
+
+            {isOwnProfile && (
+                <AvatarModal
+                    isOpen={avatarModalOpen}
+                    onClose={() => setAvatarModalOpen(false)}
+                    currentAvatar={avatarUrl}
+                    username={userData.username}
+                    onChanged={handleAvatarChanged}
+                />
+            )}
         </div>
     );
 }

@@ -8,6 +8,7 @@ import { useCallback } from "react";
 import Notif from "@/src/components/ui/Notif";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import Profile from "@/src/components/ui/Profile";
+import Avatar from "@/src/components/ui/Avatar";
 import { useRouter, usePathname } from "next/navigation";
 import handleLogout from "@/src/lib/logout";
 import { useTranslations, useLocale } from "next-intl"; 
@@ -82,10 +83,17 @@ const Topbar = () => {
 
                 <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
                     {currentUser.user
-                        ? <span className="text-sm text-gray-300 cursor-pointer font-bold max-w-30 truncate hover:text-gray-200 text-xl"
+                        ? <div className="flex items-center gap-2 cursor-pointer group"
                             onClick={() => router.push(`/${locale}/profile/`)}>
-                            {currentUser.user?.username}
-                        </span>
+                            <span className="text-sm text-gray-300 font-bold max-w-30 truncate group-hover:text-gray-200 text-xl">
+                                {currentUser.user?.username}
+                            </span>
+                            <Avatar
+                                src={currentUser.user?.avatar_url}
+                                username={currentUser.user?.username}
+                                size={36}
+                            />
+                        </div>
                         : <Profile />
                     }
                     <Notif />
