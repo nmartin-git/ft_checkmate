@@ -75,7 +75,6 @@
     "recovery_warn": "Keep these codes in a safe place. They will only be shown once.",
     "copy_codes": "Copy all codes",
     "copied": "Codes copied!",
-    "danger_zone": "Danger zone",
     "delete_account": "Delete account",
     "delete_warning": "This action is irreversible. All your data (games, friends, statistics) will be permanently deleted.",
     "delete_confirm": "Confirm deletion",
@@ -90,7 +89,8 @@
     "accept": "Accept",
     "refuse": "Decline",
     "accept_challenge": "Accept challenge",
-    "refuse_challenge": "Decline challenge"
+    "refuse_challenge": "Decline challenge",
+    "wants_to_add": "Wants to add you as a friend"
   },
   "footer": {
     "privacy": "Privacy",
@@ -188,5 +188,23 @@
     "s5_body": "In accordance with GDPR, you can at any time request access, modification, or deletion of your personal data by deleting your account from your profile, or by contacting us.",
     "s6_title": "6. Contact",
     "s6_body": "For any question about your data, contact the development team via the project repository."
+  },
+  "avatar": {
+    "title": "Change avatar",
+    "tab_upload": "From my computer",
+    "tab_gallery": "Default avatars",
+    "choose_file": "Choose an image",
+    "formats_hint": "PNG, JPG or WEBP — 2 MB maximum",
+    "select_avatar": "Select this avatar",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "saving": "Uploading...",
+    "change_avatar": "Change avatar",
+    "err_type": "Unsupported format. Use PNG, JPG or WEBP.",
+    "err_size": "Image too large (2 MB maximum).",
+    "err_corrupted": "Corrupted or invalid file.",
+    "err_no_file": "No file selected.",
+    "err_network": "Network error. Please retry.",
+    "err_generic": "Avatar change failed."
   }
 }

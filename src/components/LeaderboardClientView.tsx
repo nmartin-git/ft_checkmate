@@ -1,6 +1,7 @@
 'use client'
 
 import { club_names } from "@prisma/client";
+import Avatar from "@/src/components/ui/Avatar"
 import Link from "next/link";
 import { useLocale, useTranslations} from "next-intl";
 
@@ -9,6 +10,7 @@ interface PlayerRow {
     username: string | null;
     club: club_names;
     elo: number;
+    avatar_url?: string | null;
 }
 
 interface LeaderboardClientViewProps {
@@ -46,7 +48,7 @@ export default function LeaderboardClientView({ leaderboard }: LeaderboardClient
                                         #{index + 1}
                                     </span>
                                     <span className="font-bold text-white hover:text-[#81b64c] transition-colors">
-                                        {player.username}
+                                        <><Avatar src={player.avatar_url} username={player.username} size={32} className="mr-2 inline-block align-middle" />{player.username}</>
                                     </span>
                                     <span className={`text-xs px-2 py-0.5 rounded uppercase font-black bg-[#312e2b] ${textColor}`}>
                                         {player.club}

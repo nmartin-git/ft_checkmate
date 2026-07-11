@@ -75,7 +75,6 @@
     "recovery_warn": "Conservez ces codes en lieu sûr. Ils ne seront affichés qu'une seule fois.",
     "copy_codes": "Copier tous les codes",
     "copied": "Codes copiés !",
-    "danger_zone": "Zone de danger",
     "delete_account": "Supprimer le compte",
     "delete_warning": "Cette action est irréversible. Toutes vos données (parties, amis, statistiques) seront définitivement supprimées.",
     "delete_confirm": "Confirmer la suppression",
@@ -90,7 +89,8 @@
     "accept": "Accepter",
     "refuse": "Refuser",
     "accept_challenge": "Accepter le défi",
-    "refuse_challenge": "Refuser le défi"
+    "refuse_challenge": "Refuser le défi",
+    "wants_to_add": "Souhaite vous ajouter en ami"
   },
   "footer": {
     "privacy": "Confidentialité",
@@ -188,5 +188,23 @@
     "s5_body": "Conformément au RGPD, vous pouvez à tout moment demander l'accès, la modification ou la suppression de vos données personnelles en supprimant votre compte depuis votre profil, ou en nous contactant.",
     "s6_title": "6. Contact",
     "s6_body": "Pour toute question relative à vos données, contactez l'équipe de développement via le dépôt du projet."
+  },
+  "avatar": {
+    "title": "Changer d'avatar",
+    "tab_upload": "Depuis mon ordinateur",
+    "tab_gallery": "Avatars par défaut",
+    "choose_file": "Choisir une image",
+    "formats_hint": "PNG, JPG ou WEBP — 2 Mo maximum",
+    "select_avatar": "Sélectionner cet avatar",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "saving": "Envoi...",
+    "change_avatar": "Changer l'avatar",
+    "err_type": "Format non supporté. Utilisez PNG, JPG ou WEBP.",
+    "err_size": "Image trop lourde (2 Mo maximum).",
+    "err_corrupted": "Fichier corrompu ou invalide.",
+    "err_no_file": "Aucun fichier sélectionné.",
+    "err_network": "Erreur réseau. Réessayez.",
+    "err_generic": "Le changement d'avatar a échoué."
   }
 }

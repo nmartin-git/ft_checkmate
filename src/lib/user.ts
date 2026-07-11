@@ -1,6 +1,7 @@
 import argon2 from "argon2"
 import crypto from "node:crypto"
 import { unlink } from "node:fs/promises"
+import { join } from "node:path"
 import { prisma } from "./prisma"
 import { Prisma, club_names } from "@prisma/client"
 import { setTwoFactorAuth } from "./auth"
@@ -85,7 +86,9 @@ export async function updateChatEnable(userId : string, enable : boolean) : Prom
 	}
 }
 
-async function updateAvatar(userId : string, newUrl : string | null) : Promise <void>
+// Met à jour l'avatar. Supprime l'ancien fichier UNIQUEMENT s'il s'agit
+// d'un upload personnel (/uploads/...), jamais un avatar par défaut (/avatars/...).
+export async function updateAvatar(userId : string, newUrl : string | null) : Promise <void>
 {
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {
@@ -95,8 +98,13 @@ async function updateAvatar(userId : string, newUrl : string | null) : Promise <
 			avatar_url: true,
 		}
 	})
-	if (user.avatar_url)
-		await unlink(user.avatar_url)
+	if (user.avatar_url && user.avatar_url.startsWith("/uploads/")) {
+		try {
+			await unlink(join(process.cwd(), "public", user.avatar_url))
+		} catch {
+			// fichier déjà absent : on ignore, ce n'est pas bloquant
+		}
+	}
 	await prisma.user.update({
 		where: {
 			id: userId
@@ -146,7 +154,8 @@ export async function getProfile(userId : string)
 			username: true,
 			email: true,
 			club: true,
-			elo: true
+			elo: true,
+			avatar_url: true
 		}
 	})
 	return (user);
@@ -296,32 +305,32 @@ export async function inscriptionClassic(inputEmail : string, inputUsername : st
 //         await prisma.$disconnect()
 //     })
 
-export async function deleteAccount(userId: string): Promise<void> {
-	await prisma.$transaction(async (tx) => {
-		const games = await tx.game.findMany({
-			where: { OR: [{ white_player_id: userId }, { black_player_id: userId }] },
-			select: { id: true },
-		});
-		const gameIds = games.map((g) => g.id);
+// export async function deleteAccount(userId: string): Promise<void> {
+// 	await prisma.$transaction(async (tx) => {
+// 		const games = await tx.game.findMany({
+// 			where: { OR: [{ white_player_id: userId }, { black_player_id: userId }] },
+// 			select: { id: true },
+// 		});
+// 		const gameIds = games.map((g) => g.id);
 
-		if (gameIds.length > 0) {
-			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
-			await tx.chat.deleteMany({ where: { game_id: { in: gameIds } } });
-		}
-		await tx.chat.deleteMany({ where: { author_user_id: userId } });
+// 		if (gameIds.length > 0) {
+// 			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
+// 			await tx.directMessage.deleteMany({ where: { game_id: { in: gameIds } } });
+// 		}
+// 		await tx.directMessage.deleteMany({ where: { author_user_id: userId } });
 
-		await tx.directMessage.deleteMany({
-			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
-		});
+// 		await tx.directMessage.deleteMany({
+// 			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
+// 		});
 
-		await tx.friends.deleteMany({
-			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
-		});
+// 		await tx.friends.deleteMany({
+// 			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
+// 		});
 
-		if (gameIds.length > 0) {
-			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
-		}
+// 		if (gameIds.length > 0) {
+// 			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
+// 		}
 
-		await tx.user.delete({ where: { id: userId } });
-	});
-}
+// 		await tx.user.delete({ where: { id: userId } });
+// 	});
+// }

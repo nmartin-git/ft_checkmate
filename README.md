@@ -307,6 +307,39 @@ The checkers game was built from scratch using React and Next.js on the client s
 
 ---
 
+## Avatar System _by braugust_
+
+### Overview
+
+Users can personalize their profile picture, either by uploading their own image or by choosing from a set of built-in avatars. Once changed, the new avatar propagates instantly across the entire application without any manual refresh.
+
+### Features
+
+**Custom upload**
+- Upload an image directly from the user's computer
+- Live preview before confirming the change
+- Confirm or cancel the selection
+
+**Built-in avatar gallery**
+- 5 default avatars shipped as application assets (`public/avatars/`)
+- Stylized checkers kings matching the four club colors (Alliance, Assembly, Federation, Order) plus a neutral one
+- Single-click selection, currently selected avatar highlighted
+
+**Validation & security** (server side, `src/app/api/avatar/route.ts`)
+- Allowed formats only: PNG, JPG, JPEG, WEBP
+- Maximum file size: 2 MB
+- Corrupted file detection: the binary signature (magic number) of each upload is verified, so a renamed non-image file is rejected
+- Failed uploads never leave the profile in an inconsistent state — the database is only updated once the file is safely written
+- Clear, translated error messages returned to the user (unsupported format, file too large, corrupted file, network error)
+
+### Technical Implementation
+
+**Single reusable component** (`src/components/ui/Avatar.tsx`)
+
+The avatar is rendered by one single component reused everywhere it appears — no duplicated UI logic:
+
+---
+
 # Instructions
 
 ## Prerequisites

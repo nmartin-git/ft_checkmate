@@ -1,6 +1,7 @@
 'use client'
 
 import { club_names } from "@prisma/client";
+import Avatar from "@/src/components/ui/Avatar";
 import Link from "next/link";
 import { useLocale, useTranslations} from "next-intl";
 import SearchBar from "./ui/search";
@@ -13,6 +14,7 @@ interface PlayerRow {
     username: string | null;
     club: club_names;
     elo: number;
+    avatar_url?: string | null;
 }
 
 interface FriendsClientViewProps {
@@ -43,7 +45,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const friendId = challengedFriendIdRef.current;      // valeur à jour
+                const friendId = challengedFriendIdRef.current;   
                 const url = friendId
                     ? `/api/game/online/matchmaking?friendId=${friendId}`
                     : "/api/game/online/matchmaking";
@@ -52,9 +54,9 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                 if (!res.ok) return;
 
                 const data = await res.json();
-                setActiveRequests(data.activeRequests);              // ← objet, plus tableau
+                setActiveRequests(data.activeRequests);              
 
-                if (data.gameId) {                                   // l'ami a accepté !
+                if (data.gameId) {                                  
                     clearInterval(interval);
                     router.push(`/${locale}/game/${data.gameId}`);
                 }
@@ -158,9 +160,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                     className="flex items-center justify-between p-3 mx-1 my-1 rounded-md bg-[#151412] border border-[#23211e] hover:border-[#383530] transition-all group cursor-pointer"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-[#2b2925] flex items-center justify-center text-white font-black uppercase text-sm border border-[#45423f]">
-                                            {player.username?.substring(0, 2)}
-                                        </div>
+                                        <Avatar src={player.avatar_url} username={player.username} size={40} className="rounded-full" />
                                         <div className="flex flex-col">
                                             <span className="font-bold text-white group-hover:text-[#81b64c] transition-colors">
                                                 {player.username}
