@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "prisma generate",
     "dev": "node server.js",
     "build": "next build",
     "start": "next start"
@@ -32,6 +33,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
     "date-fns": "^4.4.0",
+    "dotenv": "^17.4.2",
     "jose": "^6.2.3",
     "lucide-react": "^1.21.0",
     "next": "^16.2.9",
@@ -58,7 +60,6 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
-    "dotenv": "^17.4.2",
     "prisma": "^7.8.0",
     "typescript": "^6.0.3"
   }
