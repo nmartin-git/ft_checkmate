@@ -1,6 +1,6 @@
 'use client'
 
-import { HiOutlineHome } from "react-icons/hi";
+import { HiOutlineHome, HiOutlineMail } from "react-icons/hi";
 import TopbarItem from "@/src/components/ui/TopbarItem";
 import Button from "@/src/components/ui/Button";
 import useLoginModal from "@/src/hooks/useLoginModal";
@@ -47,7 +47,6 @@ const Topbar = () => {
     return (
         <nav className="w-full bg-[#1e1c18] border-b border-[#2b2925] px-6 py-3 flex items-center justify-between shadow-md select-none">
 
-            {}
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push(`/${locale}/`)}>
                     <span className="text-[#81b64c] text-xl font-black">♞</span>
@@ -68,20 +67,18 @@ const Topbar = () => {
                 </div>
             </div>
 
-            {}
             <div className="hidden md:flex flex-col items-center text-center">
                 <h2 className="text-gray-200 font-bold text-sm tracking-wide">
-                    {t('game.title')} {}
+                    {t('game.title')} 
                 </h2>
                 <p className="text-xs text-[#81b64c] font-medium font-mono px-2 py-0.5 bg-[#262522] rounded mt-0.5">
-                    {t('game.vs')} {}
+                    {t('game.vs')} 
                 </p>
             </div>
 
-            {}
             <div className="flex items-center gap-4">
 
-                <div className="flex items-center gap-2 border-r border-[#2b2925] pr-4">
+                <div className="flex items-center gap-3 border-r border-[#2b2925] pr-4">
                     {currentUser.user
                         ? <div className="flex items-center gap-2 cursor-pointer group"
                             onClick={() => router.push(`/${locale}/profile/`)}>
@@ -96,10 +93,20 @@ const Topbar = () => {
                         </div>
                         : <Profile />
                     }
+
+                    {currentUser.user && (
+                        <button
+                            onClick={() => router.push(`/${locale}/messages`)}
+                            className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded transition-colors duration-150 relative active:scale-90"
+                            title="Messages"
+                        >
+                            <HiOutlineMail size={22} />
+                        </button>
+                    )}
+
                     <Notif />
                 </div>
 
-                {}
                 <div className="flex gap-1 border-r border-[#2b2925] pr-4">
                     {["fr", "en", "ar"].map((lang) => (
                         <button

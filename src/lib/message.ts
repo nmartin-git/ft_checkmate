@@ -1,8 +1,33 @@
 import { prisma } from "./prisma"
 import { PUBLIC_USER_SELECT } from "./select"
+import { getUserById } from "./user"
 
 const MAX_MESSAGE_LENGTH = 140
 const CONVERSATION_PAGE_SIZE = 50
+
+export async function getChatEnable(userId: string) : Promise<boolean>
+{
+    const user = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: userId
+        },
+        select: {
+            chat_enable: true,
+        }
+    })
+    return (user.chat_enable);
+}
+
+export async function loadDiscussion(currentUserId: string, targetUserId: string)
+{
+    const [initialMessages, partnerUser, chatEnable] = await Promise.all([
+            getConversation(currentUserId, targetUserId),
+			getUserById(targetUserId),
+            getChatEnable(currentUserId),
+            markConversationRead(currentUserId, targetUserId)
+        ]);
+    return { initialMessages, partnerUser, chatEnable};
+}
 
 export async function sendDirectMessage(senderId: string, receiverId: string, rawMessage: string) {
     if (senderId === receiverId)
@@ -106,7 +131,6 @@ export async function listConversations(userId: string) {
 }
 
 export async function markConversationRead(userId: string, otherId: string): Promise<void> {
-    // await prisma.follow.findFirst()
     await prisma.directMessage.updateMany({
         where: {
             sender_id: otherId,

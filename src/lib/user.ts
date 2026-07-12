@@ -86,8 +86,6 @@ export async function updateChatEnable(userId : string, enable : boolean) : Prom
 	}
 }
 
-// Met à jour l'avatar. Supprime l'ancien fichier UNIQUEMENT s'il s'agit
-// d'un upload personnel (/uploads/...), jamais un avatar par défaut (/avatars/...).
 export async function updateAvatar(userId : string, newUrl : string | null) : Promise <void>
 {
 	const user = await prisma.user.findUniqueOrThrow({
@@ -102,7 +100,6 @@ export async function updateAvatar(userId : string, newUrl : string | null) : Pr
 		try {
 			await unlink(join(process.cwd(), "public", user.avatar_url))
 		} catch {
-			// fichier déjà absent : on ignore, ce n'est pas bloquant
 		}
 	}
 	await prisma.user.update({
@@ -218,6 +215,20 @@ export async function updateTwoFactorAuth(userId : string, enable : boolean) : P
 		}
     })
 	return (recoveryCodes);
+}
+
+export async function getUserById(userId: string)
+{
+	const user = await prisma.user.findUnique({
+		where: {
+			id: userId
+		},
+		select: {
+			id: true,
+			username: true
+		}
+	})
+	return (user);
 }
 
 async function changePassword(userId : string, password : string) : Promise <void>

@@ -29,10 +29,6 @@ export default function ParametersPage() {
   const [initialChatEnabled, setInitialChatEnabled] = useState(false)
   const [initialTwoFactorAuthEnabled, setInitialTwoFactorAuthEnabled] = useState(false)
   const [initialBirthdate, setInitialBirthdate] = useState<Date | undefined>()
-  // const [avatar, setAvatar] = useState<File | null>(null)
-  // const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-
-  //REFAIRE LA DA DE PARAMETERS
 
 	useEffect(() => {
 		const loadParameters = async () => {
@@ -73,13 +69,13 @@ export default function ParametersPage() {
 
     const formData = new FormData()
     if (chatEnabled !== initialChatEnabled) {
-    formData.append("chatEnable", String(chatEnabled))
+    	formData.append("chatEnable", String(chatEnabled))
     }
     if (twoFactorAuthEnabled !== initialTwoFactorAuthEnabled) {
-    formData.append("twoFactorAuthEnable", String(twoFactorAuthEnabled))
+    	formData.append("twoFactorAuthEnable", String(twoFactorAuthEnabled))
     }
     if (birthdate !== initialBirthdate) {
-    formData.append("birthdate", String(birthdate))
+    	formData.append("birthdate", String(birthdate))
     }
 
 

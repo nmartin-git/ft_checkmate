@@ -8,7 +8,7 @@ import { club_names } from "@prisma/client"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
-import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineCheck } from "react-icons/ai"
+import { AiOutlineMessage, AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineCheck } from "react-icons/ai"
 import Avatar from "@/src/components/ui/Avatar";
 import AvatarModal from "@/src/components/Modals/AvatarModal"
 
@@ -53,7 +53,6 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
     
     const [isPending, setIsPending] = useState(userData.isInitialPending || false);
     const [isFriend] = useState(userData.isInitialFriend || false);
-    // RÈGLE REACT : tous les hooks AVANT le moindre return conditionnel
     const [avatarUrl, setAvatarUrl] = useState<string | null>(userData.avatar_url ?? null);
     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
@@ -136,7 +135,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                     </div>
                 </div>
 
-                <div className="w-full md:w-auto flex justify-center md:justify-end">
+                <div className="w-full md:w-auto flex flex-col sm:flex-row justify-center md:justify-end gap-3">
                     {!isPublicView ? (
                         <Button
                             label={t("parameters")}
@@ -145,36 +144,48 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                         />
                     ) : (
                         !isOwnProfile && (
-                            isFriend ? (
-                                <button
-                                    disabled
-                                    className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#2b2925] text-gray-500 border border-[#312e2b] cursor-not-allowed shadow-inner"
-                                >
-                                    <AiOutlineCheck size={16} className="text-gray-600" />
-                                    {t("friends_short")}
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleToggleFriendRequest}
-                                    className={`flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded transition-all duration-150 active:scale-95 shadow-md ${
-                                        isPending  
-                                            ? "bg-[#312e2b] text-gray-400 border border-[#45423f] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50" 
-                                            : "bg-[#81b64c] hover:bg-[#92cb57] text-white shadow-[#81b64c]/10"
-                                    }`}
-                                >
-                                    {isPending ? (
-                                        <>
-                                            <AiOutlineUserDelete size={16} />
-                                            {t("pending")}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <AiOutlineUserAdd size={16} />
-                                            {t("add_friend")}
-                                        </>
-                                    )}
-                                </button>
-                            )
+                            <>
+                                {isFriend && (
+                                    <button
+                                        onClick={() => router.push(`/${locale}/profile/${userData.id}/message`)}
+                                        className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-95 shadow-md animate-fade-in"
+                                    >
+                                        <AiOutlineMessage size={16} />
+                                        Discuter
+                                    </button>
+                                )}
+
+                                {isFriend ? (
+                                    <button
+                                        disabled
+                                        className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#2b2925] text-gray-500 border border-[#312e2b] cursor-not-allowed shadow-inner"
+                                    >
+                                        <AiOutlineCheck size={16} className="text-gray-600" />
+                                        {t("friends_short")}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleToggleFriendRequest}
+                                        className={`flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded transition-all duration-150 active:scale-95 shadow-md ${
+                                            isPending  
+                                                ? "bg-[#312e2b] text-gray-400 border border-[#45423f] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50" 
+                                                : "bg-[#81b64c] hover:bg-[#92cb57] text-white shadow-[#81b64c]/10"
+                                        }`}
+                                    >
+                                        {isPending ? (
+                                            <>
+                                                <AiOutlineUserDelete size={16} />
+                                                {t("pending")}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <AiOutlineUserAdd size={16} />
+                                                {t("add_friend")}
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+                            </>
                         )
                     )}
                 </div>
@@ -182,36 +193,37 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
 
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col min-h-64">
-                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 {t("matchs_title_short")}</p>
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 {t("matchs_title_short")}</p>
 
-                {matchHistory.length === 0 ? (
-                    <p className="text-sm text-gray-500 font-medium mt-6">{t("no_matchs_short")}</p>
-                ) : (
-                    <ul className="space-y-2">
-                        {matchHistory.map((m) => (
-                            <li key={m.id} className="flex items-center justify-between bg-[#262522] rounded px-3 py-2">
-                                <div className="flex items-center gap-2">
-                                    <span className={`w-2 h-2 rounded-full ${
-                                        m.outcome === 'WIN' ? 'bg-[#81b64c]'
-                                        : m.outcome === 'LOSS' ? 'bg-red-500' : 'bg-gray-400'
-                                    }`} />
-                                    <span className="text-sm text-white font-semibold">vs {m.opponent ?? '—'}</span>
-                                </div>
-                                <span className={`text-xs font-black uppercase ${
-                                    m.outcome === 'WIN' ? 'text-[#81b64c]'
-                                    : m.outcome === 'LOSS' ? 'text-red-400' : 'text-gray-400'
-                                }`}>
-                                    {m.outcome === "WIN" ? t("win") : m.outcome === "LOSS" ? t("loss") : t("draw_result")}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>  
-            <div className="max-w-6xl mx-auto mt-6 bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
-                <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 {t("elo_evolution")}</p>
-                <EloChart data={eloHistory} />
-            </div>
+                    {matchHistory.length === 0 ? (
+                        <p className="text-sm text-gray-500 font-medium mt-6">{t("no_matchs_short")}</p>
+                    ) : (
+                        <ul className="space-y-2">
+                            {matchHistory.map((m) => (
+                                <li key={m.id} className="flex items-center justify-between bg-[#262522] rounded px-3 py-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className={`w-2 h-2 rounded-full ${
+                                            m.outcome === 'WIN' ? 'bg-[#81b64c]'
+                                            : m.outcome === 'LOSS' ? 'bg-red-500' : 'bg-gray-400'
+                                        }`} />
+                                        <span className="text-sm text-white font-semibold">vs {m.opponent ?? '—'}</span>
+                                    </div>
+                                    <span className={`text-xs font-black uppercase ${
+                                        m.outcome === 'WIN' ? 'text-[#81b64c]'
+                                        : m.outcome === 'LOSS' ? 'text-red-400' : 'text-gray-400'
+                                    }`}>
+                                        {m.outcome === "WIN" ? t("win") : m.outcome === "LOSS" ? t("loss") : t("draw_result")}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>  
+                
+                <div className="max-w-6xl mx-auto bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl w-full">
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 {t("elo_evolution")}</p>
+                    <EloChart data={eloHistory} />
+                </div>
 
                 <Link href={`/${locale}/leaderboard`} className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer">
                     <div>

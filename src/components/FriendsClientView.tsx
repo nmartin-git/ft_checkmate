@@ -3,10 +3,11 @@
 import { club_names } from "@prisma/client";
 import Avatar from "@/src/components/ui/Avatar";
 import Link from "next/link";
-import { useLocale, useTranslations} from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import SearchBar from "./ui/search";
 import { useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMessage } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 interface PlayerRow {
     id: string;
@@ -30,6 +31,7 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
 export default function FriendsClientView({ friendsList }: FriendsClientViewProps) {
     const t = useTranslations("social");
     const locale = useLocale();
+    const router = useRouter();
     const [list, setList] = useState<PlayerRow[]>(friendsList);
 
     const handleRemove = async (e: React.MouseEvent, friendId: string) => {
@@ -83,6 +85,17 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                     <div className="flex items-center gap-4">
                                         <span className="font-mono font-black text-[#81b64c]">{player.elo} ELO</span>
                                         
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                router.push(`/${locale}/profile/${player.id}/message`);
+                                            }}
+                                            className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded bg-[#262522] border border-[#312e2b] hover:border-[#81b64c] transition-all duration-150 active:scale-90"
+                                            title="Discuter"
+                                        >
+                                            <AiOutlineMessage size={18} />
+                                        </button>
+
                                         <button
                                             onClick={(e) => handleRemove(e, player.id)}
                                             className="text-gray-500 hover:text-red-500 p-1 rounded transition-colors duration-150 active:scale-90"

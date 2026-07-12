@@ -7,7 +7,7 @@ const intlMiddleware = createMiddleware({
   localePrefix: "always"
 });
 
-const protectedRoutes = ["/profile", "/profile/edit"];
+const protectedRoutes = ["/profile", "/profile/edit", "/messages"];
 const protectedApiRoutes = ["/api/auth/me"];
 
 export function proxy(request: NextRequest) {
