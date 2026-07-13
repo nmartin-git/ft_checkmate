@@ -99,11 +99,12 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 | 4 | Remote players (2 PCs in real-time) | Gaming | Major | 2 pts | yamartin, braugust |
 | 5 | ORM (Prisma) | Web | Minor | 1 pt | nmartin |
 | 6 | i18n 3 languages (fr/en/ar) | Accessibility | Minor | 1 pt | braugust |
-| 7 | OAuth Google | User Management | Minor | 1 pt | joudafke |
-| 8 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | joudafke |
-| 9 | Stats & match history | User Management | Minor | 1 pt | nmartin, joudafke |
+| 7 | RTL language support | Accessibility | Minor | 1 pt | braugust |
+| 8 | OAuth Google | User Management | Minor | 1 pt | joudafke |
+| 9 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | joudafke |
+| 10 | Stats & match history | User Management | Minor | 1 pt | nmartin, joudafke |
 
-**Total: 4 majors (8 pts) + 5 minors (5 pts) = 13 points**
+**Total: 4 majors (8 pts) + 6 minors (6 pts) = 14 points**
 
 ---
 
