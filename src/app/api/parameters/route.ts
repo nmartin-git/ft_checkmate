@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { updateChatEnable, updateTwoFactorAuth, getParameters, updateUserField } from "@/src/lib/user"
-import { jwtVerify} from "jose";
+import { jwtVerify, JWTPayload } from "jose";
 import { cookies } from "next/headers";
 
 

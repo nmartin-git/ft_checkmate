@@ -149,8 +149,7 @@ export async function getFriendsCount(userId: string) : Promise<number>
     return (friendsCount);
 }
 
-export async function getFriendsList(userId: string)
-{
+export async function getFriendsList(userId: string) {
     const rows = await prisma.friends.findMany({
         where: {
             status: follow_status.ACCEPTED,
@@ -162,8 +161,22 @@ export async function getFriendsList(userId: string)
         select: {
             user_id: true,
             friend_id: true,
-            user: { select: PUBLIC_USER_SELECT },
-            friend: { select: PUBLIC_USER_SELECT },
+            user: { 
+                select: { 
+                    username: true,
+                    club: true,
+                    elo: true,
+                    is_online: true,
+                } 
+            },
+            friend: { 
+                select: { 
+                    username: true,
+                    club: true,
+                     elo: true,
+                    is_online: true,
+                } 
+            },
         }
     });
 
@@ -172,7 +185,10 @@ export async function getFriendsList(userId: string)
         const targetId = r.user_id === userId ? r.friend_id : r.user_id;
 
         return {
-            ...targetUser,
+            username: targetUser.username,
+            club: targetUser.club,
+            elo: targetUser.elo,
+            is_online: targetUser.is_online,
             id: targetId
         };
     });

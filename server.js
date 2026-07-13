@@ -61,10 +61,11 @@ async function pushResult(gameId, winner){
 const TURN_SECONDS = 30;       // temps par tour
 const DRAW_NO_CAPTURE = 10;    // nulle après X tours sans prise
 
-app.prepare().then(() => {
+app.prepare().then(async() => {
   const httpServer = createServer((req, res) => handle(req, res));
   const io = new Server(httpServer);
   const rooms = {};
+  const onlineUsers = new Map();
 
   // démarre / redémarre le compte à rebours du tour courant d'une room
   function startTimer(roomId) {
@@ -97,9 +98,44 @@ app.prepare().then(() => {
   }
 
   io.on("connection", async (socket) => {
-    const gameId = socket.handshake.query.gameId;
-    const userId = await getUserIdFromCookie(socket.handshake.headers.cookie);
 
+  // ── Connexion "présence" (pas de partie) ──
+  const userId = await getUserIdFromCookie(socket.handshake.headers.cookie);
+  const gameId = socket.handshake.query.gameId;
+  if (!gameId) {
+    if (!userId) return; // pas connecté → on ignore
+
+    // +1 dans SON casier
+    const count = onlineUsers.get(userId) || 0;
+    onlineUsers.set(userId, count + 1);
+
+    // si on passe de 0 à 1 → il vient d'arriver
+    if (count === 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { is_online: true },
+      });
+      // io.emit("presence:update", { userId, isOnline: true });  // à la connexion 
+      // (Étape 4 : prévenir ses amis ici)
+    }
+
+    socket.on("disconnect", async () => {
+      const c = onlineUsers.get(userId) || 0;
+      if (c <= 1) {
+        onlineUsers.delete(userId);
+        await prisma.user.update({
+          where: { id: userId },
+          data: { is_online: false },
+        });
+        // (Étape 4 : prévenir ses amis ici)
+        // io.emit("presence:update", { userId, isOnline: false });  // à la connexion 
+      } else {
+        onlineUsers.set(userId, c - 1); // encore d'autres onglets
+      }
+    });
+
+    return; // ← important : on ne va PAS dans le code du jeu
+  }
     const game = await prisma.game.findUnique({ where: { id: gameId } });
     if (!game) {
       socket.emit("error", { message: "Game not found" });
@@ -207,7 +243,7 @@ app.prepare().then(() => {
       if (Object.keys(room.players).length === 0) delete rooms[gameId];
     });
   });
-
+  await prisma.user.updateMany({ data: { is_online: false } });
   const PORT = 3000;
   httpServer.listen(PORT, () => console.log(`> Serveur prêt sur http://localhost:${PORT}`));
 });

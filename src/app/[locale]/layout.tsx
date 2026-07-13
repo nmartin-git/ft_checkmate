@@ -10,6 +10,8 @@ import RegisterModal from "@/src/components/Modals/RegisterModal";
 import NotifModal from "@/src/components/Modals/NotifModal";
 import AuthProvider from "@/src/components/AuthProvider";
 import Footer from "@/src/components/Footer";
+import PresenceComponent from "@/src/components/PresenceComponent";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +36,6 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-
   const messages = await getMessages();
 
   return (
@@ -43,6 +44,7 @@ export default async function RootLayout({
       {}
       <NextIntlClientProvider locale={locale} messages={messages}>
         <AuthProvider>
+          <PresenceComponent />
           <RegisterModal />
           <LoginModal />
           <NotifModal />
