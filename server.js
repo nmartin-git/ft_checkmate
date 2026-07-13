@@ -64,6 +64,7 @@ const DRAW_NO_CAPTURE = 10;    // nulle après X tours sans prise
 app.prepare().then(async() => {
   const httpServer = createServer((req, res) => handle(req, res));
   const io = new Server(httpServer);
+  global.io = io; // pour que les routes API (même process) puissent émettre
   const rooms = {};
   const onlineUsers = new Map();
 
@@ -104,7 +105,7 @@ app.prepare().then(async() => {
   const gameId = socket.handshake.query.gameId;
   if (!gameId) {
     if (!userId) return; // pas connecté → on ignore
-
+    socket.join(userId);
     // +1 dans SON casier
     const count = onlineUsers.get(userId) || 0;
     onlineUsers.set(userId, count + 1);
@@ -244,6 +245,5 @@ app.prepare().then(async() => {
     });
   });
   await prisma.user.updateMany({ data: { is_online: false } });
-  const PORT = 3000;
   httpServer.listen(PORT, () => console.log(`> Serveur prêt sur https://localhost`));
 });

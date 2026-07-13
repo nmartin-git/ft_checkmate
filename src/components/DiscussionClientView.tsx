@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { io } from "socket.io-client";
+
 
 interface Message {
     id: string;
@@ -38,6 +40,19 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
             scrollToBottom();
         }
     }, [messages, isChatEnabled]);
+    useEffect(() => {
+    const socket = io();
+    socket.on("dm:new", (msg: Message) => {
+        const inThisConversation =
+            (msg.sender_id === currentUserId && msg.receiver_id === partner.id) ||
+            (msg.sender_id === partner.id && msg.receiver_id === currentUserId);
+        if (!inThisConversation) return;
+        setMessages((prev) =>
+            prev.some((m) => m.id === msg.id) ? prev : [...prev, msg] // évite le doublon
+        );
+    });
+    return () => { socket.disconnect(); };
+}, [currentUserId, partner.id]);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
