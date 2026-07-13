@@ -24,6 +24,7 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [showModModal, setShowModModal] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -56,7 +57,11 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                 setMessages((prev) => [...prev, data]);
                 setText("");
             } else {
-                setErrorMessage(data.error || "Une erreur est survenue.");
+                if (data.error === "MODERATION_BLOCKED") {
+                    setShowModModal(true);
+                } else {
+                    setErrorMessage(data.error || "Une erreur est survenue.");
+                }
             }
         } catch (err) {
             console.error("Erreur réseau lors de l'envoi:", err);
@@ -129,6 +134,27 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                 </form>
 
             </div>
+            {showModModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+                    <div className="bg-[#1e1c18] border-2 border-red-900/50 rounded-lg p-6 max-w-sm w-full text-center shadow-2xl relative">
+                        <div className="w-12 h-12 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400 text-xl">
+                            🛑
+                        </div>
+                        <h3 className="text-lg font-black uppercase tracking-wide text-red-400 mb-2">
+                            Message Refusé
+                        </h3>
+                        <p className="text-gray-400 text-sm font-medium mb-6 leading-relaxed">
+                            Notre système automatique a détecté des termes inappropriés ou insultants. Merci de rester courtois et respectueux.
+                        </p>
+                        <button
+                            onClick={() => setShowModModal(false)}
+                            className="w-full bg-[#312e2b] hover:bg-[#3d3a36] text-white border border-[#45423f] py-2 px-4 rounded text-xs font-black uppercase tracking-wider transition-all duration-150 active:scale-95"
+                        >
+                            Compris
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
