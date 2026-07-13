@@ -1,4 +1,4 @@
-import { eloHistoric, getRecentMatches } from "@/src/lib/stats";
+import { eloHistoric, getRecentMatches, getStats } from "@/src/lib/stats";
 import { getProfile } from "@/src/lib/user";
 import { notFound } from "next/navigation";
 import StatsClientView from "@/src/components/StatisticsClientView";
@@ -21,14 +21,17 @@ export default async function PlayerStatsPage({ params, searchParams }: StatsPag
     else if (range === "90") days = 90;
 
     const filteredEloHistory = await eloHistoric(id, days);
-    
+
     const allMatches = await getRecentMatches(id, 0);
 
+    const stats = await getStats(id);
+
     return (
-        <StatsClientView 
+        <StatsClientView
             username={userProfile.username ?? "Joueur"}
             eloHistory={filteredEloHistory}
             matchHistory={allMatches}
+            stats={stats}
             currentRange={range || "all"}
         />
     );

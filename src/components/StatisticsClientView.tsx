@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import EloChart from "./EloChart";
+import WinRateChart from "./WinRateChart";
 
 interface StatsClientViewProps {
     username: string;
@@ -13,10 +14,11 @@ interface StatsClientViewProps {
         opponent: string | null;
         outcome: 'WIN' | 'LOSS' | 'DRAW';
     }[];
+    stats: { winrate: number; wins: number; losses: number; draws: number };
     currentRange: string;
 }
 
-export default function StatsClientView({ username, eloHistory, matchHistory, currentRange }: StatsClientViewProps) {
+export default function StatsClientView({ username, eloHistory, matchHistory, stats, currentRange }: StatsClientViewProps) {
     const router = useRouter();
     const pathname = usePathname();
     
@@ -85,6 +87,11 @@ export default function StatsClientView({ username, eloHistory, matchHistory, cu
                     ) : (
                         <EloChart data={eloHistory} />
                     )}
+                </div>
+
+                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Répartition des résultats</p>
+                    <WinRateChart wins={stats.wins} losses={stats.losses} draws={stats.draws} winrate={stats.winrate} />
                 </div>
 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-[380px]">

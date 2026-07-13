@@ -15,7 +15,7 @@ export default function EloChart({data} : {data : EloPoint[]}){
         label : format(new Date(p.date), "dd,MM"),
         elo : p.elo
     }));
-    if (chartData.length < 2){
+    if (chartData.length ==0){
         return (
             <p className="text-sm text-gray-500 font-medium mt-6">
                 {t("not_enough_games")}
