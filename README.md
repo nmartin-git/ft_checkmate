@@ -11,21 +11,20 @@ Ft_checkmate is a real-time multiplayer checkers game (jeu de dames) built as a 
 - User authentication (email/password, Google OAuth, 2FA)
 - User profiles with ELO ranking, match history, and friends system
 - Leaderboard and matchmaking system
-- In-game chat
 - Internationalization (French, English, Arabic)
 - Full containerization with Docker
 
 ---
 
-## Team Organisation
+# Team Organisation
 
-### Roles
+## Roles
 
 **Product Owner (PO):** _nmartin_
 As a product owner, I decided with my teammates the project subject (checkers game).
-I discussed with my team and decided which modules and features were pertinent to do according to the project and our preferences.
-With the Project Manager, we established roles and work repartitions between each member, priority order of modules and features and tracked their progression.
-I also regularly discussed with each member of the group to see their work, its compatibility with the global code and to merge it with GitHub.
+I discuss with my team and decided which modules and features were pertinent to do according to the project and our preferences.
+With the Project Manager, we established roles and work repartitions between each members, priority order of modules and features and tracked their progression.
+Also I regularly discuss with each members of the group to see their work, its compatibility with the global code and to merge it with github.
 
 **Project Manager (PM) / Scrum Master:** _joudafke_
 
@@ -37,7 +36,7 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 
 **Developers:** all team members
 
-### Work Repartition
+## Work Repartition
 
 | Member | Role | Main contributions |
 |--------|------|--------------------|
@@ -47,7 +46,7 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 | braugust | Developer | Server-side game engine, Docker, HTTPS, i18n, avatar system |
 | yamartin | Developer | Client-side game logic, WebSocket client, game UI |
 
-### Project Management
+## Project Management
 
 - Communication via Discord (daily updates, code reviews, blockers)
 - Work organized by feature branches on GitHub (`database`, `front`, `game`, `brice`, etc.)
@@ -56,9 +55,9 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 
 ---
 
-## Technical Stack
+# Technical Stack
 
-### Frontend
+## Frontend
 - **Next.js 16** (App Router) — full-stack React framework
 - **React** — UI component library
 - **TypeScript** — static typing
@@ -67,7 +66,7 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 - **next-intl** — internationalization (FR/EN/AR)
 - **socket.io-client** — WebSocket client for real-time game
 
-### Backend
+## Backend
 - **Next.js API Routes** — REST API endpoints
 - **Node.js custom server** — socket.io WebSocket server integrated with Next.js
 - **socket.io** — real-time bidirectional communication
@@ -75,172 +74,41 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 - **Prisma v7** — ORM for database interaction
 - **argon2** — password hashing
 
-### Database
+## Database
 - **PostgreSQL 16** — relational database
 - Chosen for its reliability, SQL standard compliance, and strong ecosystem
 
-### Infrastructure
+## Infrastructure
 - **Docker & Docker Compose** — full containerization
 - **Nginx** — reverse proxy with HTTPS termination
 - **ngrok** — external HTTPS tunnel for evaluations
 
 ---
 
-## Database Schema
+# Modules
 
-### Tables
+| # | Module | Category | Type | Points | Implemented by |
+|---|--------|----------|------|--------|----------------|
+| 1 | Framework front + back (Next.js) | Web | Major | 2 pts | maissat |
+| 2 | Real-time WebSockets (socket.io) | Web | Major | 2 pts | yamartin, braugust |
+| 3 | Complete web-based game (checkers) | Gaming | Major | 2 pts | yamartin, braugust |
+| 4 | Remote players (2 PCs in real-time) | Gaming | Major | 2 pts | yamartin, braugust |
+| 5 | ORM (Prisma) | Web | Minor | 1 pt | nmartin |
+| 6 | i18n 3 languages (fr/en/ar) | Accessibility | Minor | 1 pt | braugust |
+| 7 | OAuth Google | User Management | Minor | 1 pt | joudafke |
+| 8 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | joudafke |
+| 9 | Stats & match history | User Management | Minor | 1 pt | nmartin, joudafke |
 
-**User**
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| email | String (unique) | User email |
-| username | String (unique, max 12) | Display name |
-| password | String? | Hashed with argon2 |
-| birthdate | Date? | Optional |
-| avatar_url | String? | Profile picture |
-| a2f_enable | Boolean | 2FA enabled |
-| club | Enum | Assembly / Order / Federation / Alliance |
-| elo | Int | ELO rating (default 800) |
-| is_online | Boolean | Online presence |
-
-**Game**
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| date | DateTime | Game start time |
-| white_player_id | UUID | Foreign key → User |
-| black_player_id | UUID | Foreign key → User |
-| white_player_elo | Int | ELO at game start |
-| black_player_elo | Int | ELO at game start |
-| result | Enum? | WHITE / BLACK / DRAW |
-
-**Move**
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| game_id | UUID | Foreign key → Game |
-| move_number | Int | Order in game |
-| initial_position | SmallInt | From position |
-| new_position | SmallInt | To position |
-| time_to_move | Int | Time taken (seconds) |
-
-**Friends**
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| user_id | UUID | Foreign key → User |
-| friend_id | UUID | Foreign key → User |
-| status | Enum | PENDING / ACCEPTED / REFUSED / GAME_REQUESTED |
-
-**Chat** (in-game)
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| game_id | UUID | Foreign key → Game |
-| author_user_id | UUID | Foreign key → User |
-| message | String (max 140) | Message content |
-| date | DateTime | Timestamp |
-
-**DirectMessage**
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary key |
-| sender_id | UUID | Foreign key → User |
-| receiver_id | UUID | Foreign key → User |
-| message | String (max 140) | Message content |
-| date | DateTime | Sent at |
-| read_at | DateTime? | Read receipt |
+**Total: 4 majors (8 pts) + 5 minors (5 pts) = 13 points**
 
 ---
 
-## Features List
-
-### Authentication _by joudafke_
-- User registration with email and password (hashed with argon2)
-- User login with session management (NextAuth.js)
-- Google OAuth 2.0 login
-- Two-factor authentication (2FA) with recovery codes
-- Protected routes — unauthenticated users are redirected
-
-### User Management _by joudafke & nmartin_
-- User profile page with avatar, username, ELO, club, birthdate
-- Match history (results, opponents, dates)
-- ELO chart (progression over time)
-- Friends system — send/accept/refuse friend requests, see online status
-- Parameters page — update profile information, enable/disable 2FA, change avatar
-- Leaderboard — ranking of all players by ELO
-
-### Avatar System _by braugust_
-- Upload a custom image (PNG, JPG, JPEG, WEBP — max 2MB)
-- Binary signature validation (magic number check) to reject disguised files
-- Choose from 5 built-in avatars (stylized checkers kings per club)
-- Live preview before confirming
-- Avatar propagates instantly across the entire app without refresh
-
-### Game _by yamartin & braugust_
-- Complete French checkers game playable in real-time between two players
-- Full rules: diagonal movement, mandatory capture, multi-capture chains, king promotion, long-distance king movement and capture
-- Online matchmaking — players are matched and a game room is created
-- Local mode — two players on the same device
-- 30-second timer per turn with automatic forfeit on timeout
-- Draw conditions: king vs king with no progress, 10 turns without capture
-- In-game chat
-
-### Real-time & WebSockets _by yamartin & braugust_
-- Custom Node.js server with socket.io integrated on the same port as Next.js
-- Dynamic game rooms identified by `gameId`
-- Server-side move validation via `checkers.js` game engine
-- Real-time board sync between both players
-- Turn enforcement — a player cannot act if it is not their turn
-- Graceful disconnection handling
-
-### Infrastructure _by braugust_
-- Full Docker Compose setup (PostgreSQL, Next.js, Nginx)
-- Single launch command: `docker compose up --build`
-- HTTPS with self-signed SSL certificate via Nginx reverse proxy
-- Automatic Prisma migrations on container startup
-- ngrok tunnel for external HTTPS access during evaluations
-
-### Internationalization _by braugust_
-- 3 languages: French (default), English, Arabic
-- Locale-aware routing (`/fr/`, `/en/`, `/ar/`)
-- Language switcher in navbar
-- All user-facing text translated (navbar, modals, profile, parameters)
-
-### Front-end Architecture _by maissat_
-- Next.js App Router structure with locale-aware layout
-- Consistent visual direction (DA) across all pages
-- Topbar with navigation, game status, notification bell, login/logout
-- Footer
-- Login and Register modals
-- Notification modal
-
----
-
-## Modules
-
-| Module | Category | Type | Points | Implemented by |
-|--------|----------|------|--------|----------------|
-| Use a framework for both frontend and backend (Next.js) | Web | Major | 2 pts | maissat |
-| Implement real-time features using WebSockets | Web | Major | 2 pts | yamartin, braugust |
-| Use an ORM for the database (Prisma) | Web | Minor | 1 pt | nmartin |
-| Standard user management and authentication | User Management | Major | 2 pts | joudafke |
-| Game statistics and match history | User Management | Minor | 1 pt | joudafke, nmartin |
-| Implement remote authentication with OAuth 2.0 (Google) | User Management | Minor | 1 pt | joudafke |
-| Implement a complete 2FA system | User Management | Minor | 1 pt | joudafke |
-| Implement a complete web-based game | Gaming | Major | 2 pts | yamartin, braugust |
-| Remote players (real-time multiplayer) | Gaming | Major | 2 pts | yamartin, braugust |
-| Support for multiple languages (FR/EN/AR) | Accessibility & i18n | Minor | 1 pt | braugust |
-
-**Total: 15 points**
-
----
+# Ft_checkmate
 
 ## Database _by nmartin_
 
 For the database, we decided to use PostgreSQL for its pertinence to learn how to use it on the market, for its efficiency and for its usage of SQL language.
-To establish a communication between the database and the backend, we decided to use an Object-Relational Mapping (ORM).
+To establish a communication between the database and the backend, we decided to use a Object-Relational Mapping (ORM).
 Using an ORM makes this task easier and more instinctive, it's also a minor module.
 The most pertinent ORM to learn on the market according to us is Prisma.
 Prisma is synchronized with the database, it converts its code automatically into SQL commands which are sent to the database.
@@ -248,7 +116,8 @@ Prisma is synchronized with the database, it converts its code automatically int
 ### Schematization
 
 A well organized database is an important pillar to build a project like ours.
-Before any code, visualizing the needs of our project is important to get a global vision and a strong database structure.
+Before any code, visualizing the needs of our project is important to get a global vision and getting a strong database structure.
+I found a platform which makes schema realization easier: draw.io.
 
 ![MCD schema](documents/MCD.drawio.png)
 
@@ -258,14 +127,29 @@ Its goal is to establish the different tables of our database, the different ele
 ![MLD schema](documents/MLD.drawio.png)
 
 This schema is a Logical Data Model (LDM).
-Its goal is to get a global vision closer to Prisma's models.
+Its goal is to get a global vision closer to prisma's models.
 It is similar to the CDM, adding different constraints (unique, check, not null...) and foreign keys.
+
+Those schemas make the implementation of Prisma (and globally the entire code) easier and more intuitive.
 
 ### Interaction
 
+As we said, Prisma permits an interaction between database and backend.
+We need to start with a `schema.prisma` file which is a translation of our precedent schemas in code.
+
 ```bash
 npx prisma init --datasource-provider postgresql
+```
+
+Next, Prisma generates a `migration.sql` file which is a translation of our code in SQL.
+
+```bash
 npx prisma migrate dev --name add_constraints --create-only
+```
+
+We add our constraints in SQL language and we send this `.sql` file to our database.
+
+```bash
 npx prisma migrate dev
 ```
 
@@ -275,25 +159,33 @@ Our backend is now in communication with our database with functions like `find`
 
 ## Infrastructure & Deployment _by braugust_
 
+### Overview
+
 The infrastructure ensures the entire application can be launched with a single command, runs securely over HTTPS, and connects all services together reliably.
 
 ### Docker Setup
 
-Three services communicating over an internal Docker network:
-- **db** — PostgreSQL 16 with health checks
-- **frontend** — Next.js with automatic Prisma migration on startup
+The application is fully containerized using Docker Compose with three services communicating over an internal network:
+
+- **db** — PostgreSQL 16 database with health checks to ensure readiness before dependent services start
+- **frontend** — Next.js application with automatic Prisma migration on startup
 - **nginx** — Reverse proxy handling HTTPS termination
 
 ```bash
 docker compose up --build
 ```
 
+This single command builds all images, applies database migrations, and starts the full stack.
+
 **Key implementation details:**
-- Prisma `migrate deploy` runs automatically at container startup
-- Health checks on `db` prevent the frontend from starting before PostgreSQL is ready
-- A `prisma.config.ts` at `packages/` level provides the `datasource.url` required by Prisma v7
+- Prisma `migrate deploy` runs automatically at container startup via the `CMD` instruction in the Dockerfile
+- The generated Prisma client is copied from `packages/node_modules/.prisma` to `/app/node_modules/.prisma` to ensure Next.js can locate it at runtime
+- Health checks on the `db` service prevent the frontend from starting before PostgreSQL is ready
+- A `prisma.config.ts` placed at `packages/` level provides the `datasource.url` required by Prisma v7 for migrations
 
 ### HTTPS with Nginx
+
+A self-signed SSL certificate is generated locally for `localhost`:
 
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
@@ -302,47 +194,133 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -subj "/CN=localhost"
 ```
 
-- HTTP (port 80) redirects to HTTPS
-- HTTPS (port 443) proxies to Next.js on port 3000 (internal network only)
+Nginx listens on ports 80 and 443:
+- HTTP (port 80) redirects automatically to HTTPS
+- HTTPS (port 443) proxies requests to the Next.js frontend on port 3000 (internal Docker network only)
+
+### Environment Configuration
+
+Credentials are stored in a local `.env` file (never committed) following the `.env.example` template:
+
+```env
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+DATABASE_URL=postgresql://USER:PASSWORD@db:5432/ft_checkmate
+RESEND_API_KEY=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=https://localhost
+```
 
 ---
 
-## Internationalization _by braugust_
+## Internationalization (i18n) _by braugust_
 
-3 languages supported: French (default), English, Arabic — built with **next-intl**.
+The application supports three languages: French (default), English, and Arabic.
+
+The i18n system is built with **next-intl**, integrated directly into the Next.js App Router.
 
 ```
 messages/
-├── fr.json
-├── en.json
-└── ar.json
+├── fr.json    ← French translations
+├── en.json    ← English translations
+└── ar.json    ← Arabic translations
 ```
 
-All routes are prefixed with the locale (`/fr/`, `/en/`, `/ar/`). The middleware handles auth protection and locale routing simultaneously. Language switcher available in the navbar.
+All routes are prefixed with the locale:
+```
+/fr/profile    ← French
+/en/profile    ← English
+/ar/profile    ← Arabic
+```
+
+The middleware handles auth protection and locale routing simultaneously. Language switcher (FR / EN / AR) available in the navbar.
 
 ---
 
 ## Game _by yamartin & braugust_
 
-### Client side — _yamartin_ (`src/components/OnlineGameClient.tsx`)
+### Overview
 
-Built with React, TypeScript, Tailwind CSS:
-- `useState` for board state, selected piece, turn, timer, eaten piece counters
+Ft_checkmate implements a fully functional online checkers game (jeu de dames) playable in real-time between two players through a web browser.
+
+### Game Features
+
+**Board & Pieces**
+- 8×8 checkerboard with alternating dark and light squares
+- Black pieces (player 1) start on the first 3 rows, white pieces (player 2) on the last 3 rows
+- Visual distinction between regular pieces and kings (gold border)
+
+**Game Rules (French checkers)**
+- Diagonal movement only, on dark squares
+- Black pieces move downward, white pieces move upward
+- Mandatory capture (prise forcée): if a capture is available, the player must take it
+- Multi-capture chains: after a capture, if another capture is possible, the player must continue
+- King promotion: a piece reaching the last row becomes a king (dame)
+- Kings can move and capture in all 4 diagonal directions
+- Long-distance king movement: kings can move multiple squares in one direction
+- Long-distance king capture: kings can jump over an enemy piece anywhere on the diagonal
+
+**Multiplayer & Real-time**
+- Two players connect to the same game room via WebSocket (socket.io)
+- Each player is assigned a color (black or white) from the database
+- Real-time board synchronization: every move is instantly reflected on both screens
+- Server-side move validation: the server verifies every move using `checkers.js` before applying it
+- Turn enforcement: a player cannot move if it is not their turn
+- 30-second timer per turn: if the timer runs out, the player loses by forfeit
+- Graceful disconnection handling
+
+**Win / End conditions**
+- A player wins when the opponent has no more legal moves
+- Draw by material (king vs king with no progress)
+- Draw by inactivity (10 turns without a capture)
+- Timeout forfeit
+
+**UI & UX**
+- Click to select a piece, click destination to move
+- Selected piece highlighted with a yellow outline
+- Turn indicator and countdown timer displayed
+- Piece capture counters for both players
+- Game over screen with winner announcement
+
+### Technical Implementation
+
+**Client side** (`src/app/[locale]/game/[gameId]/page.tsx`, `src/components/OnlineGameClient.tsx`) — _by yamartin_
+- Built with React (Next.js App Router), TypeScript, Tailwind CSS
+- `useState` for board state, selected piece, turn, timer, eaten counters
 - `useEffect` with socket.io-client for real-time WebSocket connection
-- `handleClick` manages piece selection and sends moves to the server
-- Receives `init`, `state`, `timer`, `gameover`, `error` events from the server
-- Board rendered with double `.map()` over the 8×8 array
-- Pieces represented as numbers: 0=empty, 1=black pawn, 2=white pawn, 3=black king, 4=white king
+- Click handler validates piece ownership before sending move to server
+- Receives `init`, `state`, `timer`, `gameover`, `error` events from server
 
-### Server side — _braugust_ (`server.js`, `src/lib/checkers.js`)
-
-- Custom Node.js server with socket.io on the same HTTP server as Next.js
-- Dynamic game rooms by `gameId` from the database
-- Player color assigned from database (JWT cookie verification)
-- `checkers.js`: complete game engine (`legalMoves`, `applyMove`, `isDrawByMaterial`, `makeFreshBoard`)
-- 30-second countdown timer per turn with automatic forfeit
-- Results pushed to database (ELO calculation, match history)
+**Server side** (`server.js`, `src/lib/checkers.js`) — _by braugust_
+- Custom Next.js server with socket.io integrated on the same HTTP server
+- Dynamic game rooms identified by `gameId` from the database
+- Player color assigned from database (not by connection order)
+- `checkers.js`: complete game engine — `legalMoves`, `applyMove`, `isDrawByMaterial`, `makeFreshBoard`
+- Per-turn countdown timer with automatic forfeit on timeout
+- Results pushed to database after each game (ELO calculation)
 - Maximum 2 players per room enforced server-side
+
+---
+
+## Avatar System _by braugust_
+
+Users can personalize their profile picture, either by uploading their own image or by choosing from a set of built-in avatars.
+
+**Custom upload**
+- Upload an image directly from the user's computer
+- Live preview before confirming the change
+
+**Built-in avatar gallery**
+- 5 default avatars matching the four club colors plus a neutral one
+- Single-click selection, currently selected avatar highlighted
+
+**Validation & security**
+- Allowed formats: PNG, JPG, JPEG, WEBP — max 2 MB
+- Binary signature (magic number) verification to reject disguised files
+- Database only updated once the file is safely written
 
 ---
 
@@ -356,7 +334,9 @@ Built with React, TypeScript, Tailwind CSS:
 
 ### joudafke — Project Manager & Developer
 - Coordinated team meetings, tracked deadlines, managed blockers
-- _(backend contributions to be completed)_
+- Implemented user authentication (login, register, sessions)
+- Implemented Google OAuth 2.0
+- Implemented 2FA (OTP by email + recovery codes)
 
 ### maissat — Technical Lead & Developer
 - Chose and set up the front-end stack (Next.js, TypeScript, React, Tailwind CSS, shadcn/ui)
@@ -439,10 +419,13 @@ Share the generated URL with the evaluator.
 
 ---
 
-# Resources
+# Documentation
 
 ## Database
+- https://www.youtube.com/watch?v=iHKE_4KeNWQ&list=PLjwdMgw5TTLXXpRlzDZq7d8iS6YXgnslt
+- https://youtu.be/qw--VYLpxG4?si=kX9xEN0Cez4mMprK
 - https://www.postgresql.org/docs/
+- https://youtu.be/RebA5J-rlwg?si=_ajJHgS3vmEiO95y
 - https://www.prisma.io/docs
 
 ## Infrastructure & i18n
