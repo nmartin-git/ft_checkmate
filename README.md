@@ -27,6 +27,10 @@ With the Project Manager, we established roles and work repartitions between eac
 Also I regularly discuss with each members of the group to see their work, its compatibility with the global code and to merge it with github.
 
 **Project Manager (PM) / Scrum Master:** _joudafke_
+As project manager and Scrum master, I was responsible for the team's coordination and for keeping the project on track.
+I organized our team meetings and planning sessions, and made sure everyone knew what to work on and by when.
+Together with the Product Owner, I established the roles and work repartition between each member, and I tracked the progression of the modules and features to keep our deadlines realistic.
+I facilitated communication within the team and handled the risks and blockers as they came up, so that each member could stay focused on their tasks.
 
 **Technical Lead / Architect:** _maissat_
 As technical lead, I was responsible for the overall front-end architecture and technical choices of the project.
@@ -337,6 +341,8 @@ Users can personalize their profile picture, either by uploading their own image
 - Implemented user authentication (login, register, sessions)
 - Implemented Google OAuth 2.0
 - Implemented 2FA (OTP by email + recovery codes)
+- Implemented the user profile, parameters page, and friends system
+- Contributed to game statistics and match history
 
 ### maissat — Technical Lead & Developer
 - Chose and set up the front-end stack (Next.js, TypeScript, React, Tailwind CSS, shadcn/ui)
