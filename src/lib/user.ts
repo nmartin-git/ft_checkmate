@@ -324,22 +324,18 @@ export async function deleteAccount(userId: string): Promise<void> {
 		});
 		const gameIds = games.map((g) => g.id);
 
-		// Moves are scoped to games, remove them first
 		if (gameIds.length > 0) {
 			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
 		}
 
-		// Direct messages sent or received by the user
 		await tx.directMessage.deleteMany({
 			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
 		});
 
-		// Friend links in both directions
 		await tx.friends.deleteMany({
 			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
 		});
 
-		// The user's games (moves already gone)
 		if (gameIds.length > 0) {
 			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
 		}
