@@ -18,7 +18,7 @@ export async function getRecentMatches(userID: string, limit:number =3){
 			black_user : {select: {username:true}}
 		},
 		orderBy: {date:'desc'},
-		take:limit
+		take: limit
 	});
 	return games.map((g)=>{
 		const isWhite = g.white_player_id === userID;

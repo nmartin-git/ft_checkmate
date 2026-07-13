@@ -34,7 +34,6 @@ interface ProfileClientViewProps {
         color : 'white' | 'black';
     }[];
     eloHistory : {date : Date|string;elo:number}[]
-
 }
 
 const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; text: string }> = {
@@ -42,6 +41,14 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
     [club_names.Assembly]: { badge: "bg-[#a251b6] text-white", avatarBorder: "border-[#a251b6]", text: "text-[#a251b6]" },
     [club_names.Federation]: { badge: "bg-[#e24c3c] text-white", avatarBorder: "border-[#e24c3c]", text: "text-[#e24c3c]" },
     [club_names.Order]: { badge: "bg-[#ffc107] text-black", avatarBorder: "border-[#ffc107]", text: "text-[#ffc107]" }
+};
+
+const getRankDetails = (elo: number) => {
+    if (elo < 250) return { title: "Bot", min: 0, max: 250, color: "from-gray-600 to-gray-400" };
+    if (elo < 500) return { title: "Golem", min: 250, max: 500, color: "from-amber-800 to-amber-600" };
+    if (elo < 750) return { title: "Débutant", min: 500, max: 750, color: "from-blue-600 to-blue-400" };
+    if (elo < 1000) return { title: "Novice", min: 750, max: 1000, color: "from-purple-600 to-purple-400" };
+    return { title: "GOAT", min: 1000, max: 2500, color: "from-yellow-500 to-amber-400" };
 };
 
 export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
@@ -55,6 +62,11 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
     const [isFriend] = useState(userData.isInitialFriend || false);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(userData.avatar_url ?? null);
     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+
+    const rankDetails = getRankDetails(userData.elo);
+    const progressPercent = rankDetails.title === "GOAT" 
+        ? 100 
+        : Math.min(100, Math.max(0, ((userData.elo - rankDetails.min) / (rankDetails.max - rankDetails.min)) * 100));
 
     const handleEditClick = () => {
         router.push(`/${locale}/profile/parameters`);
@@ -109,7 +121,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
             <div className="max-w-6xl mx-auto bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
                 
                 <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full">
-                    <div className="relative group">
+                    <div className="relative group flex-shrink-0">
                         <Avatar src={avatarUrl} username={userData.username} size={96} className={currentStyle.avatarBorder} />
                         {isOwnProfile && (
                             <button
@@ -122,7 +134,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                         )}
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="space-y-3 w-full">
                         <div className="flex items-center justify-center sm:justify-start gap-3">
                             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">
                                 {userData.username}
@@ -132,10 +144,23 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                             </span>
                         </div>
                         <p className="text-gray-400 font-medium text-sm md:text-base">{userData.email}</p>
+
+                        <div className="pt-2 max-w-sm mx-auto sm:mx-0">
+                            <div className="flex justify-between items-end mb-1 text-xs font-bold uppercase tracking-wider">
+                                <span className="text-[#81b64c] font-black">Rang : {rankDetails.title}</span>
+                                <span className="text-gray-400 font-mono">{userData.elo} / {rankDetails.title === "GOAT" ? "∞" : rankDetails.max} ELO</span>
+                            </div>
+                            <div className="w-full h-3 bg-[#262522] border border-[#2b2925] rounded-full overflow-hidden p-[1px]">
+                                <div 
+                                    className={`h-full rounded-full bg-gradient-to-r ${rankDetails.color} transition-all duration-500 ease-out`}
+                                    style={{ width: `${progressPercent}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="w-full md:w-auto flex flex-col sm:flex-row justify-center md:justify-end gap-3">
+                <div className="w-full md:w-auto flex flex-col sm:flex-row justify-center md:justify-end gap-3 flex-shrink-0">
                     {!isPublicView ? (
                         <Button
                             label={t("parameters")}
@@ -192,8 +217,17 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
             </div>
 
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col min-h-64">
-                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📜 {t("matchs_title_short")}</p>
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm">📜 {t("matchs_title_short")}</p>
+                        <Link 
+                            href={`/${locale}/profile/${userData.id}/statistics`}
+                            className="text-xs font-bold px-2.5 py-1 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-all duration-150 border border-white/5"
+                        >
+                            Détails →
+                        </Link>
+                    </div>
 
                     {matchHistory.length === 0 ? (
                         <p className="text-sm text-gray-500 font-medium mt-6">{t("no_matchs_short")}</p>
@@ -218,9 +252,9 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                             ))}
                         </ul>
                     )}
-                </div>  
+                </div>
                 
-                <div className="max-w-6xl mx-auto bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl w-full">
+                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl w-full">
                     <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">📈 {t("elo_evolution")}</p>
                     <EloChart data={eloHistory} />
                 </div>
@@ -242,6 +276,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                     </div>
                 </Link>
 
+                {/* Bloc Amis */}
                 <Link href={`/${locale}/friends`} className="bg-[#1e1c18] border-2 border-[#2b2925] hover:border-blue-500/40 rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-64 transition-all duration-200 group cursor-pointer">
                     <div>
                         <div className="flex justify-between items-center mb-4">
@@ -254,6 +289,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                         </div>
                     </div>
                 </Link>
+
             </div>
 
             {isOwnProfile && (
