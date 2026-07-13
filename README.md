@@ -11,6 +11,7 @@ Ft_checkmate is a real-time multiplayer checkers game (jeu de dames) built as a 
 - User authentication (email/password, Google OAuth, 2FA)
 - User profiles with ELO ranking, match history, and friends system
 - Leaderboard and matchmaking system
+- In-game chat between players
 - Internationalization (French, English, Arabic)
 - Full containerization with Docker
 
@@ -45,7 +46,7 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 | Member | Role | Main contributions |
 |--------|------|--------------------|
 | nmartin | PO + Developer | Database schema, Prisma ORM, project management |
-| joudafke | PM + Developer | Authentication (login, register, OAuth, 2FA), backend routes |
+| joudafke | PM + Developer | Authentication (login, register, OAuth, 2FA), profile, friends, chat |
 | maissat | Tech Lead + Developer | Front-end architecture, UI/UX, shared components |
 | braugust | Developer | Server-side game engine, Docker, HTTPS, i18n, avatar system |
 | yamartin | Developer | Client-side game logic, WebSocket client, game UI |
@@ -94,17 +95,18 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 | # | Module | Category | Type | Points | Implemented by |
 |---|--------|----------|------|--------|----------------|
 | 1 | Framework front + back (Next.js) | Web | Major | 2 pts | maissat |
-| 2 | Real-time WebSockets (socket.io) | Web | Major | 2 pts | yamartin, braugust |
-| 3 | Complete web-based game (checkers) | Gaming | Major | 2 pts | yamartin, braugust |
-| 4 | Remote players (2 PCs in real-time) | Gaming | Major | 2 pts | yamartin, braugust |
-| 5 | ORM (Prisma) | Web | Minor | 1 pt | nmartin |
-| 6 | i18n 3 languages (fr/en/ar) | Accessibility | Minor | 1 pt | braugust |
-| 7 | RTL language support | Accessibility | Minor | 1 pt | braugust |
-| 8 | OAuth Google | User Management | Minor | 1 pt | joudafke |
-| 9 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | joudafke |
-| 10 | Stats & match history | User Management | Minor | 1 pt | nmartin, joudafke |
+| 2 | Real-time features using WebSockets (socket.io) | Web | Major | 2 pts | yamartin, braugust |
+| 3 | Allow users to interact (chat, profile, friends) | Web | Major | 2 pts | joudafke |
+| 4 | Standard user management and authentication | User Management | Major | 2 pts | joudafke, braugust |
+| 5 | Complete web-based game (checkers) | Gaming | Major | 2 pts | yamartin, braugust |
+| 6 | Remote players (2 PCs in real-time) | Gaming | Major | 2 pts | yamartin, braugust |
+| 7 | ORM (Prisma) | Web | Minor | 1 pt | nmartin |
+| 8 | i18n 3 languages (fr/en/ar) | Accessibility | Minor | 1 pt | braugust |
+| 9 | OAuth Google | User Management | Minor | 1 pt | joudafke |
+| 10 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | joudafke |
+| 11 | Game statistics and match history | User Management | Minor | 1 pt | nmartin, joudafke |
 
-**Total: 4 majors (8 pts) + 6 minors (6 pts) = 14 points**
+**Total: 6 majors (12 pts) + 5 minors (5 pts) = 17 points**
 
 ---
 
@@ -343,6 +345,7 @@ Users can personalize their profile picture, either by uploading their own image
 - Implemented Google OAuth 2.0
 - Implemented 2FA (OTP by email + recovery codes)
 - Implemented the user profile, parameters page, and friends system
+- Implemented in-game and direct messaging chat system
 - Contributed to game statistics and match history
 
 ### maissat — Technical Lead & Developer
@@ -449,4 +452,4 @@ Share the generated URL with the evaluator.
 - https://next-auth.js.org/
 
 ## AI Usage
-AI tools were used by some team members as a learning and debugging during development.
+AI tools were used by some team members as a learning and debugging aid during development.
