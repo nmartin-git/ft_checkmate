@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface Message {
     id: string;
@@ -20,6 +21,7 @@ interface DiscussionClientViewProps {
 
 export default function DiscussionClientView({ initialMessages, currentUserId, partner, isChatEnabled }: DiscussionClientViewProps) {
     const router = useRouter();
+    const t = useTranslations("discussion");
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
@@ -60,12 +62,12 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                 if (data.error === "MODERATION_BLOCKED") {
                     setShowModModal(true);
                 } else {
-                    setErrorMessage(data.error || "Une erreur est survenue.");
+                    setErrorMessage(data.error || t("error_server"));
                 }
             }
         } catch (err) {
             console.error("Erreur réseau lors de l'envoi:", err);
-            setErrorMessage("Impossible de contacter le serveur.");
+            setErrorMessage(t("error_server"));
         } finally {
             setLoading(false);
         }
@@ -78,16 +80,16 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                 <div className="p-4 border-b border-[#2b2925] bg-[#151412] flex items-center justify-between">
                     <span className="font-black uppercase tracking-wide">💬 {partner.username}</span>
                     <button onClick={() => router.back()} className="text-xs text-gray-400 hover:text-white uppercase font-bold transition-colors">
-                        Retour
+                        {t("back")}
                     </button>
                 </div>
 
                 {!isChatEnabled ? (
                     <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#151412]/50">
                         <span className="text-4xl mb-3">🔒</span>
-                        <h3 className="text-lg font-black uppercase text-red-400 tracking-wide">Messagerie Désactivée</h3>
+                        <h3 className="text-lg font-black uppercase text-red-400 tracking-wide">{t("disabled_title")}</h3>
                         <p className="text-sm text-gray-400 max-w-sm mt-2 font-medium">
-                            Vous devez activer l'option de messagerie dans les paramètres de votre profil pour pouvoir consulter et envoyer des messages.
+                            {t("disabled_desc")}
                         </p>
                     </div>
                 ) : (
@@ -121,7 +123,7 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                         value={text}
                         disabled={loading || !isChatEnabled}
                         onChange={(e) => setText(e.target.value)}
-                        placeholder={isChatEnabled ? "Rédiger un message (140 car. max)..." : "Chat désactivé..."}
+                        placeholder={isChatEnabled ? t("placeholder") : t("placeholder_disabled")}
                         className="flex-1 bg-[#262522] border border-[#312e2b] focus:border-[#81b64c] focus:outline-none rounded px-3 py-2 text-sm text-white placeholder-gray-500 disabled:opacity-30 disabled:cursor-not-allowed"
                     />
                     <button
@@ -129,7 +131,7 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                         disabled={loading || !text.trim() || !isChatEnabled}
                         className="bg-[#81b64c] hover:bg-[#92cb57] disabled:bg-[#2b2925] disabled:text-gray-600 text-white px-5 py-2 rounded text-xs font-black uppercase tracking-wider transition-all duration-150 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
                     >
-                        Envoyer
+                        {t("send")}
                     </button>
                 </form>
 
@@ -141,16 +143,16 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
                             🛑
                         </div>
                         <h3 className="text-lg font-black uppercase tracking-wide text-red-400 mb-2">
-                            Message Refusé
+                            {t("mod_title")}
                         </h3>
                         <p className="text-gray-400 text-sm font-medium mb-6 leading-relaxed">
-                            Notre système automatique a détecté des termes inappropriés ou insultants. Merci de rester courtois et respectueux.
+                            {t("mod_desc")}
                         </p>
                         <button
                             onClick={() => setShowModModal(false)}
                             className="w-full bg-[#312e2b] hover:bg-[#3d3a36] text-white border border-[#45423f] py-2 px-4 rounded text-xs font-black uppercase tracking-wider transition-all duration-150 active:scale-95"
                         >
-                            Compris
+                            {t("mod_ok")}
                         </button>
                     </div>
                 </div>

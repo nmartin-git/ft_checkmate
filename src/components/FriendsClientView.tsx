@@ -31,6 +31,7 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
 
 export default function FriendsClientView({ friendsList }: FriendsClientViewProps) {
     const t = useTranslations("social");
+    const tProfile = useTranslations("profile");
     const locale = useLocale();
     const router = useRouter();
     const [list, setList] = useState<PlayerRow[]>(friendsList);
@@ -95,7 +96,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
                                                 router.push(`/${locale}/profile/${player.id}/message`);
                                             }}
                                             className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded bg-[#262522] border border-[#312e2b] hover:border-[#81b64c] transition-all duration-150 active:scale-90"
-                                            title="Discuter"
+                                            title={tProfile("chat")}
                                         >
                                             <AiOutlineMessage size={18} />
                                         </button>

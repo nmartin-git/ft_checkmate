@@ -7,6 +7,7 @@ import { useState, useCallback } from "react";
 import Modal from "../ui/Modal";
 import useCurrentUser from "@/src/hooks/useCurrentUser";
 import { redirectAuthGoogle } from "@/src/lib/google";
+import { useTranslations } from "next-intl";
 
 
 const RegisterModal= () => {
@@ -17,6 +18,7 @@ const RegisterModal= () => {
     const [password,setPassword] = useState('');
     const [isLoading,setIsLoading] = useState(false);
     const currentUser = useCurrentUser();
+    const t = useTranslations('auth');
     const [errorMessage, setErrorMessage] = useState('');
 
     const onSubmit =useCallback(async () =>{
@@ -39,14 +41,14 @@ const RegisterModal= () => {
                 // const text = await response.text();
                 // console.log("Registor error;", text);
                 // return;
-                throw new Error(data.error || 'An error occured');
+                throw new Error(data.error || t('generic_error'));
             }
             currentUser.setUser({
                 id : data.user.id,
                 username : data.user.username,
                 email : data.user.email
             })
-            alert('user creer avec succes');
+            alert(t('register_success'));
             RegisterModal.onClose();
         } catch (error : any)
         {
@@ -70,14 +72,14 @@ const RegisterModal= () => {
         <div className="flex flex-col gap-4">
             {errorText}
              <Input
-            placeholder="Username"
+            placeholder={t('username')}
             onChange={(e)=>setUsername(e.target.value)}
             value={username}
             disabled={isLoading}
 
             />
             <Input
-            placeholder="Email"
+            placeholder={t('email')}
             onChange={(e)=>setEmail(e.target.value)}
             value={email}
             disabled={isLoading}
@@ -85,7 +87,7 @@ const RegisterModal= () => {
             />
             
             <Input
-            placeholder="Password"
+            placeholder={t('password')}
             onChange={(e)=>setPassword(e.target.value)}
             value={password}
             type="password"
@@ -98,7 +100,7 @@ const RegisterModal= () => {
         <div className="flex flex-col py-2">
                 <div className="relative flex py-2 items-center w-full">
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="flex-shrink mx-4 text-gray-400 text-sm">ou</span>
+                <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('or')}</span>
                 <div className="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div className="w-full">
@@ -115,18 +117,18 @@ const RegisterModal= () => {
                           <path fill="none" d="M0 0h48v48H0z"></path>
                         </svg>
                       </div>
-                      <span className="gsi-material-button-contents">Sign up with Google</span>
-                      <span style={{display: 'none'}}>Sign up with Google</span>
+                      <span className="gsi-material-button-contents">{t('sign_up_google')}</span>
+                      <span style={{display: 'none'}}>{t('sign_up_google')}</span>
                     </div>
                 </button>
                 </div>
             <div className="flex flex-row justify-center w-full pt-2 text-sm">
-            <p className="pr-2">You already have an account ? </p>
+            <p className="pr-2">{t('already_account')} </p>
             <span className="
             text-decoration-line: underline
             cursor-pointer 
             hover:opacity-50
-            " onClick={onToggle}>Log in</span>
+            " onClick={onToggle}>{t('log_in')}</span>
             </div>
        </div>
     )
@@ -135,8 +137,8 @@ const RegisterModal= () => {
         <Modal
         disabled={isLoading}
         isOpen={RegisterModal.isOpen}
-        title="Create an account"
-        actionLabel="Register"
+        title={t('register_title')}
+        actionLabel={t('register')}
         onClose={RegisterModal.onClose}
         onSubmit={onSubmit}
         body={bodyContent}

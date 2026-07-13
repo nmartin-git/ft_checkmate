@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/src/app/globals.css"; 
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import Topbar from "@/src/components/Topbar";
 import PlayModal from "@/src/components/Modals/PlayModal";
 import LoginModal from "@/src/components/Modals/LoginModal";
@@ -23,10 +23,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "ft-chess",
-  description: "Créé avec Next.js",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: "Dames.com",
+    description: t("description"),
+  };
+}
 
 export default async function RootLayout({
   children,

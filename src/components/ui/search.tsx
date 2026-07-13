@@ -133,7 +133,7 @@ export default function SearchBar() {
 
             {query.trim() !== "" && !isLoading && results.length === 0 && (
                 <p className="text-xs text-gray-500 mt-1 pl-1">
-                    Aucun joueur trouvé pour "{query}".
+                    {t("no_players_found", { query })}
                 </p>
             )}
         </div>

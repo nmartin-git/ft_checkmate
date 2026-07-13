@@ -2,6 +2,7 @@ import { eloHistoric, getRecentMatches, getStats } from "@/src/lib/stats";
 import { getProfile } from "@/src/lib/user";
 import { notFound } from "next/navigation";
 import StatsClientView from "@/src/components/StatisticsClientView";
+import { getTranslations } from "next-intl/server";
 
 interface StatsPageProps {
     params: Promise<{ id: string; locale: string }>;
@@ -11,6 +12,7 @@ interface StatsPageProps {
 export default async function PlayerStatsPage({ params, searchParams }: StatsPageProps) {
     const { id } = await params;
     const { range } = await searchParams;
+    const t = await getTranslations("profile");
 
     const userProfile = await getProfile(id);
     if (!userProfile) notFound();
@@ -28,7 +30,7 @@ export default async function PlayerStatsPage({ params, searchParams }: StatsPag
 
     return (
         <StatsClientView
-            username={userProfile.username ?? "Joueur"}
+            username={userProfile.username ?? t("player")}
             eloHistory={filteredEloHistory}
             matchHistory={allMatches}
             stats={stats}

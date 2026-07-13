@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import EloChart from "./EloChart";
 import WinRateChart from "./WinRateChart";
@@ -21,15 +22,17 @@ interface StatsClientViewProps {
 export default function StatsClientView({ username, eloHistory, matchHistory, stats, currentRange }: StatsClientViewProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const t = useTranslations();
+    const locale = useLocale();
     
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
     const ranges = [
-        { label: "7 jours", value: "7" },
-        { label: "30 jours", value: "30" },
-        { label: "90 jours", value: "90" },
-        { label: "Tout", value: "all" }
+        { label: t("stats.range_7"), value: "7" },
+        { label: t("stats.range_30"), value: "30" },
+        { label: t("stats.range_90"), value: "90" },
+        { label: t("stats.range_all"), value: "all" }
     ];
 
     const handleRangeChange = (value: string) => {
@@ -51,13 +54,13 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                 
                 <div className="flex items-center justify-between border-b border-[#2b2925] pb-4">
                     <h1 className="text-2xl font-black uppercase tracking-tight">
-                        📈 Statistiques de {username}
+                        📈 {t("stats.title", { username })}
                     </h1>
                     <button 
                         onClick={() => router.back()}
                         className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white bg-[#1e1c18] border border-[#2b2925] px-3 py-1.5 rounded transition-all"
                     >
-                        Retour Profil
+                        {t("stats.back_profile")}
                     </button>
                 </div>
 
@@ -81,40 +84,40 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                 </div>
 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
-                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Evolution de l'ELO</p>
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.elo_evolution")}</p>
                     {eloHistory.length === 0 ? (
-                        <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune donnée sur cette période.</p>
+                        <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("stats.no_data_period")}</p>
                     ) : (
                         <EloChart data={eloHistory} />
                     )}
                 </div>
 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
-                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Répartition des résultats</p>
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.results_distribution")}</p>
                     <WinRateChart wins={stats.wins} losses={stats.losses} draws={stats.draws} winrate={stats.winrate} />
                 </div>
 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-[380px]">
                     <div>
-                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Historique des parties</p>
+                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.match_history")}</p>
                         
                         {matchHistory.length === 0 ? (
-                            <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune partie enregistrée.</p>
+                            <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("stats.no_matches")}</p>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse text-sm">
                                     <thead>
                                         <tr className="border-b border-[#2b2925] text-gray-400 text-xs font-black uppercase tracking-wider">
-                                            <th className="pb-3">Date</th>
-                                            <th className="pb-3">Adversaire</th>
-                                            <th className="pb-3 text-right">Résultat</th>
+                                            <th className="pb-3">{t("stats.col_date")}</th>
+                                            <th className="pb-3">{t("stats.col_opponent")}</th>
+                                            <th className="pb-3 text-right">{t("stats.col_result")}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-[#2b2925]/50">
                                         {currentMatches.map((m) => (
                                             <tr key={m.id} className="hover:bg-[#262522]/30 transition-colors">
                                                 <td className="py-3 text-gray-400 font-mono text-xs">
-                                                    {new Date(m.date).toLocaleDateString('fr-FR', {
+                                                    {new Date(m.date).toLocaleDateString(locale, {
                                                         day: '2-digit',
                                                         month: '2-digit',
                                                         year: 'numeric'
@@ -128,7 +131,7 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                                                         m.outcome === 'WIN' ? 'bg-[#81b64c]/10 text-[#81b64c]'
                                                         : m.outcome === 'LOSS' ? 'bg-red-500/10 text-red-400' : 'bg-gray-400/10 text-gray-400'
                                                     }`}>
-                                                        {m.outcome}
+                                                        {m.outcome === "WIN" ? t("profile.win") : m.outcome === "LOSS" ? t("profile.loss") : t("profile.draw_result")}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -142,7 +145,7 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                     {matchHistory.length > itemsPerPage && (
                         <div className="flex items-center justify-between border-t border-[#2b2925] pt-4 mt-4">
                             <span className="text-xs text-gray-400 font-medium">
-                                Page <span className="font-mono text-white font-bold">{currentPage}</span> sur <span className="font-mono text-white font-bold">{totalPages}</span>
+                                {t("stats.page")} <span className="font-mono text-white font-bold">{currentPage}</span> {t("stats.of")} <span className="font-mono text-white font-bold">{totalPages}</span>
                             </span>
                             <div className="flex gap-2">
                                 <button
@@ -150,14 +153,14 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                                     disabled={currentPage === 1}
                                     className="p-2 bg-[#262522] border border-[#2b2925] rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-all font-bold text-xs uppercase select-none"
                                 >
-                                    ← Précédent
+                                    ← {t("stats.previous")}
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
                                     className="p-2 bg-[#262522] border border-[#2b2925] rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-all font-bold text-xs uppercase select-none"
                                 >
-                                    Suivant →
+                                    {t("stats.next")} →
                                 </button>
                             </div>
                         </div>

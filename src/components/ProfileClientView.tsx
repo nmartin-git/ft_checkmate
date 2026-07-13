@@ -44,16 +44,18 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
 };
 
 const getRankDetails = (elo: number) => {
-    if (elo < 250) return { title: "Bot", min: 0, max: 250, color: "from-gray-600 to-gray-400" };
-    if (elo < 500) return { title: "Golem", min: 250, max: 500, color: "from-amber-800 to-amber-600" };
-    if (elo < 750) return { title: "Débutant", min: 500, max: 750, color: "from-blue-600 to-blue-400" };
-    if (elo < 1000) return { title: "Novice", min: 750, max: 1000, color: "from-purple-600 to-purple-400" };
-    return { title: "GOAT", min: 1000, max: 2500, color: "from-yellow-500 to-amber-400" };
+    if (elo < 250) return { key: "bot", isMax: false, min: 0, max: 250, color: "from-gray-600 to-gray-400" };
+    if (elo < 500) return { key: "golem", isMax: false, min: 250, max: 500, color: "from-amber-800 to-amber-600" };
+    if (elo < 750) return { key: "beginner", isMax: false, min: 500, max: 750, color: "from-blue-600 to-blue-400" };
+    if (elo < 1000) return { key: "novice", isMax: false, min: 750, max: 1000, color: "from-purple-600 to-purple-400" };
+    return { key: "goat", isMax: true, min: 1000, max: 2500, color: "from-yellow-500 to-amber-400" };
 };
 
 export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
     const t = useTranslations("profile");
     const tAvatar = useTranslations("avatar");
+    const tRanks = useTranslations("ranks");
+    const tClubs = useTranslations("clubs");
     const router = useRouter();
     const locale = useLocale();
     const { user, setAvatar } = useCurrentUser();
@@ -64,7 +66,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
     const rankDetails = getRankDetails(userData.elo);
-    const progressPercent = rankDetails.title === "GOAT" 
+    const progressPercent = rankDetails.isMax 
         ? 100 
         : Math.min(100, Math.max(0, ((userData.elo - rankDetails.min) / (rankDetails.max - rankDetails.min)) * 100));
 
@@ -140,15 +142,15 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                                 {userData.username}
                             </h1>
                             <span className={`${currentStyle.badge} text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider transition-colors duration-300`}>
-                                {userData.club}
+                                {tClubs(userData.club)}
                             </span>
                         </div>
                         <p className="text-gray-400 font-medium text-sm md:text-base">{userData.email}</p>
 
                         <div className="pt-2 max-w-sm mx-auto sm:mx-0">
                             <div className="flex justify-between items-end mb-1 text-xs font-bold uppercase tracking-wider">
-                                <span className="text-[#81b64c] font-black">Rang : {rankDetails.title}</span>
-                                <span className="text-gray-400 font-mono">{userData.elo} / {rankDetails.title === "GOAT" ? "∞" : rankDetails.max} ELO</span>
+                                <span className="text-[#81b64c] font-black">{t("rank_label")} : {tRanks(rankDetails.key)}</span>
+                                <span className="text-gray-400 font-mono">{userData.elo} / {rankDetails.isMax ? "∞" : rankDetails.max} ELO</span>
                             </div>
                             <div className="w-full h-3 bg-[#262522] border border-[#2b2925] rounded-full overflow-hidden p-[1px]">
                                 <div 
@@ -176,7 +178,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                                         className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-95 shadow-md animate-fade-in"
                                     >
                                         <AiOutlineMessage size={16} />
-                                        Discuter
+                                        {t("chat")}
                                     </button>
                                 )}
 
@@ -225,7 +227,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                             href={`/${locale}/profile/${userData.id}/statistics`}
                             className="text-xs font-bold px-2.5 py-1 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-all duration-150 border border-white/5"
                         >
-                            Détails →
+                            {t("details")} →
                         </Link>
                     </div>
 
@@ -263,7 +265,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <p className="text-gray-300 font-black uppercase tracking-wider text-sm">🏆 {t("elo_historics")}</p>
-                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Classement →</span>
+                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("ranking")} →</span>
                         </div>
                         <div className="flex items-baseline gap-2 mt-6">
                             <span className="text-5xl font-black text-white tracking-tight">{userData.elo}</span> 

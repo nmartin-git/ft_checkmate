@@ -123,7 +123,7 @@ export default function ParametersPage() {
     }
   }
   if (isFetching) {
-    return <div className="p-6 min-h-[calc(100vh-100px)] bg-[#262522] text-gray-400 font-medium text-sm">Loading settings...</div>
+    return <div className="p-6 min-h-[calc(100vh-100px)] bg-[#262522] text-gray-400 font-medium text-sm">{t("loading")}</div>
   }
   return (
     <>

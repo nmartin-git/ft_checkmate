@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Avatar from "@/src/components/ui/Avatar";
 import { club_names } from "@prisma/client";
 
@@ -32,24 +32,25 @@ interface ConversationsClientViewProps {
 
 export default function ConversationsClientView({ conversations, isChatEnabled }: ConversationsClientViewProps) {
     const locale = useLocale();
+    const t = useTranslations("conversations");
 
     return (
         <div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 select-none">
             <div className="max-w-2xl mx-auto">
-                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">💬 Mes Discussions</h1>
+                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">💬 {t("title")}</h1>
 
                 {!isChatEnabled ? (
                     <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-12 text-center shadow-xl flex flex-col items-center justify-center">
                         <span className="text-5xl mb-4">🔒</span>
-                        <h2 className="text-xl font-black uppercase text-red-400 tracking-wide">Accès Bloqué</h2>
+                        <h2 className="text-xl font-black uppercase text-red-400 tracking-wide">{t("access_blocked")}</h2>
                         <p className="text-sm text-gray-400 max-w-sm mt-2 font-medium">
-                            Votre messagerie privée est actuellement désactivée. Allez dans vos paramètres de profil pour l'activer et accéder à vos conversations.
+                            {t("disabled_desc")}
                         </p>
                     </div>
                 ) : (
                     <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg overflow-hidden shadow-xl">
                         {conversations.length === 0 ? (
-                            <p className="text-sm text-gray-500 text-center py-12 font-medium">Aucune discussion en cours.</p>
+                            <p className="text-sm text-gray-500 text-center py-12 font-medium">{t("none")}</p>
                         ) : (
                             conversations.map((conv) => {
                                 if (!conv.partner || !conv.lastMessage) return null;

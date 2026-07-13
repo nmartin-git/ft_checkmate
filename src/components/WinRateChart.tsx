@@ -1,6 +1,7 @@
 'use client'
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts"
+import { useTranslations } from "next-intl"
 
 interface WinRateChartProps {
     wins: number;
@@ -12,9 +13,9 @@ interface WinRateChartProps {
 const SURFACE = "#1e1c18"; // couleur de la carte, sert d'interstice entre les parts
 
 const SLICES = [
-    { key: "wins", label: "Victoires", color: "#81b64c" },
-    { key: "losses", label: "Défaites", color: "#e5484d" },
-    { key: "draws", label: "Nulles", color: "#e6912c" },
+    { key: "wins", labelKey: "wins", color: "#81b64c" },
+    { key: "losses", labelKey: "losses", color: "#e5484d" },
+    { key: "draws", labelKey: "draws", color: "#e6912c" },
 ] as const;
 
 interface Slice {
@@ -37,16 +38,17 @@ function ChartTooltip({ active, payload, total }: { active?: boolean; payload?: 
 }
 
 export default function WinRateChart({ wins, losses, draws, winrate }: WinRateChartProps) {
+    const t = useTranslations("chart");
     const total = wins + losses + draws;
 
     if (total === 0) {
         return (
-            <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune partie enregistrée.</p>
+            <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("no_games")}</p>
         );
     }
 
     const values: Record<string, number> = { wins, losses, draws };
-    const data: Slice[] = SLICES.map((s) => ({ label: s.label, value: values[s.key], color: s.color }));
+    const data: Slice[] = SLICES.map((s) => ({ label: t(s.labelKey), value: values[s.key], color: s.color }));
 
     return (
         <div className="flex flex-col md:flex-row items-center gap-6">
@@ -78,7 +80,7 @@ export default function WinRateChart({ wins, losses, draws, winrate }: WinRateCh
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <span className="text-3xl font-black text-white leading-none">{Math.round(winrate * 100)}%</span>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 mt-1">Victoires</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 mt-1">{t("wins")}</span>
                 </div>
             </div>
 
@@ -97,7 +99,7 @@ export default function WinRateChart({ wins, losses, draws, winrate }: WinRateCh
                 })}
                 <li className="flex items-center gap-3 text-sm border-t border-[#2b2925] pt-2 mt-2">
                     <span className="w-3 h-3 shrink-0" />
-                    <span className="font-black uppercase tracking-wider text-gray-400 flex-1 text-xs">Total</span>
+                    <span className="font-black uppercase tracking-wider text-gray-400 flex-1 text-xs">{t("total")}</span>
                     <span className="font-mono text-white font-bold">{total}</span>
                     <span className="w-10" />
                 </li>

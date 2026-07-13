@@ -316,32 +316,34 @@ export async function inscriptionClassic(inputEmail : string, inputUsername : st
 //         await prisma.$disconnect()
 //     })
 
-// export async function deleteAccount(userId: string): Promise<void> {
-// 	await prisma.$transaction(async (tx) => {
-// 		const games = await tx.game.findMany({
-// 			where: { OR: [{ white_player_id: userId }, { black_player_id: userId }] },
-// 			select: { id: true },
-// 		});
-// 		const gameIds = games.map((g) => g.id);
+export async function deleteAccount(userId: string): Promise<void> {
+	await prisma.$transaction(async (tx) => {
+		const games = await tx.game.findMany({
+			where: { OR: [{ white_player_id: userId }, { black_player_id: userId }] },
+			select: { id: true },
+		});
+		const gameIds = games.map((g) => g.id);
 
-// 		if (gameIds.length > 0) {
-// 			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
-// 			await tx.directMessage.deleteMany({ where: { game_id: { in: gameIds } } });
-// 		}
-// 		await tx.directMessage.deleteMany({ where: { author_user_id: userId } });
+		// Moves are scoped to games, remove them first
+		if (gameIds.length > 0) {
+			await tx.move.deleteMany({ where: { game_id: { in: gameIds } } });
+		}
 
-// 		await tx.directMessage.deleteMany({
-// 			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
-// 		});
+		// Direct messages sent or received by the user
+		await tx.directMessage.deleteMany({
+			where: { OR: [{ sender_id: userId }, { receiver_id: userId }] },
+		});
 
-// 		await tx.friends.deleteMany({
-// 			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
-// 		});
+		// Friend links in both directions
+		await tx.friends.deleteMany({
+			where: { OR: [{ user_id: userId }, { friend_id: userId }] },
+		});
 
-// 		if (gameIds.length > 0) {
-// 			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
-// 		}
+		// The user's games (moves already gone)
+		if (gameIds.length > 0) {
+			await tx.game.deleteMany({ where: { id: { in: gameIds } } });
+		}
 
-// 		await tx.user.delete({ where: { id: userId } });
-// 	});
-// }
+		await tx.user.delete({ where: { id: userId } });
+	});
+}

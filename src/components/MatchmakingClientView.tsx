@@ -129,7 +129,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
 
                     {list.length === 0 ? (
                         <p className="text-sm text-gray-500 font-medium p-8 text-center">
-                            Vous n'avez pas encore d'amis ajoutés.
+                            {t("no_friends_added")}
                         </p>
                     ) : (
                         list.map((player) => {

@@ -52,14 +52,14 @@ const LoginModal = () => {
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'response pas ok');
+            if (!response.ok) throw new Error(data.error || t('generic_error'));
             if (data.twoFactorAuthEnable) {
                 setRequires2FA(true);
                 setStep(2);
                 return;
             }
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
-            alert('Utilisateur log avec succes!');
+            alert(t('login_success'));
             handleClose();
         } catch (error: any) {
             setErrorMessage(error.message);
@@ -78,8 +78,8 @@ const LoginModal = () => {
                 body: JSON.stringify({ email, code })
             });
             const data = await response.json();
-            if (!response.ok || data.success === false) throw new Error(data.error || 'response pas ok');
-            alert('Utilisateur log avec succes!');
+            if (!response.ok || data.success === false) throw new Error(data.error || t('generic_error'));
+            alert(t('login_success'));
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
             handleClose();
         } catch (error: any) {
@@ -99,8 +99,8 @@ const LoginModal = () => {
                 body: JSON.stringify({ email, recoveryCode })
             });
             const data = await response.json();
-            if (!response.ok || data.success === false) throw new Error(data.error || 'An error occured');
-            alert('Utilisateur log avec succes!');
+            if (!response.ok || data.success === false) throw new Error(data.error || t('generic_error'));
+            alert(t('login_success'));
             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
             handleClose();
         } catch (error: any) {

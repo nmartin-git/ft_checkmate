@@ -5,7 +5,8 @@
     "login": "Connexion",
     "logout": "Déconnexion",
     "notifications": "Notifications",
-    "play": "JOUER"
+    "play": "JOUER",
+    "messages": "Messages"
   },
   "game": {
     "title": "Jeu de Dames",
@@ -36,7 +37,10 @@
     "register": "S'inscrire",
     "sign_up_google": "S'inscrire avec Google",
     "already_account": "Vous avez déjà un compte ?",
-    "log_in": "Se connecter"
+    "log_in": "Se connecter",
+    "register_success": "Compte créé avec succès !",
+    "login_success": "Connexion réussie !",
+    "generic_error": "Une erreur est survenue"
   },
   "profile": {
     "player": "Joueur",
@@ -60,7 +64,12 @@
     "loss": "Défaite",
     "draw_result": "Nulle",
     "add_friend": "Ajouter",
-    "pending": "En attente"
+    "pending": "En attente",
+    "rank_label": "Rang",
+    "details": "Détails",
+    "chat": "Discuter",
+    "ranking": "Classement",
+    "view_ranking": "Voir le classement mondial"
   },
   "parameters": {
     "loading": "Chargement des paramètres...",
@@ -91,14 +100,20 @@
     "refuse": "Refuser",
     "accept_challenge": "Accepter le défi",
     "refuse_challenge": "Refuser le défi",
-    "wants_to_add": "Souhaite vous ajouter en ami"
+    "wants_to_add": "Souhaite vous ajouter en ami",
+    "loading": "Chargement des notifications..."
   },
   "footer": {
     "privacy": "Confidentialité",
     "terms": "Conditions"
   },
   "chart": {
-    "not_enough_games": "Pas assez de parties pour afficher le graphique."
+    "not_enough_games": "Pas assez de parties pour afficher le graphique.",
+    "wins": "Victoires",
+    "losses": "Défaites",
+    "draws": "Nulles",
+    "total": "Total",
+    "no_games": "Aucune partie enregistrée."
   },
   "lobby": {
     "mode": "Mode de jeu",
@@ -143,14 +158,19 @@
     "challenge": "Affronter",
     "waiting": "En attente...",
     "join": "Rejoindre !",
-    "search_placeholder": "Rechercher un joueur par son pseudo..."
+    "search_placeholder": "Rechercher un joueur par son pseudo...",
+    "no_players_found": "Aucun joueur trouvé pour « {query} ».",
+    "no_friends_added": "Vous n'avez pas encore d'amis ajoutés."
   },
   "errors": {
     "not_connected": "Non connecté",
     "invalid_session": "Session invalide",
     "profile_load_error": "Une erreur est survenue lors du chargement du profil.",
     "generic": "Une erreur est survenue.",
-    "player_not_found": "Joueur introuvable."
+    "player_not_found": "Joueur introuvable.",
+    "messages_load": "Erreur lors du chargement des messages.",
+    "self_chat": "Impossible de discuter avec soi-même.",
+    "user_not_found": "Utilisateur introuvable."
   },
   "terms": {
     "title": "Conditions d'utilisation",
@@ -207,5 +227,59 @@
     "err_no_file": "Aucun fichier sélectionné.",
     "err_network": "Erreur réseau. Réessayez.",
     "err_generic": "Le changement d'avatar a échoué."
+  },
+  "ranks": {
+    "bot": "Bot",
+    "golem": "Golem",
+    "beginner": "Débutant",
+    "novice": "Novice",
+    "goat": "GOAT"
+  },
+  "clubs": {
+    "Alliance": "Alliance",
+    "Assembly": "Assembly",
+    "Federation": "Federation",
+    "Order": "Order"
+  },
+  "stats": {
+    "title": "Statistiques de {username}",
+    "back_profile": "Retour Profil",
+    "range_7": "7 jours",
+    "range_30": "30 jours",
+    "range_90": "90 jours",
+    "range_all": "Tout",
+    "elo_evolution": "Évolution de l'ELO",
+    "no_data_period": "Aucune donnée sur cette période.",
+    "results_distribution": "Répartition des résultats",
+    "match_history": "Historique des parties",
+    "no_matches": "Aucune partie enregistrée.",
+    "col_date": "Date",
+    "col_opponent": "Adversaire",
+    "col_result": "Résultat",
+    "page": "Page",
+    "of": "sur",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "conversations": {
+    "title": "Mes Discussions",
+    "access_blocked": "Accès Bloqué",
+    "disabled_desc": "Votre messagerie privée est actuellement désactivée. Allez dans vos paramètres de profil pour l'activer et accéder à vos conversations.",
+    "none": "Aucune discussion en cours."
+  },
+  "discussion": {
+    "back": "Retour",
+    "disabled_title": "Messagerie Désactivée",
+    "disabled_desc": "Vous devez activer l'option de messagerie dans les paramètres de votre profil pour pouvoir consulter et envoyer des messages.",
+    "placeholder": "Rédiger un message (140 car. max)...",
+    "placeholder_disabled": "Chat désactivé...",
+    "send": "Envoyer",
+    "error_server": "Impossible de contacter le serveur.",
+    "mod_title": "Message Refusé",
+    "mod_desc": "Notre système automatique a détecté des termes inappropriés ou insultants. Merci de rester courtois et respectueux.",
+    "mod_ok": "Compris"
+  },
+  "meta": {
+    "description": "Jouez aux Dames en ligne contre vos amis."
   }
 }

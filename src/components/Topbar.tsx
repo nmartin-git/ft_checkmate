@@ -98,7 +98,7 @@ const Topbar = () => {
                         <button
                             onClick={() => router.push(`/${locale}/messages`)}
                             className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded transition-colors duration-150 relative active:scale-90"
-                            title="Messages"
+                            title={t('nav.messages')}
                         >
                             <HiOutlineMail size={22} />
                         </button>

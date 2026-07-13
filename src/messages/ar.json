@@ -5,7 +5,8 @@
     "login": "تسجيل الدخول",
     "logout": "تسجيل الخروج",
     "notifications": "الإشعارات",
-    "play": "العب"
+    "play": "العب",
+    "messages": "الرسائل"
   },
   "game": {
     "title": "لعبة الداما",
@@ -36,7 +37,10 @@
     "register": "تسجيل",
     "sign_up_google": "سجّل عبر Google",
     "already_account": "لديك حساب بالفعل؟",
-    "log_in": "تسجيل الدخول"
+    "log_in": "تسجيل الدخول",
+    "register_success": "تم إنشاء الحساب بنجاح!",
+    "login_success": "تم تسجيل الدخول بنجاح!",
+    "generic_error": "حدث خطأ ما"
   },
   "profile": {
     "player": "لاعب",
@@ -60,7 +64,12 @@
     "loss": "هزيمة",
     "draw_result": "تعادل",
     "add_friend": "إضافة",
-    "pending": "قيد الانتظار"
+    "pending": "قيد الانتظار",
+    "rank_label": "الرتبة",
+    "details": "التفاصيل",
+    "chat": "محادثة",
+    "ranking": "التصنيف",
+    "view_ranking": "عرض التصنيف العالمي"
   },
   "parameters": {
     "loading": "جارٍ تحميل الإعدادات...",
@@ -91,14 +100,20 @@
     "refuse": "رفض",
     "accept_challenge": "قبول التحدي",
     "refuse_challenge": "رفض التحدي",
-    "wants_to_add": "يريد إضافتك كصديق"
+    "wants_to_add": "يريد إضافتك كصديق",
+    "loading": "جارٍ تحميل الإشعارات..."
   },
   "footer": {
     "privacy": "الخصوصية",
     "terms": "الشروط"
   },
   "chart": {
-    "not_enough_games": "لا توجد مباريات كافية لعرض الرسم البياني."
+    "not_enough_games": "لا توجد مباريات كافية لعرض الرسم البياني.",
+    "wins": "انتصارات",
+    "losses": "هزائم",
+    "draws": "تعادلات",
+    "total": "المجموع",
+    "no_games": "لا توجد مباريات مسجلة."
   },
   "lobby": {
     "mode": "وضع اللعب",
@@ -143,14 +158,19 @@
     "challenge": "تحدَّ",
     "waiting": "في الانتظار...",
     "join": "انضم!",
-    "search_placeholder": "ابحث عن لاعب باسم المستخدم..."
+    "search_placeholder": "ابحث عن لاعب باسم المستخدم...",
+    "no_players_found": "لم يُعثر على أي لاعب لـ «{query}».",
+    "no_friends_added": "لم تُضِف أي أصدقاء بعد."
   },
   "errors": {
     "not_connected": "غير متصل",
     "invalid_session": "جلسة غير صالحة",
     "profile_load_error": "حدث خطأ أثناء تحميل الملف الشخصي.",
     "generic": "حدث خطأ.",
-    "player_not_found": "اللاعب غير موجود."
+    "player_not_found": "اللاعب غير موجود.",
+    "messages_load": "حدث خطأ أثناء تحميل الرسائل.",
+    "self_chat": "لا يمكنك محادثة نفسك.",
+    "user_not_found": "المستخدم غير موجود."
   },
   "terms": {
     "title": "شروط الاستخدام",
@@ -207,5 +227,59 @@
     "err_no_file": "لم يتم اختيار ملف.",
     "err_network": "خطأ في الشبكة. أعد المحاولة.",
     "err_generic": "فشل تغيير الصورة الرمزية."
+  },
+  "ranks": {
+    "bot": "بوت",
+    "golem": "جولم",
+    "beginner": "مبتدئ",
+    "novice": "ناشئ",
+    "goat": "GOAT"
+  },
+  "clubs": {
+    "Alliance": "التحالف",
+    "Assembly": "الجمعية",
+    "Federation": "الاتحاد",
+    "Order": "النظام"
+  },
+  "stats": {
+    "title": "إحصائيات {username}",
+    "back_profile": "العودة إلى الملف",
+    "range_7": "7 أيام",
+    "range_30": "30 يومًا",
+    "range_90": "90 يومًا",
+    "range_all": "الكل",
+    "elo_evolution": "تطور نقاط ELO",
+    "no_data_period": "لا توجد بيانات لهذه الفترة.",
+    "results_distribution": "توزيع النتائج",
+    "match_history": "سجل المباريات",
+    "no_matches": "لا توجد مباريات مسجلة.",
+    "col_date": "التاريخ",
+    "col_opponent": "الخصم",
+    "col_result": "النتيجة",
+    "page": "صفحة",
+    "of": "من",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "conversations": {
+    "title": "محادثاتي",
+    "access_blocked": "الوصول محظور",
+    "disabled_desc": "المراسلة الخاصة معطلة حالياً. انتقل إلى إعدادات ملفك الشخصي لتفعيلها والوصول إلى محادثاتك.",
+    "none": "لا توجد محادثات حالياً."
+  },
+  "discussion": {
+    "back": "رجوع",
+    "disabled_title": "المراسلة معطلة",
+    "disabled_desc": "يجب تفعيل خيار المراسلة في إعدادات ملفك الشخصي لتتمكن من عرض الرسائل وإرسالها.",
+    "placeholder": "اكتب رسالة (140 حرفًا كحد أقصى)...",
+    "placeholder_disabled": "الدردشة معطلة...",
+    "send": "إرسال",
+    "error_server": "تعذّر الاتصال بالخادم.",
+    "mod_title": "تم رفض الرسالة",
+    "mod_desc": "اكتشف نظامنا الآلي عبارات غير لائقة أو مسيئة. يُرجى الالتزام باللباقة والاحترام.",
+    "mod_ok": "فهمت"
+  },
+  "meta": {
+    "description": "العب الداما عبر الإنترنت ضد أصدقائك."
   }
 }

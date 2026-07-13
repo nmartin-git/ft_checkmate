@@ -5,7 +5,8 @@
     "login": "Login",
     "logout": "Logout",
     "notifications": "Notifications",
-    "play": "PLAY"
+    "play": "PLAY",
+    "messages": "Messages"
   },
   "game": {
     "title": "Checkers Game",
@@ -36,7 +37,10 @@
     "register": "Register",
     "sign_up_google": "Sign up with Google",
     "already_account": "You already have an account?",
-    "log_in": "Log in"
+    "log_in": "Log in",
+    "register_success": "Account created successfully!",
+    "login_success": "Successfully logged in!",
+    "generic_error": "An error occurred"
   },
   "profile": {
     "player": "Player",
@@ -60,7 +64,12 @@
     "loss": "Defeat",
     "draw_result": "Draw",
     "add_friend": "Add",
-    "pending": "Pending"
+    "pending": "Pending",
+    "rank_label": "Rank",
+    "details": "Details",
+    "chat": "Chat",
+    "ranking": "Ranking",
+    "view_ranking": "View world ranking"
   },
   "parameters": {
     "loading": "Loading settings...",
@@ -91,14 +100,20 @@
     "refuse": "Decline",
     "accept_challenge": "Accept challenge",
     "refuse_challenge": "Decline challenge",
-    "wants_to_add": "Wants to add you as a friend"
+    "wants_to_add": "Wants to add you as a friend",
+    "loading": "Loading notifications..."
   },
   "footer": {
     "privacy": "Privacy",
     "terms": "Terms"
   },
   "chart": {
-    "not_enough_games": "Not enough games to display the chart."
+    "not_enough_games": "Not enough games to display the chart.",
+    "wins": "Wins",
+    "losses": "Losses",
+    "draws": "Draws",
+    "total": "Total",
+    "no_games": "No game recorded."
   },
   "lobby": {
     "mode": "Game mode",
@@ -143,14 +158,19 @@
     "challenge": "Challenge",
     "waiting": "Waiting...",
     "join": "Join!",
-    "search_placeholder": "Search for a player by username..."
+    "search_placeholder": "Search for a player by username...",
+    "no_players_found": "No player found for \"{query}\".",
+    "no_friends_added": "You haven't added any friends yet."
   },
   "errors": {
     "not_connected": "Not connected",
     "invalid_session": "Invalid session",
     "profile_load_error": "An error occurred while loading the profile.",
     "generic": "An error occurred.",
-    "player_not_found": "Player not found."
+    "player_not_found": "Player not found.",
+    "messages_load": "Error while loading messages.",
+    "self_chat": "You can't chat with yourself.",
+    "user_not_found": "User not found."
   },
   "terms": {
     "title": "Terms of Service",
@@ -207,5 +227,59 @@
     "err_no_file": "No file selected.",
     "err_network": "Network error. Please retry.",
     "err_generic": "Avatar change failed."
+  },
+  "ranks": {
+    "bot": "Bot",
+    "golem": "Golem",
+    "beginner": "Beginner",
+    "novice": "Novice",
+    "goat": "GOAT"
+  },
+  "clubs": {
+    "Alliance": "Alliance",
+    "Assembly": "Assembly",
+    "Federation": "Federation",
+    "Order": "Order"
+  },
+  "stats": {
+    "title": "{username}'s statistics",
+    "back_profile": "Back to profile",
+    "range_7": "7 days",
+    "range_30": "30 days",
+    "range_90": "90 days",
+    "range_all": "All",
+    "elo_evolution": "ELO evolution",
+    "no_data_period": "No data for this period.",
+    "results_distribution": "Results breakdown",
+    "match_history": "Game history",
+    "no_matches": "No game recorded.",
+    "col_date": "Date",
+    "col_opponent": "Opponent",
+    "col_result": "Result",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "conversations": {
+    "title": "My Conversations",
+    "access_blocked": "Access Blocked",
+    "disabled_desc": "Your private messaging is currently disabled. Go to your profile settings to enable it and access your conversations.",
+    "none": "No conversation yet."
+  },
+  "discussion": {
+    "back": "Back",
+    "disabled_title": "Messaging Disabled",
+    "disabled_desc": "You must enable the messaging option in your profile settings to view and send messages.",
+    "placeholder": "Write a message (140 char. max)...",
+    "placeholder_disabled": "Chat disabled...",
+    "send": "Send",
+    "error_server": "Unable to reach the server.",
+    "mod_title": "Message Rejected",
+    "mod_desc": "Our automated system detected inappropriate or insulting terms. Please stay courteous and respectful.",
+    "mod_ok": "Got it"
+  },
+  "meta": {
+    "description": "Play Checkers online against your friends."
   }
 }

@@ -1,0 +1,1267 @@
+diff --git a/src/app/[locale]/layout.tsx b/src/app/[locale]/layout.tsx
+index 045f7c7..8636a02 100644
+--- a/src/app/[locale]/layout.tsx
++++ b/src/app/[locale]/layout.tsx
+@@ -2,7 +2,7 @@ import type { Metadata } from "next";
+ import { Geist, Geist_Mono } from "next/font/google";
+ import "@/src/app/globals.css"; 
+ import { NextIntlClientProvider } from "next-intl";
+-import { getMessages } from "next-intl/server";
++import { getMessages, getTranslations } from "next-intl/server";
+ import Topbar from "@/src/components/Topbar";
+ import PlayModal from "@/src/components/Modals/PlayModal";
+ import LoginModal from "@/src/components/Modals/LoginModal";
+@@ -23,10 +23,13 @@ const geistMono = Geist_Mono({
+   subsets: ["latin"],
+ });
+ 
+-export const metadata: Metadata = {
+-  title: "ft-chess",
+-  description: "Créé avec Next.js",
+-};
++export async function generateMetadata(): Promise<Metadata> {
++  const t = await getTranslations("meta");
++  return {
++    title: "Dames.com",
++    description: t("description"),
++  };
++}
+ 
+ export default async function RootLayout({
+   children,
+diff --git a/src/app/[locale]/messages/page.tsx b/src/app/[locale]/messages/page.tsx
+index d908b30..eaf634f 100644
+--- a/src/app/[locale]/messages/page.tsx
++++ b/src/app/[locale]/messages/page.tsx
+@@ -2,16 +2,18 @@ import { cookies } from "next/headers";
+ import { jwtVerify } from "jose";
+ import { getChatEnable, listConversations } from "@/src/lib/message";
+ import ConversationsClientView from "@/src/components/ConversationClientView";
++import { getTranslations } from "next-intl/server";
+ 
+ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-a-changer');
+ interface TokenPayload { id: string; }
+ 
+ export default async function MessagesPage() {
++    const t = await getTranslations("errors");
+     try {
+         const cookieStore = await cookies();
+         const token = cookieStore.get('auth-token')?.value;
+         if (!token)
+-			return <p className="text-white text-center mt-10">Non connecté</p>;
++			return <p className="text-white text-center mt-10">{t("not_connected")}</p>;
+ 
+         const { payload } = await jwtVerify<TokenPayload>(token, JWT_SECRET);
+         const conversations = await listConversations(payload.id);
+@@ -25,6 +27,6 @@ export default async function MessagesPage() {
+         );
+     } catch (error) {
+         console.error("Erreur chargement conversations:", error);
+-        return <p className="text-white text-center mt-10">Erreur lors du chargement des messages.</p>;
++        return <p className="text-white text-center mt-10">{t("messages_load")}</p>;
+     }
+ }
+diff --git a/src/app/[locale]/profile/[id]/message/page.tsx b/src/app/[locale]/profile/[id]/message/page.tsx
+index cd75989..687038b 100644
+--- a/src/app/[locale]/profile/[id]/message/page.tsx
++++ b/src/app/[locale]/profile/[id]/message/page.tsx
+@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
+ import { jwtVerify } from "jose";
+ import { loadDiscussion } from "@/src/lib/message";
+ import DiscussionClientView from "@/src/components/DiscussionClientView";
++import { getTranslations } from "next-intl/server";
+ 
+ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret-a-changer');
+ interface TokenPayload { id: string; }
+@@ -12,24 +13,25 @@ interface PageProps {
+ 
+ export default async function DiscussionPage({ params }: PageProps) {
+     const { id: targetUserId } = await params;
++    const t = await getTranslations("errors");
+ 
+     try {
+         const cookieStore = await cookies();
+         const token = cookieStore.get('auth-token')?.value;
+         if (!token)
+-			return <p className="text-white text-center mt-10">Non connecté</p>;
++			return <p className="text-white text-center mt-10">{t("not_connected")}</p>;
+ 
+         const { payload } = await jwtVerify<TokenPayload>(token, JWT_SECRET);
+         const currentUserId = payload.id;
+ 
+         if (currentUserId === targetUserId) {
+-            return <p className="text-white text-center mt-10">Impossible de discuter avec soi-même.</p>;
++            return <p className="text-white text-center mt-10">{t("self_chat")}</p>;
+         }
+ 
+         const {initialMessages, partnerUser, chatEnable} = await loadDiscussion(currentUserId, targetUserId);
+ 
+         if (!partnerUser)
+-			return <p className="text-white text-center mt-10">Utilisateur introuvable.</p>;
++			return <p className="text-white text-center mt-10">{t("user_not_found")}</p>;
+ 
+         return (
+             <DiscussionClientView 
+@@ -41,6 +43,6 @@ export default async function DiscussionPage({ params }: PageProps) {
+         );
+     } catch (error) {
+         console.error("Erreur salon de discussion:", error);
+-        return <p className="text-white text-center mt-10">Une erreur est survenue.</p>;
++        return <p className="text-white text-center mt-10">{t("generic")}</p>;
+     }
+ }
+\ No newline at end of file
+diff --git a/src/app/[locale]/profile/[id]/statistics/page.tsx b/src/app/[locale]/profile/[id]/statistics/page.tsx
+index 1d6d2e4..8b37cf0 100644
+--- a/src/app/[locale]/profile/[id]/statistics/page.tsx
++++ b/src/app/[locale]/profile/[id]/statistics/page.tsx
+@@ -2,6 +2,7 @@ import { eloHistoric, getRecentMatches, getStats } from "@/src/lib/stats";
+ import { getProfile } from "@/src/lib/user";
+ import { notFound } from "next/navigation";
+ import StatsClientView from "@/src/components/StatisticsClientView";
++import { getTranslations } from "next-intl/server";
+ 
+ interface StatsPageProps {
+     params: Promise<{ id: string; locale: string }>;
+@@ -11,6 +12,7 @@ interface StatsPageProps {
+ export default async function PlayerStatsPage({ params, searchParams }: StatsPageProps) {
+     const { id } = await params;
+     const { range } = await searchParams;
++    const t = await getTranslations("profile");
+ 
+     const userProfile = await getProfile(id);
+     if (!userProfile) notFound();
+@@ -28,7 +30,7 @@ export default async function PlayerStatsPage({ params, searchParams }: StatsPag
+ 
+     return (
+         <StatsClientView
+-            username={userProfile.username ?? "Joueur"}
++            username={userProfile.username ?? t("player")}
+             eloHistory={filteredEloHistory}
+             matchHistory={allMatches}
+             stats={stats}
+diff --git a/src/app/[locale]/profile/parameters/page.tsx b/src/app/[locale]/profile/parameters/page.tsx
+index 38df7d2..bc39ab3 100644
+--- a/src/app/[locale]/profile/parameters/page.tsx
++++ b/src/app/[locale]/profile/parameters/page.tsx
+@@ -123,7 +123,7 @@ export default function ParametersPage() {
+     }
+   }
+   if (isFetching) {
+-    return <div className="p-6 min-h-[calc(100vh-100px)] bg-[#262522] text-gray-400 font-medium text-sm">Loading settings...</div>
++    return <div className="p-6 min-h-[calc(100vh-100px)] bg-[#262522] text-gray-400 font-medium text-sm">{t("loading")}</div>
+   }
+   return (
+     <>
+diff --git a/src/components/ConversationClientView.tsx b/src/components/ConversationClientView.tsx
+index bef1bd4..6008dbc 100644
+--- a/src/components/ConversationClientView.tsx
++++ b/src/components/ConversationClientView.tsx
+@@ -1,7 +1,7 @@
+ 'use client'
+ 
+ import Link from "next/link";
+-import { useLocale } from "next-intl";
++import { useLocale, useTranslations } from "next-intl";
+ import Avatar from "@/src/components/ui/Avatar";
+ import { club_names } from "@prisma/client";
+ 
+@@ -32,24 +32,25 @@ interface ConversationsClientViewProps {
+ 
+ export default function ConversationsClientView({ conversations, isChatEnabled }: ConversationsClientViewProps) {
+     const locale = useLocale();
++    const t = useTranslations("conversations");
+ 
+     return (
+         <div className="min-h-[calc(100vh-100px)] bg-[#262522] text-white p-6 select-none">
+             <div className="max-w-2xl mx-auto">
+-                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">💬 Mes Discussions</h1>
++                <h1 className="text-3xl font-black mb-6 uppercase tracking-tight">💬 {t("title")}</h1>
+ 
+                 {!isChatEnabled ? (
+                     <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-12 text-center shadow-xl flex flex-col items-center justify-center">
+                         <span className="text-5xl mb-4">🔒</span>
+-                        <h2 className="text-xl font-black uppercase text-red-400 tracking-wide">Accès Bloqué</h2>
++                        <h2 className="text-xl font-black uppercase text-red-400 tracking-wide">{t("access_blocked")}</h2>
+                         <p className="text-sm text-gray-400 max-w-sm mt-2 font-medium">
+-                            Votre messagerie privée est actuellement désactivée. Allez dans vos paramètres de profil pour l'activer et accéder à vos conversations.
++                            {t("disabled_desc")}
+                         </p>
+                     </div>
+                 ) : (
+                     <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg overflow-hidden shadow-xl">
+                         {conversations.length === 0 ? (
+-                            <p className="text-sm text-gray-500 text-center py-12 font-medium">Aucune discussion en cours.</p>
++                            <p className="text-sm text-gray-500 text-center py-12 font-medium">{t("none")}</p>
+                         ) : (
+                             conversations.map((conv) => {
+                                 if (!conv.partner || !conv.lastMessage) return null;
+diff --git a/src/components/DiscussionClientView.tsx b/src/components/DiscussionClientView.tsx
+index de726e3..0238b40 100644
+--- a/src/components/DiscussionClientView.tsx
++++ b/src/components/DiscussionClientView.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { useState, useRef, useEffect } from "react";
+ import { useRouter } from "next/navigation";
++import { useTranslations } from "next-intl";
+ 
+ interface Message {
+     id: string;
+@@ -20,6 +21,7 @@ interface DiscussionClientViewProps {
+ 
+ export default function DiscussionClientView({ initialMessages, currentUserId, partner, isChatEnabled }: DiscussionClientViewProps) {
+     const router = useRouter();
++    const t = useTranslations("discussion");
+     const [messages, setMessages] = useState<Message[]>(initialMessages);
+     const [text, setText] = useState("");
+     const [loading, setLoading] = useState(false);
+@@ -60,12 +62,12 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
+                 if (data.error === "MODERATION_BLOCKED") {
+                     setShowModModal(true);
+                 } else {
+-                    setErrorMessage(data.error || "Une erreur est survenue.");
++                    setErrorMessage(data.error || t("error_server"));
+                 }
+             }
+         } catch (err) {
+             console.error("Erreur réseau lors de l'envoi:", err);
+-            setErrorMessage("Impossible de contacter le serveur.");
++            setErrorMessage(t("error_server"));
+         } finally {
+             setLoading(false);
+         }
+@@ -78,16 +80,16 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
+                 <div className="p-4 border-b border-[#2b2925] bg-[#151412] flex items-center justify-between">
+                     <span className="font-black uppercase tracking-wide">💬 {partner.username}</span>
+                     <button onClick={() => router.back()} className="text-xs text-gray-400 hover:text-white uppercase font-bold transition-colors">
+-                        Retour
++                        {t("back")}
+                     </button>
+                 </div>
+ 
+                 {!isChatEnabled ? (
+                     <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#151412]/50">
+                         <span className="text-4xl mb-3">🔒</span>
+-                        <h3 className="text-lg font-black uppercase text-red-400 tracking-wide">Messagerie Désactivée</h3>
++                        <h3 className="text-lg font-black uppercase text-red-400 tracking-wide">{t("disabled_title")}</h3>
+                         <p className="text-sm text-gray-400 max-w-sm mt-2 font-medium">
+-                            Vous devez activer l'option de messagerie dans les paramètres de votre profil pour pouvoir consulter et envoyer des messages.
++                            {t("disabled_desc")}
+                         </p>
+                     </div>
+                 ) : (
+@@ -121,7 +123,7 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
+                         value={text}
+                         disabled={loading || !isChatEnabled}
+                         onChange={(e) => setText(e.target.value)}
+-                        placeholder={isChatEnabled ? "Rédiger un message (140 car. max)..." : "Chat désactivé..."}
++                        placeholder={isChatEnabled ? t("placeholder") : t("placeholder_disabled")}
+                         className="flex-1 bg-[#262522] border border-[#312e2b] focus:border-[#81b64c] focus:outline-none rounded px-3 py-2 text-sm text-white placeholder-gray-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                     />
+                     <button
+@@ -129,7 +131,7 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
+                         disabled={loading || !text.trim() || !isChatEnabled}
+                         className="bg-[#81b64c] hover:bg-[#92cb57] disabled:bg-[#2b2925] disabled:text-gray-600 text-white px-5 py-2 rounded text-xs font-black uppercase tracking-wider transition-all duration-150 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
+                     >
+-                        Envoyer
++                        {t("send")}
+                     </button>
+                 </form>
+ 
+@@ -141,16 +143,16 @@ export default function DiscussionClientView({ initialMessages, currentUserId, p
+                             🛑
+                         </div>
+                         <h3 className="text-lg font-black uppercase tracking-wide text-red-400 mb-2">
+-                            Message Refusé
++                            {t("mod_title")}
+                         </h3>
+                         <p className="text-gray-400 text-sm font-medium mb-6 leading-relaxed">
+-                            Notre système automatique a détecté des termes inappropriés ou insultants. Merci de rester courtois et respectueux.
++                            {t("mod_desc")}
+                         </p>
+                         <button
+                             onClick={() => setShowModModal(false)}
+                             className="w-full bg-[#312e2b] hover:bg-[#3d3a36] text-white border border-[#45423f] py-2 px-4 rounded text-xs font-black uppercase tracking-wider transition-all duration-150 active:scale-95"
+                         >
+-                            Compris
++                            {t("mod_ok")}
+                         </button>
+                     </div>
+                 </div>
+diff --git a/src/components/FriendsClientView.tsx b/src/components/FriendsClientView.tsx
+index 911ac91..bfce9eb 100644
+--- a/src/components/FriendsClientView.tsx
++++ b/src/components/FriendsClientView.tsx
+@@ -31,6 +31,7 @@ const CLUB_TEXT_COLORS: Record<club_names, string> = {
+ 
+ export default function FriendsClientView({ friendsList }: FriendsClientViewProps) {
+     const t = useTranslations("social");
++    const tProfile = useTranslations("profile");
+     const locale = useLocale();
+     const router = useRouter();
+     const [list, setList] = useState<PlayerRow[]>(friendsList);
+@@ -95,7 +96,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
+                                                 router.push(`/${locale}/profile/${player.id}/message`);
+                                             }}
+                                             className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded bg-[#262522] border border-[#312e2b] hover:border-[#81b64c] transition-all duration-150 active:scale-90"
+-                                            title="Discuter"
++                                            title={tProfile("chat")}
+                                         >
+                                             <AiOutlineMessage size={18} />
+                                         </button>
+diff --git a/src/components/MatchmakingClientView.tsx b/src/components/MatchmakingClientView.tsx
+index 2c03b06..b01dfae 100644
+--- a/src/components/MatchmakingClientView.tsx
++++ b/src/components/MatchmakingClientView.tsx
+@@ -129,7 +129,7 @@ export default function FriendsClientView({ friendsList }: FriendsClientViewProp
+ 
+                     {list.length === 0 ? (
+                         <p className="text-sm text-gray-500 font-medium p-8 text-center">
+-                            Vous n'avez pas encore d'amis ajoutés.
++                            {t("no_friends_added")}
+                         </p>
+                     ) : (
+                         list.map((player) => {
+diff --git a/src/components/Modals/LoginModal.tsx b/src/components/Modals/LoginModal.tsx
+index 2765bcf..11dba2c 100644
+--- a/src/components/Modals/LoginModal.tsx
++++ b/src/components/Modals/LoginModal.tsx
+@@ -52,14 +52,14 @@ const LoginModal = () => {
+                 body: JSON.stringify({ email, password })
+             });
+             const data = await response.json();
+-            if (!response.ok) throw new Error(data.error || 'response pas ok');
++            if (!response.ok) throw new Error(data.error || t('generic_error'));
+             if (data.twoFactorAuthEnable) {
+                 setRequires2FA(true);
+                 setStep(2);
+                 return;
+             }
+             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
+-            alert('Utilisateur log avec succes!');
++            alert(t('login_success'));
+             handleClose();
+         } catch (error: any) {
+             setErrorMessage(error.message);
+@@ -78,8 +78,8 @@ const LoginModal = () => {
+                 body: JSON.stringify({ email, code })
+             });
+             const data = await response.json();
+-            if (!response.ok || data.success === false) throw new Error(data.error || 'response pas ok');
+-            alert('Utilisateur log avec succes!');
++            if (!response.ok || data.success === false) throw new Error(data.error || t('generic_error'));
++            alert(t('login_success'));
+             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
+             handleClose();
+         } catch (error: any) {
+@@ -99,8 +99,8 @@ const LoginModal = () => {
+                 body: JSON.stringify({ email, recoveryCode })
+             });
+             const data = await response.json();
+-            if (!response.ok || data.success === false) throw new Error(data.error || 'An error occured');
+-            alert('Utilisateur log avec succes!');
++            if (!response.ok || data.success === false) throw new Error(data.error || t('generic_error'));
++            alert(t('login_success'));
+             currentUser.setUser({ id: data.user.id, username: data.user.username, email: data.user.email });
+             handleClose();
+         } catch (error: any) {
+diff --git a/src/components/Modals/NotifModal.tsx b/src/components/Modals/NotifModal.tsx
+index 94dadf0..9d94ba3 100644
+--- a/src/components/Modals/NotifModal.tsx
++++ b/src/components/Modals/NotifModal.tsx
+@@ -97,7 +97,7 @@ const NotifModal = () => {
+         <div className="flex flex-col gap-3 max-h-100 overflow-y-auto pr-1">
+             {isLoading && (
+                 <p className="text-sm text-gray-500 text-center py-4 animate-pulse">
+-                    Chargement des notifications...
++                    {t("loading")}
+                 </p>
+             )}
+ 
+diff --git a/src/components/Modals/RegisterModal.tsx b/src/components/Modals/RegisterModal.tsx
+index d0fc511..6e77166 100644
+--- a/src/components/Modals/RegisterModal.tsx
++++ b/src/components/Modals/RegisterModal.tsx
+@@ -7,6 +7,7 @@ import { useState, useCallback } from "react";
+ import Modal from "../ui/Modal";
+ import useCurrentUser from "@/src/hooks/useCurrentUser";
+ import { redirectAuthGoogle } from "@/src/lib/google";
++import { useTranslations } from "next-intl";
+ 
+ 
+ const RegisterModal= () => {
+@@ -17,6 +18,7 @@ const RegisterModal= () => {
+     const [password,setPassword] = useState('');
+     const [isLoading,setIsLoading] = useState(false);
+     const currentUser = useCurrentUser();
++    const t = useTranslations('auth');
+     const [errorMessage, setErrorMessage] = useState('');
+ 
+     const onSubmit =useCallback(async () =>{
+@@ -39,14 +41,14 @@ const RegisterModal= () => {
+                 // const text = await response.text();
+                 // console.log("Registor error;", text);
+                 // return;
+-                throw new Error(data.error || 'An error occured');
++                throw new Error(data.error || t('generic_error'));
+             }
+             currentUser.setUser({
+                 id : data.user.id,
+                 username : data.user.username,
+                 email : data.user.email
+             })
+-            alert('user creer avec succes');
++            alert(t('register_success'));
+             RegisterModal.onClose();
+         } catch (error : any)
+         {
+@@ -70,14 +72,14 @@ const RegisterModal= () => {
+         <div className="flex flex-col gap-4">
+             {errorText}
+              <Input
+-            placeholder="Username"
++            placeholder={t('username')}
+             onChange={(e)=>setUsername(e.target.value)}
+             value={username}
+             disabled={isLoading}
+ 
+             />
+             <Input
+-            placeholder="Email"
++            placeholder={t('email')}
+             onChange={(e)=>setEmail(e.target.value)}
+             value={email}
+             disabled={isLoading}
+@@ -85,7 +87,7 @@ const RegisterModal= () => {
+             />
+             
+             <Input
+-            placeholder="Password"
++            placeholder={t('password')}
+             onChange={(e)=>setPassword(e.target.value)}
+             value={password}
+             type="password"
+@@ -98,7 +100,7 @@ const RegisterModal= () => {
+         <div className="flex flex-col py-2">
+                 <div className="relative flex py-2 items-center w-full">
+                 <div className="flex-grow border-t border-gray-300"></div>
+-                <span className="flex-shrink mx-4 text-gray-400 text-sm">ou</span>
++                <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('or')}</span>
+                 <div className="flex-grow border-t border-gray-300"></div>
+                 </div>
+                 <div className="w-full">
+@@ -115,18 +117,18 @@ const RegisterModal= () => {
+                           <path fill="none" d="M0 0h48v48H0z"></path>
+                         </svg>
+                       </div>
+-                      <span className="gsi-material-button-contents">Sign up with Google</span>
+-                      <span style={{display: 'none'}}>Sign up with Google</span>
++                      <span className="gsi-material-button-contents">{t('sign_up_google')}</span>
++                      <span style={{display: 'none'}}>{t('sign_up_google')}</span>
+                     </div>
+                 </button>
+                 </div>
+             <div className="flex flex-row justify-center w-full pt-2 text-sm">
+-            <p className="pr-2">You already have an account ? </p>
++            <p className="pr-2">{t('already_account')} </p>
+             <span className="
+             text-decoration-line: underline
+             cursor-pointer 
+             hover:opacity-50
+-            " onClick={onToggle}>Log in</span>
++            " onClick={onToggle}>{t('log_in')}</span>
+             </div>
+        </div>
+     )
+@@ -135,8 +137,8 @@ const RegisterModal= () => {
+         <Modal
+         disabled={isLoading}
+         isOpen={RegisterModal.isOpen}
+-        title="Create an account"
+-        actionLabel="Register"
++        title={t('register_title')}
++        actionLabel={t('register')}
+         onClose={RegisterModal.onClose}
+         onSubmit={onSubmit}
+         body={bodyContent}
+diff --git a/src/components/ProfileClientView.tsx b/src/components/ProfileClientView.tsx
+index c825b67..7a14b39 100644
+--- a/src/components/ProfileClientView.tsx
++++ b/src/components/ProfileClientView.tsx
+@@ -44,16 +44,18 @@ const CLUB_STYLES: Record<club_names, { badge: string; avatarBorder: string; tex
+ };
+ 
+ const getRankDetails = (elo: number) => {
+-    if (elo < 250) return { title: "Bot", min: 0, max: 250, color: "from-gray-600 to-gray-400" };
+-    if (elo < 500) return { title: "Golem", min: 250, max: 500, color: "from-amber-800 to-amber-600" };
+-    if (elo < 750) return { title: "Débutant", min: 500, max: 750, color: "from-blue-600 to-blue-400" };
+-    if (elo < 1000) return { title: "Novice", min: 750, max: 1000, color: "from-purple-600 to-purple-400" };
+-    return { title: "GOAT", min: 1000, max: 2500, color: "from-yellow-500 to-amber-400" };
++    if (elo < 250) return { key: "bot", isMax: false, min: 0, max: 250, color: "from-gray-600 to-gray-400" };
++    if (elo < 500) return { key: "golem", isMax: false, min: 250, max: 500, color: "from-amber-800 to-amber-600" };
++    if (elo < 750) return { key: "beginner", isMax: false, min: 500, max: 750, color: "from-blue-600 to-blue-400" };
++    if (elo < 1000) return { key: "novice", isMax: false, min: 750, max: 1000, color: "from-purple-600 to-purple-400" };
++    return { key: "goat", isMax: true, min: 1000, max: 2500, color: "from-yellow-500 to-amber-400" };
+ };
+ 
+ export default function ProfileClientView({ userData, rank, isPublicView, friendsCount, matchHistory, eloHistory }: ProfileClientViewProps) {
+     const t = useTranslations("profile");
+     const tAvatar = useTranslations("avatar");
++    const tRanks = useTranslations("ranks");
++    const tClubs = useTranslations("clubs");
+     const router = useRouter();
+     const locale = useLocale();
+     const { user, setAvatar } = useCurrentUser();
+@@ -64,7 +66,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
+     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+ 
+     const rankDetails = getRankDetails(userData.elo);
+-    const progressPercent = rankDetails.title === "GOAT" 
++    const progressPercent = rankDetails.isMax 
+         ? 100 
+         : Math.min(100, Math.max(0, ((userData.elo - rankDetails.min) / (rankDetails.max - rankDetails.min)) * 100));
+ 
+@@ -140,15 +142,15 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
+                                 {userData.username}
+                             </h1>
+                             <span className={`${currentStyle.badge} text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider transition-colors duration-300`}>
+-                                {userData.club}
++                                {tClubs(userData.club)}
+                             </span>
+                         </div>
+                         <p className="text-gray-400 font-medium text-sm md:text-base">{userData.email}</p>
+ 
+                         <div className="pt-2 max-w-sm mx-auto sm:mx-0">
+                             <div className="flex justify-between items-end mb-1 text-xs font-bold uppercase tracking-wider">
+-                                <span className="text-[#81b64c] font-black">Rang : {rankDetails.title}</span>
+-                                <span className="text-gray-400 font-mono">{userData.elo} / {rankDetails.title === "GOAT" ? "∞" : rankDetails.max} ELO</span>
++                                <span className="text-[#81b64c] font-black">{t("rank_label")} : {tRanks(rankDetails.key)}</span>
++                                <span className="text-gray-400 font-mono">{userData.elo} / {rankDetails.isMax ? "∞" : rankDetails.max} ELO</span>
+                             </div>
+                             <div className="w-full h-3 bg-[#262522] border border-[#2b2925] rounded-full overflow-hidden p-[1px]">
+                                 <div 
+@@ -176,7 +178,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
+                                         className="flex items-center gap-2 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded bg-[#81b64c] hover:bg-[#92cb57] text-white transition-all duration-150 active:scale-95 shadow-md animate-fade-in"
+                                     >
+                                         <AiOutlineMessage size={16} />
+-                                        Discuter
++                                        {t("chat")}
+                                     </button>
+                                 )}
+ 
+@@ -225,7 +227,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
+                             href={`/${locale}/profile/${userData.id}/statistics`}
+                             className="text-xs font-bold px-2.5 py-1 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-all duration-150 border border-white/5"
+                         >
+-                            Détails →
++                            {t("details")} →
+                         </Link>
+                     </div>
+ 
+@@ -263,7 +265,7 @@ export default function ProfileClientView({ userData, rank, isPublicView, friend
+                     <div>
+                         <div className="flex justify-between items-center mb-4">
+                             <p className="text-gray-300 font-black uppercase tracking-wider text-sm">🏆 {t("elo_historics")}</p>
+-                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Classement →</span>
++                            <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("ranking")} →</span>
+                         </div>
+                         <div className="flex items-baseline gap-2 mt-6">
+                             <span className="text-5xl font-black text-white tracking-tight">{userData.elo}</span> 
+diff --git a/src/components/StatisticsClientView.tsx b/src/components/StatisticsClientView.tsx
+index f5f30a6..967d886 100644
+--- a/src/components/StatisticsClientView.tsx
++++ b/src/components/StatisticsClientView.tsx
+@@ -1,6 +1,7 @@
+ 'use client'
+ 
+ import { useRouter, usePathname } from "next/navigation";
++import { useTranslations, useLocale } from "next-intl";
+ import { useState } from "react";
+ import EloChart from "./EloChart";
+ import WinRateChart from "./WinRateChart";
+@@ -21,15 +22,17 @@ interface StatsClientViewProps {
+ export default function StatsClientView({ username, eloHistory, matchHistory, stats, currentRange }: StatsClientViewProps) {
+     const router = useRouter();
+     const pathname = usePathname();
++    const t = useTranslations();
++    const locale = useLocale();
+     
+     const [currentPage, setCurrentPage] = useState(1);
+     const itemsPerPage = 5;
+ 
+     const ranges = [
+-        { label: "7 jours", value: "7" },
+-        { label: "30 jours", value: "30" },
+-        { label: "90 jours", value: "90" },
+-        { label: "Tout", value: "all" }
++        { label: t("stats.range_7"), value: "7" },
++        { label: t("stats.range_30"), value: "30" },
++        { label: t("stats.range_90"), value: "90" },
++        { label: t("stats.range_all"), value: "all" }
+     ];
+ 
+     const handleRangeChange = (value: string) => {
+@@ -51,13 +54,13 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
+                 
+                 <div className="flex items-center justify-between border-b border-[#2b2925] pb-4">
+                     <h1 className="text-2xl font-black uppercase tracking-tight">
+-                        📈 Statistiques de {username}
++                        📈 {t("stats.title", { username })}
+                     </h1>
+                     <button 
+                         onClick={() => router.back()}
+                         className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white bg-[#1e1c18] border border-[#2b2925] px-3 py-1.5 rounded transition-all"
+                     >
+-                        Retour Profil
++                        {t("stats.back_profile")}
+                     </button>
+                 </div>
+ 
+@@ -81,40 +84,40 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
+                 </div>
+ 
+                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
+-                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Evolution de l'ELO</p>
++                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.elo_evolution")}</p>
+                     {eloHistory.length === 0 ? (
+-                        <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune donnée sur cette période.</p>
++                        <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("stats.no_data_period")}</p>
+                     ) : (
+                         <EloChart data={eloHistory} />
+                     )}
+                 </div>
+ 
+                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
+-                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Répartition des résultats</p>
++                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.results_distribution")}</p>
+                     <WinRateChart wins={stats.wins} losses={stats.losses} draws={stats.draws} winrate={stats.winrate} />
+                 </div>
+ 
+                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-[380px]">
+                     <div>
+-                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">Historique des parties</p>
++                        <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.match_history")}</p>
+                         
+                         {matchHistory.length === 0 ? (
+-                            <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune partie enregistrée.</p>
++                            <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("stats.no_matches")}</p>
+                         ) : (
+                             <div className="overflow-x-auto">
+                                 <table className="w-full text-left border-collapse text-sm">
+                                     <thead>
+                                         <tr className="border-b border-[#2b2925] text-gray-400 text-xs font-black uppercase tracking-wider">
+-                                            <th className="pb-3">Date</th>
+-                                            <th className="pb-3">Adversaire</th>
+-                                            <th className="pb-3 text-right">Résultat</th>
++                                            <th className="pb-3">{t("stats.col_date")}</th>
++                                            <th className="pb-3">{t("stats.col_opponent")}</th>
++                                            <th className="pb-3 text-right">{t("stats.col_result")}</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody className="divide-y divide-[#2b2925]/50">
+                                         {currentMatches.map((m) => (
+                                             <tr key={m.id} className="hover:bg-[#262522]/30 transition-colors">
+                                                 <td className="py-3 text-gray-400 font-mono text-xs">
+-                                                    {new Date(m.date).toLocaleDateString('fr-FR', {
++                                                    {new Date(m.date).toLocaleDateString(locale, {
+                                                         day: '2-digit',
+                                                         month: '2-digit',
+                                                         year: 'numeric'
+@@ -128,7 +131,7 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
+                                                         m.outcome === 'WIN' ? 'bg-[#81b64c]/10 text-[#81b64c]'
+                                                         : m.outcome === 'LOSS' ? 'bg-red-500/10 text-red-400' : 'bg-gray-400/10 text-gray-400'
+                                                     }`}>
+-                                                        {m.outcome}
++                                                        {m.outcome === "WIN" ? t("profile.win") : m.outcome === "LOSS" ? t("profile.loss") : t("profile.draw_result")}
+                                                     </span>
+                                                 </td>
+                                             </tr>
+@@ -142,7 +145,7 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
+                     {matchHistory.length > itemsPerPage && (
+                         <div className="flex items-center justify-between border-t border-[#2b2925] pt-4 mt-4">
+                             <span className="text-xs text-gray-400 font-medium">
+-                                Page <span className="font-mono text-white font-bold">{currentPage}</span> sur <span className="font-mono text-white font-bold">{totalPages}</span>
++                                {t("stats.page")} <span className="font-mono text-white font-bold">{currentPage}</span> {t("stats.of")} <span className="font-mono text-white font-bold">{totalPages}</span>
+                             </span>
+                             <div className="flex gap-2">
+                                 <button
+@@ -150,14 +153,14 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
+                                     disabled={currentPage === 1}
+                                     className="p-2 bg-[#262522] border border-[#2b2925] rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-all font-bold text-xs uppercase select-none"
+                                 >
+-                                    ← Précédent
++                                    ← {t("stats.previous")}
+                                 </button>
+                                 <button
+                                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                     disabled={currentPage === totalPages}
+                                     className="p-2 bg-[#262522] border border-[#2b2925] rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:hover:text-gray-400 transition-all font-bold text-xs uppercase select-none"
+                                 >
+-                                    Suivant →
++                                    {t("stats.next")} →
+                                 </button>
+                             </div>
+                         </div>
+diff --git a/src/components/Topbar.tsx b/src/components/Topbar.tsx
+index 1d02008..0b40940 100644
+--- a/src/components/Topbar.tsx
++++ b/src/components/Topbar.tsx
+@@ -98,7 +98,7 @@ const Topbar = () => {
+                         <button
+                             onClick={() => router.push(`/${locale}/messages`)}
+                             className="text-gray-400 hover:text-[#81b64c] p-1.5 rounded transition-colors duration-150 relative active:scale-90"
+-                            title="Messages"
++                            title={t('nav.messages')}
+                         >
+                             <HiOutlineMail size={22} />
+                         </button>
+diff --git a/src/components/WinRateChart.tsx b/src/components/WinRateChart.tsx
+index 4e52b6c..fce0140 100644
+--- a/src/components/WinRateChart.tsx
++++ b/src/components/WinRateChart.tsx
+@@ -1,6 +1,7 @@
+ 'use client'
+ 
+ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts"
++import { useTranslations } from "next-intl"
+ 
+ interface WinRateChartProps {
+     wins: number;
+@@ -12,9 +13,9 @@ interface WinRateChartProps {
+ const SURFACE = "#1e1c18"; // couleur de la carte, sert d'interstice entre les parts
+ 
+ const SLICES = [
+-    { key: "wins", label: "Victoires", color: "#81b64c" },
+-    { key: "losses", label: "Défaites", color: "#e5484d" },
+-    { key: "draws", label: "Nulles", color: "#e6912c" },
++    { key: "wins", labelKey: "wins", color: "#81b64c" },
++    { key: "losses", labelKey: "losses", color: "#e5484d" },
++    { key: "draws", labelKey: "draws", color: "#e6912c" },
+ ] as const;
+ 
+ interface Slice {
+@@ -37,16 +38,17 @@ function ChartTooltip({ active, payload, total }: { active?: boolean; payload?:
+ }
+ 
+ export default function WinRateChart({ wins, losses, draws, winrate }: WinRateChartProps) {
++    const t = useTranslations("chart");
+     const total = wins + losses + draws;
+ 
+     if (total === 0) {
+         return (
+-            <p className="text-sm text-gray-500 font-medium py-8 text-center">Aucune partie enregistrée.</p>
++            <p className="text-sm text-gray-500 font-medium py-8 text-center">{t("no_games")}</p>
+         );
+     }
+ 
+     const values: Record<string, number> = { wins, losses, draws };
+-    const data: Slice[] = SLICES.map((s) => ({ label: s.label, value: values[s.key], color: s.color }));
++    const data: Slice[] = SLICES.map((s) => ({ label: t(s.labelKey), value: values[s.key], color: s.color }));
+ 
+     return (
+         <div className="flex flex-col md:flex-row items-center gap-6">
+@@ -78,7 +80,7 @@ export default function WinRateChart({ wins, losses, draws, winrate }: WinRateCh
+                 </ResponsiveContainer>
+                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                     <span className="text-3xl font-black text-white leading-none">{Math.round(winrate * 100)}%</span>
+-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 mt-1">Victoires</span>
++                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 mt-1">{t("wins")}</span>
+                 </div>
+             </div>
+ 
+@@ -97,7 +99,7 @@ export default function WinRateChart({ wins, losses, draws, winrate }: WinRateCh
+                 })}
+                 <li className="flex items-center gap-3 text-sm border-t border-[#2b2925] pt-2 mt-2">
+                     <span className="w-3 h-3 shrink-0" />
+-                    <span className="font-black uppercase tracking-wider text-gray-400 flex-1 text-xs">Total</span>
++                    <span className="font-black uppercase tracking-wider text-gray-400 flex-1 text-xs">{t("total")}</span>
+                     <span className="font-mono text-white font-bold">{total}</span>
+                     <span className="w-10" />
+                 </li>
+diff --git a/src/components/rank.tsx b/src/components/rank.tsx
+index 6ad162c..3f9c47c 100644
+--- a/src/components/rank.tsx
++++ b/src/components/rank.tsx
+@@ -1,7 +1,7 @@
+ 'use client';
+ 
+ import Link from "next/link";
+-import { useLocale } from "next-intl";
++import { useLocale, useTranslations } from "next-intl";
+ 
+ interface ProfileRankBadgeProps {
+   rank: number;
+@@ -9,15 +9,16 @@ interface ProfileRankBadgeProps {
+ 
+ export default function ProfileRankBadge({ rank }: ProfileRankBadgeProps) {
+   const locale = useLocale();
++  const t = useTranslations("profile");
+ 
+   return (
+     <Link
+       href={`/${locale}/leaderboard`}
+       className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-700/50 hover:border-blue-500/50 rounded-xl transition-all duration-200 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+-      title="Voir le classement mondial"
++      title={t("view_ranking")}
+     >
+       <span className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
+-        Classement
++        {t("ranking")}
+       </span>
+       <span className="text-lg font-black bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-mono tracking-wider group-hover:scale-105 transition-transform">
+         #{rank}
+diff --git a/src/components/ui/search.tsx b/src/components/ui/search.tsx
+index 0d698c7..431d224 100644
+--- a/src/components/ui/search.tsx
++++ b/src/components/ui/search.tsx
+@@ -133,7 +133,7 @@ export default function SearchBar() {
+ 
+             {query.trim() !== "" && !isLoading && results.length === 0 && (
+                 <p className="text-xs text-gray-500 mt-1 pl-1">
+-                    Aucun joueur trouvé pour "{query}".
++                    {t("no_players_found", { query })}
+                 </p>
+             )}
+         </div>
+diff --git a/src/messages/ar.json b/src/messages/ar.json
+index c722716..d91be2a 100644
+--- a/src/messages/ar.json
++++ b/src/messages/ar.json
+@@ -5,7 +5,8 @@
+     "login": "تسجيل الدخول",
+     "logout": "تسجيل الخروج",
+     "notifications": "الإشعارات",
+-    "play": "العب"
++    "play": "العب",
++    "messages": "الرسائل"
+   },
+   "game": {
+     "title": "لعبة الداما",
+@@ -36,7 +37,10 @@
+     "register": "تسجيل",
+     "sign_up_google": "سجّل عبر Google",
+     "already_account": "لديك حساب بالفعل؟",
+-    "log_in": "تسجيل الدخول"
++    "log_in": "تسجيل الدخول",
++    "register_success": "تم إنشاء الحساب بنجاح!",
++    "login_success": "تم تسجيل الدخول بنجاح!",
++    "generic_error": "حدث خطأ ما"
+   },
+   "profile": {
+     "player": "لاعب",
+@@ -60,7 +64,12 @@
+     "loss": "هزيمة",
+     "draw_result": "تعادل",
+     "add_friend": "إضافة",
+-    "pending": "قيد الانتظار"
++    "pending": "قيد الانتظار",
++    "rank_label": "الرتبة",
++    "details": "التفاصيل",
++    "chat": "محادثة",
++    "ranking": "التصنيف",
++    "view_ranking": "عرض التصنيف العالمي"
+   },
+   "parameters": {
+     "loading": "جارٍ تحميل الإعدادات...",
+@@ -91,14 +100,20 @@
+     "refuse": "رفض",
+     "accept_challenge": "قبول التحدي",
+     "refuse_challenge": "رفض التحدي",
+-    "wants_to_add": "يريد إضافتك كصديق"
++    "wants_to_add": "يريد إضافتك كصديق",
++    "loading": "جارٍ تحميل الإشعارات..."
+   },
+   "footer": {
+     "privacy": "الخصوصية",
+     "terms": "الشروط"
+   },
+   "chart": {
+-    "not_enough_games": "لا توجد مباريات كافية لعرض الرسم البياني."
++    "not_enough_games": "لا توجد مباريات كافية لعرض الرسم البياني.",
++    "wins": "انتصارات",
++    "losses": "هزائم",
++    "draws": "تعادلات",
++    "total": "المجموع",
++    "no_games": "لا توجد مباريات مسجلة."
+   },
+   "lobby": {
+     "mode": "وضع اللعب",
+@@ -143,14 +158,19 @@
+     "challenge": "تحدَّ",
+     "waiting": "في الانتظار...",
+     "join": "انضم!",
+-    "search_placeholder": "ابحث عن لاعب باسم المستخدم..."
++    "search_placeholder": "ابحث عن لاعب باسم المستخدم...",
++    "no_players_found": "لم يُعثر على أي لاعب لـ «{query}».",
++    "no_friends_added": "لم تُضِف أي أصدقاء بعد."
+   },
+   "errors": {
+     "not_connected": "غير متصل",
+     "invalid_session": "جلسة غير صالحة",
+     "profile_load_error": "حدث خطأ أثناء تحميل الملف الشخصي.",
+     "generic": "حدث خطأ.",
+-    "player_not_found": "اللاعب غير موجود."
++    "player_not_found": "اللاعب غير موجود.",
++    "messages_load": "حدث خطأ أثناء تحميل الرسائل.",
++    "self_chat": "لا يمكنك محادثة نفسك.",
++    "user_not_found": "المستخدم غير موجود."
+   },
+   "terms": {
+     "title": "شروط الاستخدام",
+@@ -207,5 +227,59 @@
+     "err_no_file": "لم يتم اختيار ملف.",
+     "err_network": "خطأ في الشبكة. أعد المحاولة.",
+     "err_generic": "فشل تغيير الصورة الرمزية."
++  },
++  "ranks": {
++    "bot": "بوت",
++    "golem": "جولم",
++    "beginner": "مبتدئ",
++    "novice": "ناشئ",
++    "goat": "GOAT"
++  },
++  "clubs": {
++    "Alliance": "التحالف",
++    "Assembly": "الجمعية",
++    "Federation": "الاتحاد",
++    "Order": "النظام"
++  },
++  "stats": {
++    "title": "إحصائيات {username}",
++    "back_profile": "العودة إلى الملف",
++    "range_7": "7 أيام",
++    "range_30": "30 يومًا",
++    "range_90": "90 يومًا",
++    "range_all": "الكل",
++    "elo_evolution": "تطور نقاط ELO",
++    "no_data_period": "لا توجد بيانات لهذه الفترة.",
++    "results_distribution": "توزيع النتائج",
++    "match_history": "سجل المباريات",
++    "no_matches": "لا توجد مباريات مسجلة.",
++    "col_date": "التاريخ",
++    "col_opponent": "الخصم",
++    "col_result": "النتيجة",
++    "page": "صفحة",
++    "of": "من",
++    "previous": "السابق",
++    "next": "التالي"
++  },
++  "conversations": {
++    "title": "محادثاتي",
++    "access_blocked": "الوصول محظور",
++    "disabled_desc": "المراسلة الخاصة معطلة حالياً. انتقل إلى إعدادات ملفك الشخصي لتفعيلها والوصول إلى محادثاتك.",
++    "none": "لا توجد محادثات حالياً."
++  },
++  "discussion": {
++    "back": "رجوع",
++    "disabled_title": "المراسلة معطلة",
++    "disabled_desc": "يجب تفعيل خيار المراسلة في إعدادات ملفك الشخصي لتتمكن من عرض الرسائل وإرسالها.",
++    "placeholder": "اكتب رسالة (140 حرفًا كحد أقصى)...",
++    "placeholder_disabled": "الدردشة معطلة...",
++    "send": "إرسال",
++    "error_server": "تعذّر الاتصال بالخادم.",
++    "mod_title": "تم رفض الرسالة",
++    "mod_desc": "اكتشف نظامنا الآلي عبارات غير لائقة أو مسيئة. يُرجى الالتزام باللباقة والاحترام.",
++    "mod_ok": "فهمت"
++  },
++  "meta": {
++    "description": "العب الداما عبر الإنترنت ضد أصدقائك."
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/messages/en.json b/src/messages/en.json
+index 89caa68..5d99005 100644
+--- a/src/messages/en.json
++++ b/src/messages/en.json
+@@ -5,7 +5,8 @@
+     "login": "Login",
+     "logout": "Logout",
+     "notifications": "Notifications",
+-    "play": "PLAY"
++    "play": "PLAY",
++    "messages": "Messages"
+   },
+   "game": {
+     "title": "Checkers Game",
+@@ -36,7 +37,10 @@
+     "register": "Register",
+     "sign_up_google": "Sign up with Google",
+     "already_account": "You already have an account?",
+-    "log_in": "Log in"
++    "log_in": "Log in",
++    "register_success": "Account created successfully!",
++    "login_success": "Successfully logged in!",
++    "generic_error": "An error occurred"
+   },
+   "profile": {
+     "player": "Player",
+@@ -60,7 +64,12 @@
+     "loss": "Defeat",
+     "draw_result": "Draw",
+     "add_friend": "Add",
+-    "pending": "Pending"
++    "pending": "Pending",
++    "rank_label": "Rank",
++    "details": "Details",
++    "chat": "Chat",
++    "ranking": "Ranking",
++    "view_ranking": "View world ranking"
+   },
+   "parameters": {
+     "loading": "Loading settings...",
+@@ -91,14 +100,20 @@
+     "refuse": "Decline",
+     "accept_challenge": "Accept challenge",
+     "refuse_challenge": "Decline challenge",
+-    "wants_to_add": "Wants to add you as a friend"
++    "wants_to_add": "Wants to add you as a friend",
++    "loading": "Loading notifications..."
+   },
+   "footer": {
+     "privacy": "Privacy",
+     "terms": "Terms"
+   },
+   "chart": {
+-    "not_enough_games": "Not enough games to display the chart."
++    "not_enough_games": "Not enough games to display the chart.",
++    "wins": "Wins",
++    "losses": "Losses",
++    "draws": "Draws",
++    "total": "Total",
++    "no_games": "No game recorded."
+   },
+   "lobby": {
+     "mode": "Game mode",
+@@ -143,14 +158,19 @@
+     "challenge": "Challenge",
+     "waiting": "Waiting...",
+     "join": "Join!",
+-    "search_placeholder": "Search for a player by username..."
++    "search_placeholder": "Search for a player by username...",
++    "no_players_found": "No player found for \"{query}\".",
++    "no_friends_added": "You haven't added any friends yet."
+   },
+   "errors": {
+     "not_connected": "Not connected",
+     "invalid_session": "Invalid session",
+     "profile_load_error": "An error occurred while loading the profile.",
+     "generic": "An error occurred.",
+-    "player_not_found": "Player not found."
++    "player_not_found": "Player not found.",
++    "messages_load": "Error while loading messages.",
++    "self_chat": "You can't chat with yourself.",
++    "user_not_found": "User not found."
+   },
+   "terms": {
+     "title": "Terms of Service",
+@@ -207,5 +227,59 @@
+     "err_no_file": "No file selected.",
+     "err_network": "Network error. Please retry.",
+     "err_generic": "Avatar change failed."
++  },
++  "ranks": {
++    "bot": "Bot",
++    "golem": "Golem",
++    "beginner": "Beginner",
++    "novice": "Novice",
++    "goat": "GOAT"
++  },
++  "clubs": {
++    "Alliance": "Alliance",
++    "Assembly": "Assembly",
++    "Federation": "Federation",
++    "Order": "Order"
++  },
++  "stats": {
++    "title": "{username}'s statistics",
++    "back_profile": "Back to profile",
++    "range_7": "7 days",
++    "range_30": "30 days",
++    "range_90": "90 days",
++    "range_all": "All",
++    "elo_evolution": "ELO evolution",
++    "no_data_period": "No data for this period.",
++    "results_distribution": "Results breakdown",
++    "match_history": "Game history",
++    "no_matches": "No game recorded.",
++    "col_date": "Date",
++    "col_opponent": "Opponent",
++    "col_result": "Result",
++    "page": "Page",
++    "of": "of",
++    "previous": "Previous",
++    "next": "Next"
++  },
++  "conversations": {
++    "title": "My Conversations",
++    "access_blocked": "Access Blocked",
++    "disabled_desc": "Your private messaging is currently disabled. Go to your profile settings to enable it and access your conversations.",
++    "none": "No conversation yet."
++  },
++  "discussion": {
++    "back": "Back",
++    "disabled_title": "Messaging Disabled",
++    "disabled_desc": "You must enable the messaging option in your profile settings to view and send messages.",
++    "placeholder": "Write a message (140 char. max)...",
++    "placeholder_disabled": "Chat disabled...",
++    "send": "Send",
++    "error_server": "Unable to reach the server.",
++    "mod_title": "Message Rejected",
++    "mod_desc": "Our automated system detected inappropriate or insulting terms. Please stay courteous and respectful.",
++    "mod_ok": "Got it"
++  },
++  "meta": {
++    "description": "Play Checkers online against your friends."
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/messages/fr.json b/src/messages/fr.json
+index 1028205..1988b51 100644
+--- a/src/messages/fr.json
++++ b/src/messages/fr.json
+@@ -5,7 +5,8 @@
+     "login": "Connexion",
+     "logout": "Déconnexion",
+     "notifications": "Notifications",
+-    "play": "JOUER"
++    "play": "JOUER",
++    "messages": "Messages"
+   },
+   "game": {
+     "title": "Jeu de Dames",
+@@ -36,7 +37,10 @@
+     "register": "S'inscrire",
+     "sign_up_google": "S'inscrire avec Google",
+     "already_account": "Vous avez déjà un compte ?",
+-    "log_in": "Se connecter"
++    "log_in": "Se connecter",
++    "register_success": "Compte créé avec succès !",
++    "login_success": "Connexion réussie !",
++    "generic_error": "Une erreur est survenue"
+   },
+   "profile": {
+     "player": "Joueur",
+@@ -60,7 +64,12 @@
+     "loss": "Défaite",
+     "draw_result": "Nulle",
+     "add_friend": "Ajouter",
+-    "pending": "En attente"
++    "pending": "En attente",
++    "rank_label": "Rang",
++    "details": "Détails",
++    "chat": "Discuter",
++    "ranking": "Classement",
++    "view_ranking": "Voir le classement mondial"
+   },
+   "parameters": {
+     "loading": "Chargement des paramètres...",
+@@ -91,14 +100,20 @@
+     "refuse": "Refuser",
+     "accept_challenge": "Accepter le défi",
+     "refuse_challenge": "Refuser le défi",
+-    "wants_to_add": "Souhaite vous ajouter en ami"
++    "wants_to_add": "Souhaite vous ajouter en ami",
++    "loading": "Chargement des notifications..."
+   },
+   "footer": {
+     "privacy": "Confidentialité",
+     "terms": "Conditions"
+   },
+   "chart": {
+-    "not_enough_games": "Pas assez de parties pour afficher le graphique."
++    "not_enough_games": "Pas assez de parties pour afficher le graphique.",
++    "wins": "Victoires",
++    "losses": "Défaites",
++    "draws": "Nulles",
++    "total": "Total",
++    "no_games": "Aucune partie enregistrée."
+   },
+   "lobby": {
+     "mode": "Mode de jeu",
+@@ -143,14 +158,19 @@
+     "challenge": "Affronter",
+     "waiting": "En attente...",
+     "join": "Rejoindre !",
+-    "search_placeholder": "Rechercher un joueur par son pseudo..."
++    "search_placeholder": "Rechercher un joueur par son pseudo...",
++    "no_players_found": "Aucun joueur trouvé pour « {query} ».",
++    "no_friends_added": "Vous n'avez pas encore d'amis ajoutés."
+   },
+   "errors": {
+     "not_connected": "Non connecté",
+     "invalid_session": "Session invalide",
+     "profile_load_error": "Une erreur est survenue lors du chargement du profil.",
+     "generic": "Une erreur est survenue.",
+-    "player_not_found": "Joueur introuvable."
++    "player_not_found": "Joueur introuvable.",
++    "messages_load": "Erreur lors du chargement des messages.",
++    "self_chat": "Impossible de discuter avec soi-même.",
++    "user_not_found": "Utilisateur introuvable."
+   },
+   "terms": {
+     "title": "Conditions d'utilisation",
+@@ -207,5 +227,59 @@
+     "err_no_file": "Aucun fichier sélectionné.",
+     "err_network": "Erreur réseau. Réessayez.",
+     "err_generic": "Le changement d'avatar a échoué."
++  },
++  "ranks": {
++    "bot": "Bot",
++    "golem": "Golem",
++    "beginner": "Débutant",
++    "novice": "Novice",
++    "goat": "GOAT"
++  },
++  "clubs": {
++    "Alliance": "Alliance",
++    "Assembly": "Assembly",
++    "Federation": "Federation",
++    "Order": "Order"
++  },
++  "stats": {
++    "title": "Statistiques de {username}",
++    "back_profile": "Retour Profil",
++    "range_7": "7 jours",
++    "range_30": "30 jours",
++    "range_90": "90 jours",
++    "range_all": "Tout",
++    "elo_evolution": "Évolution de l'ELO",
++    "no_data_period": "Aucune donnée sur cette période.",
++    "results_distribution": "Répartition des résultats",
++    "match_history": "Historique des parties",
++    "no_matches": "Aucune partie enregistrée.",
++    "col_date": "Date",
++    "col_opponent": "Adversaire",
++    "col_result": "Résultat",
++    "page": "Page",
++    "of": "sur",
++    "previous": "Précédent",
++    "next": "Suivant"
++  },
++  "conversations": {
++    "title": "Mes Discussions",
++    "access_blocked": "Accès Bloqué",
++    "disabled_desc": "Votre messagerie privée est actuellement désactivée. Allez dans vos paramètres de profil pour l'activer et accéder à vos conversations.",
++    "none": "Aucune discussion en cours."
++  },
++  "discussion": {
++    "back": "Retour",
++    "disabled_title": "Messagerie Désactivée",
++    "disabled_desc": "Vous devez activer l'option de messagerie dans les paramètres de votre profil pour pouvoir consulter et envoyer des messages.",
++    "placeholder": "Rédiger un message (140 car. max)...",
++    "placeholder_disabled": "Chat désactivé...",
++    "send": "Envoyer",
++    "error_server": "Impossible de contacter le serveur.",
++    "mod_title": "Message Refusé",
++    "mod_desc": "Notre système automatique a détecté des termes inappropriés ou insultants. Merci de rester courtois et respectueux.",
++    "mod_ok": "Compris"
++  },
++  "meta": {
++    "description": "Jouez aux Dames en ligne contre vos amis."
+   }
+-}
+\ No newline at end of file
++}
