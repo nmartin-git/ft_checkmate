@@ -30,8 +30,6 @@ export async function POST(request: Request) {
         } else {
             return new NextResponse("Action invalide", { status: 400 });
         }
-
-        return new NextResponse("Action complétée", { status: 200 });
     } catch (error) {
         console.error("[FRIEND_ACTION_ERROR]", error);
         return new NextResponse("Erreur Interne", { status: 500 });

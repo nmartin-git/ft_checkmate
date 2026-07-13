@@ -245,5 +245,5 @@ app.prepare().then(async() => {
   });
   await prisma.user.updateMany({ data: { is_online: false } });
   const PORT = 3000;
-  httpServer.listen(PORT, () => console.log(`> Serveur prêt sur http://localhost:${PORT}`));
+  httpServer.listen(PORT, () => console.log(`> Serveur prêt sur https://localhost`));
 });

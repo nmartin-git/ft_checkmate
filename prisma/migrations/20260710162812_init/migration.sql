@@ -8,11 +8,7 @@ CREATE TYPE "club_names" AS ENUM ('Assembly', 'Order', 'Federation', 'Alliance')
 CREATE TYPE "game_results" AS ENUM ('WHITE', 'BLACK', 'DRAW');
 
 -- CreateEnum
-<<<<<<<< HEAD:prisma/migrations/20260710162812_init/migration.sql
-CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED', 'REFUSED', 'GAME_REQUESTED');
-========
 CREATE TYPE "follow_status" AS ENUM ('PENDING', 'ACCEPTED', 'GAME_REQUESTED');
->>>>>>>> origin/front:prisma/migrations/20260627233941_init/migration.sql
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -139,20 +135,11 @@ ALTER TABLE "Move" ADD CONSTRAINT "Move_game_id_fkey" FOREIGN KEY ("game_id") RE
 
 -- AddForeignKey
 ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-<<<<<<<< HEAD:prisma/migrations/20260710162812_init/migration.sql
 
 -- AddForeignKey
 ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddChecks
-
-========
-
--- AddForeignKey
-ALTER TABLE "DirectMessage" ADD CONSTRAINT "DirectMessage_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddChecks
->>>>>>>> origin/front:prisma/migrations/20260627233941_init/migration.sql
 ALTER TABLE "Friends"
 ADD CONSTRAINT "friend_user_not_self"
 CHECK ("user_id" != "friend_id");
@@ -163,8 +150,4 @@ CHECK ("white_player_id" != "black_player_id");
 
 ALTER TABLE "DirectMessage"
 ADD CONSTRAINT "sender_to_not_self"
-<<<<<<<< HEAD:prisma/migrations/20260710162812_init/migration.sql
-CHECK ("sender_id" != "receiver_id"); 
-========
 CHECK ("sender_id" != "receiver_id");
->>>>>>>> origin/front:prisma/migrations/20260627233941_init/migration.sql
