@@ -1,6 +1,23 @@
 _This project has been created as part of the 42 curriculum by nmartin, yamartin, joudafke, braugust, maissat_
 
-# Team organisation
+# Ft_checkmate
+
+## Description
+
+Ft_checkmate is a real-time multiplayer checkers game (jeu de dames) built as a full-stack web application. Two players can compete against each other online from separate computers, with full French checkers rules enforced server-side.
+
+**Key features:**
+- Real-time online multiplayer checkers game
+- User authentication (email/password, Google OAuth, 2FA)
+- User profiles with ELO ranking, match history, and friends system
+- Leaderboard and matchmaking system
+- In-game chat between players
+- Internationalization (French, English, Arabic)
+- Full containerization with Docker
+
+---
+
+# Team Organisation
 
 ## Roles
 
@@ -11,6 +28,10 @@ With the Project Manager, we established roles and work repartitions between eac
 Also I regularly discuss with each members of the group to see their work, its compatibility with the global code and to merge it with github.
 
 **Project Manager (PM) / Scrum Master:** _joudafke_
+As project manager and Scrum master, I was responsible for the team's coordination and for keeping the project on track.
+I organized our team meetings and planning sessions, and made sure everyone knew what to work on and by when.
+Together with the Product Owner, I established the roles and work repartition between each member, and I tracked the progression of the modules and features to keep our deadlines realistic.
+I facilitated communication within the team and handled the risks and blockers as they came up, so that each member could stay focused on their tasks.
 
 **Technical Lead / Architect:** _maissat_
 As technical lead, I was responsible for the overall front-end architecture and technical choices of the project.
@@ -20,11 +41,73 @@ I built the core shared components (Topbar, Footer, modals) that the rest of the
 
 **Developers:** all team members
 
-## Work repartition
+## Work Repartition
 
-## Technologies
+| Member | Role | Main contributions |
+|--------|------|--------------------|
+| nmartin | PO + Developer | Database schema, Prisma ORM, project management, Authentication (login, register, OAuth, 2FA) |
+| joudafke | PM + Developer | profile, friends, chat |
+| maissat | Tech Lead + Developer | Front-end architecture, UI/UX, shared components |
+| braugust | Developer | Server-side game engine, Docker, HTTPS, i18n, avatar system |
+| yamartin | Developer | Client-side game logic, WebSocket client, game UI |
 
-## Modules
+## Project Management
+
+- Communication via Discord (daily updates, code reviews, blockers)
+- Work organized by feature branches on GitHub (`database`, `front`, `game`, `brice`, etc.)
+- Regular syncs between members before merging branches
+- GitHub used for version control with meaningful commit messages per member
+
+---
+
+# Technical Stack
+
+## Frontend
+- **Next.js 16** (App Router) — full-stack React framework
+- **React** — UI component library
+- **TypeScript** — static typing
+- **Tailwind CSS** — utility-first CSS framework
+- **shadcn/ui** — reusable UI components
+- **next-intl** — internationalization (FR/EN/AR)
+- **socket.io-client** — WebSocket client for real-time game
+
+## Backend
+- **Next.js API Routes** — REST API endpoints
+- **Node.js custom server** — socket.io WebSocket server integrated with Next.js
+- **socket.io** — real-time bidirectional communication
+- **NextAuth.js** — authentication (session management, OAuth)
+- **Prisma v7** — ORM for database interaction
+- **argon2** — password hashing
+
+## Database
+- **PostgreSQL 16** — relational database
+- Chosen for its reliability, SQL standard compliance, and strong ecosystem
+
+## Infrastructure
+- **Docker & Docker Compose** — full containerization
+- **Nginx** — reverse proxy with HTTPS termination
+- **ngrok** — external HTTPS tunnel for evaluations
+
+---
+
+# Modules
+
+| # | Module | Category | Type | Points | Implemented by |
+|---|--------|----------|------|--------|----------------|
+| 1 | Framework front + back (Next.js) | Web | Major | 2 pts | maissat nmartin |
+| 2 | Real-time features using WebSockets (socket.io) | Web | Major | 2 pts | yamartin, braugust |
+| 3 | Allow users to interact (chat, profile, friends) | Web | Major | 2 pts | nmartin, joudafke |
+| 4 | Standard user management and authentication | User Management | Major | 2 pts | joudafke, braugust, nmartin, maissat |
+| 5 | Complete web-based game (checkers) | Gaming | Major | 2 pts | yamartin, braugust |
+| 6 | Remote players (2 PCs in real-time) | Gaming | Major | 2 pts | yamartin, braugust |
+| 7 | ORM (Prisma) | Web | Minor | 1 pt | nmartin |
+| 8 | i18n 3 languages (fr/en/ar) | Accessibility | Minor | 1 pt | braugust |
+| 9 | OAuth Google | User Management | Minor | 1 pt | nmartin |
+| 10 | 2FA (OTP by email + recovery codes) | User Management | Minor | 1 pt | nmartin |
+| 11 | Game statistics and match history | User Management | Minor | 1 pt | nmartin, joudafke |
+| 12 | Server-Side Rendering (SSR) for improved performance and SEO | Web | Minor | 1 pt | nmartin maissat |
+
+**Total: 6 majors (12 pts) + 5 minors (5 pts) = 17 points**
 
 ---
 
@@ -123,8 +206,6 @@ Nginx listens on ports 80 and 443:
 - HTTP (port 80) redirects automatically to HTTPS
 - HTTPS (port 443) proxies requests to the Next.js frontend on port 3000 (internal Docker network only)
 
-This satisfies the project requirement that HTTPS must be used everywhere on the backend.
-
 ### Environment Configuration
 
 Credentials are stored in a local `.env` file (never committed) following the `.env.example` template:
@@ -141,32 +222,19 @@ NEXTAUTH_SECRET=
 NEXTAUTH_URL=https://localhost
 ```
 
-### Module claimed
-
-| Module | Type | Points |
-|--------|------|--------|
-| Deployment with containerization (Docker) | Mandatory | — |
-
 ---
 
 ## Internationalization (i18n) _by braugust_
 
-### Overview
-
-The application supports three languages: French (default), English, and Arabic, satisfying the **Minor: Support for multiple languages** module requirement.
-
-### Implementation
+The application supports three languages: French (default), English, and Arabic.
 
 The i18n system is built with **next-intl**, integrated directly into the Next.js App Router.
 
-**Architecture:**
 ```
 messages/
 ├── fr.json    ← French translations
 ├── en.json    ← English translations
 └── ar.json    ← Arabic translations
-i18n.ts        ← next-intl configuration
-middleware.ts  ← locale detection and URL routing
 ```
 
 All routes are prefixed with the locale:
@@ -176,25 +244,7 @@ All routes are prefixed with the locale:
 /ar/profile    ← Arabic
 ```
 
-The middleware handles two responsibilities simultaneously:
-1. **Auth protection** — redirects unauthenticated users away from protected routes
-2. **Locale routing** — detects the locale from the URL and serves the correct translations
-
-**Language switcher** — three buttons (FR / EN / AR) in the navbar allow instant language switching by replacing the locale prefix in the current URL.
-
-**Translated components:**
-- Topbar (navigation labels, game title, PLAY button)
-- Login and Register modals (all fields, labels, Google OAuth button)
-- Notification modal
-- Profile page (match history, ELO, friends sections)
-- Parameters page (birthdate picker, checkboxes, save button)
-- Home page (game card)
-
-### Module claimed
-
-| Module | Type | Points |
-|--------|------|--------|
-| Support for multiple languages (at least 3 languages) | Minor | 1 pt |
+The middleware handles auth protection and locale routing simultaneously. Language switcher (FR / EN / AR) available in the navbar.
 
 ---
 
@@ -205,8 +255,6 @@ The middleware handles two responsibilities simultaneously:
 Ft_checkmate implements a fully functional online checkers game (jeu de dames) playable in real-time between two players through a web browser.
 
 ### Game Features
-
-The checkers game was built from scratch using React and Next.js on the client side, with a custom Node.js server handling the WebSocket connections and game logic.
 
 **Board & Pieces**
 - 8×8 checkerboard with alternating dark and light squares
@@ -263,80 +311,69 @@ The checkers game was built from scratch using React and Next.js on the client s
 - Results pushed to database after each game (ELO calculation)
 - Maximum 2 players per room enforced server-side
 
-### Modules claimed
-
-| Module | Type | Points | Implemented by |
-|--------|------|--------|----------------|
-| Implement a complete web-based game | Major | 2 pts | yamartin, braugust |
-| Remote players (real-time multiplayer) | Major | 2 pts | yamartin, braugust |
-| Real-time features using WebSockets | Major | 2 pts | yamartin, braugust |
-
-**Total: 6 points**
-
-### Individual Contributions
-
-**yamartin**
-- Designed and built the complete checkers game logic on the client side (React/Next.js)
-- Implemented board rendering, piece selection, move validation (diagonal movement, mandatory capture, multi-capture chains, king promotion, long-distance king movement and capture)
-- Integrated socket.io client for real-time communication with the server
-- Built the game UI: turn indicator, timer display, piece counters, win screen, replay button
-- Learned React, Next.js, TypeScript, WebSockets from scratch during this project
-
-**braugust** _(server-side game engine, infrastructure & i18n)_
-- Built the complete server-side game engine (`checkers.js`) with full French checkers rules
-- Implemented the custom Node.js/socket.io server with dynamic room management
-- Handled player authentication from database (JWT cookie verification)
-- Implemented per-turn countdown timer with forfeit logic
-- Integrated game results with the database (ELO calculation, match history)
-- Set up the complete Docker infrastructure (PostgreSQL, Next.js, Nginx) with `docker compose up --build` as the single launch command
-- Configured HTTPS with self-signed SSL certificates via Nginx reverse proxy
-- Solved Prisma v7 migration compatibility in Docker (prisma.config.ts placement, .prisma client copy between node_modules)
-- Implemented full internationalization (FR/EN/AR) using next-intl with locale-aware routing and language switcher
-- Translated all user-facing text across the application (navbar, modals, profile, parameters pages)
-- Set up ngrok for external HTTPS access during evaluations
-
- **maissat** _(front-end architecture, UI/UX & core layout components)_
-
--Chose and set up the front-end stack (Next.js/TypeScript/React, Tailwind CSS, shadcn/ui) and structured the App routing.
--Designed and implemented the overall visual direction (DA) of the site applied across all pages
--Built the Topbar component: navigation, game status display, notification bell, login/logout state handling
--Built the Footer component
--Built the LoginModal
--Built the RegisterModal for new account creation
--Built the NotifModal for displaying user notifications
-
 ---
 
 ## Avatar System _by braugust_
 
-### Overview
-
-Users can personalize their profile picture, either by uploading their own image or by choosing from a set of built-in avatars. Once changed, the new avatar propagates instantly across the entire application without any manual refresh.
-
-### Features
+Users can personalize their profile picture, either by uploading their own image or by choosing from a set of built-in avatars.
 
 **Custom upload**
 - Upload an image directly from the user's computer
 - Live preview before confirming the change
-- Confirm or cancel the selection
 
 **Built-in avatar gallery**
-- 5 default avatars shipped as application assets (`public/avatars/`)
-- Stylized checkers kings matching the four club colors (Alliance, Assembly, Federation, Order) plus a neutral one
+- 5 default avatars matching the four club colors plus a neutral one
 - Single-click selection, currently selected avatar highlighted
 
-**Validation & security** (server side, `src/app/api/avatar/route.ts`)
-- Allowed formats only: PNG, JPG, JPEG, WEBP
-- Maximum file size: 2 MB
-- Corrupted file detection: the binary signature (magic number) of each upload is verified, so a renamed non-image file is rejected
-- Failed uploads never leave the profile in an inconsistent state — the database is only updated once the file is safely written
-- Clear, translated error messages returned to the user (unsupported format, file too large, corrupted file, network error)
+**Validation & security**
+- Allowed formats: PNG, JPG, JPEG, WEBP — max 2 MB
+- Binary signature (magic number) verification to reject disguised files
+- Database only updated once the file is safely written
 
-### Technical Implementation
+---
 
-**Single reusable component** (`src/components/ui/Avatar.tsx`)
+## Individual Contributions
 
-The avatar is rendered by one single component reused everywhere it appears — no duplicated UI logic:
+### nmartin — Product Owner & Developer
+- Defined project scope, modules, and feature priorities
+- Designed and implemented the database schema (PostgreSQL + Prisma)
+- Managed GitHub merges and team coordination
+- Implemented game statistics backend (ELO calculator, match history)
+- Implemented user authentication (login, register, sessions)
+- Implemented Google OAuth 2.0
+- Implemented 2FA (OTP by email + recovery codes)
+
+### joudafke — Project Manager & Developer
+- Coordinated team meetings, tracked deadlines, managed blockers
+- Implemented the user profile, parameters page, and friends system
+- Implemented in-game and direct messaging chat system
+- Contributed to game statistics and match history
+
+### maissat — Technical Lead & Developer
+- Chose and set up the front-end stack (Next.js, TypeScript, React, Tailwind CSS, shadcn/ui)
+- Designed and implemented the overall visual direction across all pages
+- Built the Topbar, Footer, LoginModal, RegisterModal, NotifModal
+- Structured the App Router with locale-aware layouts
+
+### braugust — Developer
+- Built the complete server-side game engine (`checkers.js`) with full French checkers rules
+- Implemented the custom Node.js/socket.io server with dynamic room management
+- Handled player authentication via JWT cookie verification
+- Implemented per-turn countdown timer with forfeit logic
+- Integrated game results with the database (ELO calculation, match history)
+- Set up the complete Docker infrastructure (PostgreSQL, Next.js, Nginx)
+- Configured HTTPS with self-signed SSL certificates via Nginx
+- Solved Prisma v7 migration compatibility in Docker
+- Implemented full i18n (FR/EN/AR) with next-intl and locale-aware routing
+- Built the avatar system with custom upload and built-in gallery
+- Set up ngrok for external HTTPS access during evaluations
+
+### yamartin — Developer
+- Built the complete checkers game client from scratch (React/Next.js)
+- Implemented board rendering, piece selection, and click handler logic
+- Integrated socket.io client for real-time WebSocket communication
+- Built the game UI: turn indicator, timer, piece counters, win/loss screen, replay button
+- Learned React, Next.js, TypeScript, and WebSockets from scratch during this project
 
 ---
 
@@ -370,7 +407,7 @@ RESEND_API_KEY=your_resend_key
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXTAUTH_SECRET=a_long_random_string
-NEXTAUTH_URL=https://localhost
+NEXTAUTH_URL=https://localhost:8443
 ```
 
 4. Launch the full stack:
@@ -378,21 +415,18 @@ NEXTAUTH_URL=https://localhost
 docker compose up --build
 ```
 
-5. Open your browser at [https://localhost](https://localhost)
+5. Open your browser at [https://localhost:8443](https://localhost:8443)
 
 > The browser will show a security warning for the self-signed certificate — click "Advanced" then "Proceed to localhost" to continue.
 
 ## External access (evaluations)
 
-To share the app over the internet via HTTPS:
-
 ```bash
-# Install ngrok
 ngrok config add-authtoken YOUR_TOKEN
 ngrok http 443 --scheme https
 ```
 
-Share the generated URL (e.g. `https://abc123.ngrok-free.app`) with the evaluator.
+Share the generated URL with the evaluator.
 
 ---
 
@@ -410,16 +444,13 @@ Share the generated URL (e.g. `https://abc123.ngrok-free.app`) with the evaluato
 - https://nginx.org/en/docs/
 - https://next-intl-docs.vercel.app/
 
-## Game
+## Game & Real-time
 - https://socket.io/docs/v4/
 - https://nextjs.org/docs
 - https://react.dev/
 
+## Authentication
+- https://next-auth.js.org/
+
 ## AI Usage
-
-Claude (Anthropic) was used by multiple team members throughout the project:
-
-- **braugust** — used Claude to set up Docker infrastructure, configure Nginx HTTPS, solve Prisma v7 migration issues in Docker, and implement the next-intl internationalization system
-- **yamartin** — used Claude extensively to help with web development for creating the game client (React, Next.js, TypeScript, WebSockets)
-
-All AI-generated content was reviewed, tested, and understood by the team members before integration.
+AI tools were used by some team members as a learning and debugging aid during development.

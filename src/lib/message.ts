@@ -24,8 +24,8 @@ export async function loadDiscussion(currentUserId: string, targetUserId: string
             getConversation(currentUserId, targetUserId),
 			getUserById(targetUserId),
             getChatEnable(currentUserId),
-            markConversationRead(currentUserId, targetUserId)
         ]);
+    await markConversationRead(currentUserId, targetUserId);
     return { initialMessages, partnerUser, chatEnable};
 }
 
