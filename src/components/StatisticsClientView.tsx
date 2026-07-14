@@ -6,6 +6,44 @@ import { useState } from "react";
 import EloChart from "./EloChart";
 import WinRateChart from "./WinRateChart";
 
+
+const BADGE_CONFIGS = {
+    wins: {
+        title: "Prédateur",
+        icon: "⚔️",
+        steps: [3, 10, 50],
+        color: "from-amber-500 to-orange-600"
+    },
+    losses: {
+        title: "Survivant",
+        icon: "🛡️",
+        steps: [3, 10, 50],
+        color: "from-red-600 to-rose-800"
+    },
+    total: {
+        title: "Vétéran",
+        icon: "👑",
+        steps: [5, 15, 100],
+        color: "from-blue-500 to-indigo-700"
+    }
+};
+
+const getBadgeStepDetails = (currentCount: number, steps: number[]) => {
+    let activeStepIndex = -1;
+    for (let i = 0; i < steps.length; i++) {
+        if (currentCount >= steps[i]) {
+            activeStepIndex = i;
+        }
+    }
+    const nextStep = activeStepIndex < steps.length - 1 ? steps[activeStepIndex + 1] : null;
+    return {
+        level: activeStepIndex + 1, // Niveau 0 à 3
+        isAcquired: activeStepIndex >= 0,
+        currentStepValue: activeStepIndex >= 0 ? steps[activeStepIndex] : 0,
+        nextStepValue: nextStep
+    };
+};
+
 interface StatsClientViewProps {
     username: string;
     eloHistory: { date: Date | string; elo: number }[];
@@ -42,6 +80,26 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
             router.push(`${pathname}?range=${value}`);
         }
     };
+
+    const totalPlayed = stats.wins + stats.losses + stats.draws;
+
+    const badges = [
+        {
+            ...BADGE_CONFIGS.wins,
+            count: stats.wins,
+            status: getBadgeStepDetails(stats.wins, BADGE_CONFIGS.wins.steps)
+        },
+        {
+            ...BADGE_CONFIGS.losses,
+            count: stats.losses,
+            status: getBadgeStepDetails(stats.losses, BADGE_CONFIGS.losses.steps)
+        },
+        {
+            ...BADGE_CONFIGS.total,
+            count: totalPlayed,
+            status: getBadgeStepDetails(totalPlayed, BADGE_CONFIGS.total.steps)
+        }
+    ];
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -95,6 +153,62 @@ export default function StatsClientView({ username, eloHistory, matchHistory, st
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
                     <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">{t("stats.results_distribution")}</p>
                     <WinRateChart wins={stats.wins} losses={stats.losses} draws={stats.draws} winrate={stats.winrate} />
+                </div>
+
+                {/* 🏆 Bloc des Badges Évolutifs */}
+                <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl">
+                    <p className="text-gray-300 font-black uppercase tracking-wider text-sm mb-4">🏅 Insignes de Carrière</p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {badges.map((badge, idx) => {
+                            const { isAcquired, level, nextStepValue } = badge.status;
+                            return (
+                                <div 
+                                    key={idx} 
+                                    className="flex flex-col items-center justify-center p-4 rounded-lg bg-[#262522] border border-[#2b2925] relative overflow-hidden"
+                                >
+                                    {/* Effet lumineux en arrière-plan si acquis */}
+                                    {isAcquired && (
+                                        <div className={`absolute inset-0 bg-gradient-to-br ${badge.color} opacity-5`} />
+                                    )}
+                                    
+                                    {/* Icône du badge */}
+                                    <span className={`text-4xl mb-2 transition-all duration-300 ${
+                                        isAcquired ? "scale-110 drop-shadow-[0_0_10px_rgba(255,255,255,0.15)]" : "grayscale opacity-25"
+                                    }`}>
+                                        {badge.icon}
+                                    </span>
+
+                                    {/* Titre */}
+                                    <span className={`text-xs font-black uppercase tracking-wider ${
+                                        isAcquired ? "text-white" : "text-gray-600"
+                                    }`}>
+                                        {badge.title}
+                                    </span>
+
+                                    {/* Niveau d'étoiles */}
+                                    <div className="flex gap-1 my-1.5">
+                                        {[1, 2, 3].map((star) => (
+                                            <span 
+                                                key={star} 
+                                                className={`text-[10px] ${
+                                                    star <= level ? "text-yellow-500 drop-shadow-[0_0_2px_rgba(234,179,8,0.5)]" : "text-gray-800"
+                                                }`}
+                                            >
+                                                ★
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Progression Numérique */}
+                                    <span className="text-xs font-mono text-gray-500">
+                                        {badge.count}
+                                        {nextStepValue ? ` / ${nextStepValue}` : " (Max)"}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 <div className="bg-[#1e1c18] border-2 border-[#2b2925] rounded-lg p-6 shadow-xl flex flex-col justify-between min-h-[380px]">

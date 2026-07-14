@@ -24,6 +24,7 @@ export default async function PlayerStatsPage({ params, searchParams }: StatsPag
 
     const filteredEloHistory = await eloHistoric(id, days);
 
+    // On récupère tout l'historique sans limite pour la pagination côté client
     const allMatches = await getRecentMatches(id, 0);
 
     const stats = await getStats(id);
