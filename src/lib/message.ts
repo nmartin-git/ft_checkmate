@@ -1,3 +1,4 @@
+import { assertClean } from "./moderation"
 import { prisma } from "./prisma"
 import { PUBLIC_USER_SELECT } from "./select"
 import { getUserById } from "./user"
@@ -37,6 +38,7 @@ export async function sendDirectMessage(senderId: string, receiverId: string, ra
         throw new Error("Message is empty")
     if (message.length > MAX_MESSAGE_LENGTH)
         throw new Error(`Message exceeds ${MAX_MESSAGE_LENGTH} characters`)
+    assertClean(message);
 
     const sender = await prisma.user.findUniqueOrThrow({
         where: { id: senderId },
