@@ -105,7 +105,8 @@
   },
   "footer": {
     "privacy": "Confidentialité",
-    "terms": "Conditions"
+    "terms": "Conditions",
+    "rules" : "Règles du jeu"
   },
   "chart": {
     "not_enough_games": "Pas assez de parties pour afficher le graphique.",

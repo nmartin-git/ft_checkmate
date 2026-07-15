@@ -105,7 +105,8 @@
   },
   "footer": {
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "rules" : "Game rules"
   },
   "chart": {
     "not_enough_games": "Not enough games to display the chart.",
