@@ -12,7 +12,7 @@ interface EloPoint{
 export default function EloChart({data} : {data : EloPoint[]}){
     const t = useTranslations("chart");
     const chartData = data.map((p)=>({
-        label : format(new Date(p.date), "dd,MM"),
+        label : format(new Date(p.date), "dd/MM"),
         elo : p.elo
     }));
     if (chartData.length ==0){
