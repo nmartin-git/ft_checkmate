@@ -14,6 +14,9 @@ const Footer = () => {
              <Link href={'/terms'} className="hover:text-white transition-colors">
                 {t("terms")}
              </Link>
+             <Link href={'https://www.lecomptoirdesjeux.com/regle-jeu-dames.htm'} className="hover:text-white transition-colors">
+                {t("rules")}
+             </Link>
         </div>
     </footer>
   );
