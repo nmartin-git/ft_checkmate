@@ -88,8 +88,8 @@ export async function listConversations(userId: string) {
     });
 
     const partnerIds = Array.from(new Set([
-        ...sentTo.map(m => m.receiver_id),
-        ...receivedFrom.map(m => m.sender_id)
+        ...sentTo.map((m: { receiver_id: string }) => m.receiver_id),
+        ...receivedFrom.map((m: { sender_id: string }) => m.sender_id)
     ]));
 
     const conversationPromises = partnerIds.map(async (partnerId) => {
